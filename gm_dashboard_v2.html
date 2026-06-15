@@ -1,1026 +1,243 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GM Operations Dashboard</title>
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { font-size: 14px; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #F0F2F5; color: #1A1D23; min-height: 100vh; }
-
-  /* ---- HEADER ---- */
-  .header { background: #12151C; color: #fff; padding: 18px 32px; display: flex; align-items: center; justify-content: space-between; border-bottom: 3px solid #C8A84B; }
-  .header-left { display: flex; flex-direction: column; gap: 4px; }
-  .header-property { font-size: 1.25rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #C8A84B; }
-  .header-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-  .header-sub { font-size: 0.78rem; color: #8A8F9C; letter-spacing: 0.06em; text-transform: uppercase; }
-  .month-selector { background: #2A2F3E; border: 1px solid #3A3F4E; color: #C8A84B; font-size: 0.75rem; font-weight: 700; padding: 3px 10px; border-radius: 3px; font-family: inherit; cursor: pointer; outline: none; }
-  .month-selector:focus { border-color: #C8A84B; }
-  .header-right { display: flex; align-items: center; gap: 12px; }
-  .live-date { font-size: 0.78rem; color: #8A8F9C; text-align: right; line-height: 1.6; }
-  .print-btn { background: #C8A84B; color: #12151C; border: none; padding: 7px 16px; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer; border-radius: 3px; }
-  .print-btn:hover { background: #dfc06a; }
-
-  /* ---- SYNC BAR ---- */
-  .sync-bar { background: #1E222D; padding: 10px 32px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-  .sync-left { display: flex; align-items: center; gap: 10px; }
-  .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #8A8F9C; flex-shrink: 0; transition: background 0.3s; }
-  .sync-dot.syncing { background: #C8A84B; animation: blink 1s infinite; }
-  .sync-dot.ok      { background: #1A7A4A; }
-  .sync-dot.error   { background: #C0392B; }
-  .sync-dot.warn    { background: #C8A84B; }
-  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-  .sync-msg { font-size: 0.72rem; color: #8A8F9C; }
-  .sync-msg.ok    { color: #1A7A4A; }
-  .sync-msg.error { color: #C0392B; }
-  .sync-msg.warn  { color: #C8A84B; }
-  .sync-right { display: flex; gap: 8px; align-items: center; }
-  .sync-btn { background: transparent; border: 1px solid #3A3F4E; color: #8A8F9C; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 5px 14px; cursor: pointer; border-radius: 3px; font-family: inherit; transition: all 0.15s; }
-  .sync-btn:hover { border-color: #C8A84B; color: #C8A84B; }
-  .sync-btn.primary { background: #C8A84B; border-color: #C8A84B; color: #12151C; }
-  .sync-btn.primary:hover { background: #dfc06a; }
-  .sync-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-  /* ---- UNSAVED INDICATOR ---- */
-  .unsaved-badge { display: none; background: #C8A84B; color: #12151C; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 2px 8px; border-radius: 2px; }
-  .unsaved-badge.visible { display: inline-block; }
-
-  /* ---- MAIN ---- */
-  .main { padding: 24px 32px; display: flex; flex-direction: column; gap: 20px; }
-
-  /* ---- MONTH ROLLOVER BANNER ---- */
-  .rollover-banner { background: #FEF9ED; border: 1px solid #C8A84B; border-radius: 5px; padding: 14px 20px; display: none; align-items: center; gap: 16px; }
-  .rollover-banner.visible { display: flex; }
-  .rollover-banner-text { flex: 1; font-size: 0.8rem; color: #6B7080; line-height: 1.6; }
-  .rollover-banner-text strong { color: #1A1D23; }
-  .rollover-btn { background: #1E222D; border: none; color: #C8A84B; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 6px 14px; cursor: pointer; border-radius: 3px; white-space: nowrap; font-family: inherit; }
-
-  /* ---- CARDS ---- */
-  .card { background: #fff; border-radius: 5px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); overflow: hidden; }
-  .card-header { background: #1E222D; color: #fff; padding: 12px 20px; display: flex; align-items: baseline; gap: 12px; }
-  .card-title { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
-  .card-badge { background: #C8A84B; color: #12151C; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 8px; border-radius: 2px; }
-  .card-body { padding: 0; }
-
-  /* ---- TABLES ---- */
-  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-  thead th { background: #F7F8FA; color: #6B7080; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 9px 16px; text-align: right; border-bottom: 1px solid #E5E8EE; }
-  thead th:first-child { text-align: left; }
-  tbody tr { border-bottom: 1px solid #F0F2F5; }
-  tbody tr:last-child { border-bottom: none; }
-  tbody tr:hover { background: #FAFBFD; }
-  tbody td { padding: 10px 16px; text-align: right; vertical-align: middle; color: #2B2F3A; }
-  tbody td:first-child { text-align: left; font-weight: 600; color: #1A1D23; }
-  .cell-input { background: transparent; border: none; text-align: right; font-size: 0.85rem; color: #2B2F3A; width: 100%; min-width: 80px; outline: none; font-family: inherit; }
-  .cell-input:focus { background: #FFFBEF; border-bottom: 1px solid #C8A84B; }
-  .subsection-row td { background: #F7F8FA; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #6B7080; padding: 6px 16px; border-top: 1px solid #E5E8EE; }
-  .total-row td { background: #1E222D; color: #fff; font-weight: 700; padding: 10px 16px; }
-
-  /* ---- VARIANCE ---- */
-  .var-positive { color: #1A7A4A; font-weight: 700; }
-  .var-negative { color: #C0392B; font-weight: 700; }
-  .var-neutral  { color: #B07D00; font-weight: 700; }
-
-  /* ---- KPI STRIP ---- */
-  .rec-note { font-size: 0.68rem; color: #8A8F9C; font-weight: 400; font-style: italic; margin-left: 6px; }
-  .kpi-strip { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid #E5E8EE; }
-  .kpi-item { padding: 16px 20px; border-right: 1px solid #E5E8EE; display: flex; flex-direction: column; gap: 4px; }
-  .kpi-item:last-child { border-right: none; }
-  .kpi-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8F9C; }
-  .kpi-value { font-size: 1.5rem; font-weight: 700; color: #1A1D23; line-height: 1; }
-  .kpi-sub   { font-size: 0.72rem; color: #8A8F9C; }
-  .kpi-input { font-size: 1.4rem; font-weight: 700; color: #1A1D23; border: none; outline: none; width: 100%; background: transparent; font-family: inherit; }
-  .kpi-input:focus { border-bottom: 1px solid #C8A84B; }
-  .kpi-note { font-size: 0.68rem; color: #B07D00; margin-top: 2px; font-style: italic; }
-
-  /* ---- EV/PV ---- */
-  .ev-grid { display: grid; grid-template-columns: 1fr 1fr; }
-  .ev-inputs { padding: 16px 20px; border-right: 1px solid #E5E8EE; display: flex; flex-direction: column; gap: 12px; }
-  .ev-inputs-title { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8F9C; }
-  .ev-input-row { display: flex; align-items: center; gap: 10px; }
-  .ev-input-label { font-size: 0.78rem; color: #6B7080; min-width: 160px; }
-  .ev-input-field { border: 1px solid #E5E8EE; border-radius: 3px; padding: 5px 10px; font-size: 0.85rem; font-family: inherit; color: #1A1D23; width: 80px; text-align: right; outline: none; background: #FAFBFD; }
-  .ev-input-field:focus { border-color: #C8A84B; background: #FFFBEF; }
-  .ev-results { padding: 16px 20px; display: grid; grid-template-columns: 1fr 1fr; }
-  .ev-kpi { padding: 10px 16px; border-right: 1px solid #F0F2F5; border-bottom: 1px solid #F0F2F5; display: flex; flex-direction: column; gap: 3px; }
-  .ev-kpi:nth-child(even)      { border-right: none; }
-  .ev-kpi:nth-last-child(-n+2) { border-bottom: none; }
-  .ev-kpi-label { font-size: 0.63rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8F9C; }
-  .ev-kpi-value { font-size: 1.25rem; font-weight: 700; color: #1A1D23; line-height: 1.1; }
-  .ev-kpi-sub   { font-size: 0.68rem; color: #8A8F9C; line-height: 1.4; }
-  .ev-scope-toggle { display: flex; gap: 6px; }
-  .ev-scope-btn { background: transparent; border: 1px solid #E5E8EE; color: #8A8F9C; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 3px 10px; cursor: pointer; border-radius: 3px; font-family: inherit; }
-  .ev-scope-btn.active { background: #1E222D; border-color: #1E222D; color: #C8A84B; }
-
-  /* ---- AGENDA ---- */
-  .agenda-meta { display: grid; grid-template-columns: repeat(3, 1fr); border-bottom: 1px solid #E5E8EE; }
-  .agenda-meta-item { padding: 14px 20px; border-right: 1px solid #E5E8EE; display: flex; flex-direction: column; gap: 4px; }
-  .agenda-meta-item:last-child { border-right: none; }
-  .meta-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8F9C; }
-  .meta-input { border: none; outline: none; font-size: 0.85rem; color: #1A1D23; font-weight: 600; background: transparent; font-family: inherit; width: 100%; }
-  .meta-input:focus { border-bottom: 1px solid #C8A84B; }
-  .agenda-items { padding: 4px 0; }
-  .agenda-item { display: flex; align-items: flex-start; gap: 12px; padding: 10px 20px; border-bottom: 1px solid #F0F2F5; }
-  .agenda-item:last-child { border-bottom: none; }
-  .agenda-num { min-width: 24px; height: 24px; background: #1E222D; color: #C8A84B; font-size: 0.7rem; font-weight: 700; display: flex; align-items: center; justify-content: center; border-radius: 3px; margin-top: 1px; }
-  .agenda-text { border: none; outline: none; font-size: 0.85rem; color: #2B2F3A; background: transparent; font-family: inherit; width: 100%; line-height: 1.5; }
-  .agenda-text:focus { border-bottom: 1px solid #C8A84B; }
-
-  /* ---- ACTION ITEMS ---- */
-  .action-section { padding: 16px 20px 8px; }
-  .action-title { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #1A1D23; margin-bottom: 10px; }
-  .action-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
-  .action-table th { background: #F7F8FA; color: #6B7080; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 8px 12px; text-align: left; border: 1px solid #E5E8EE; }
-  .action-table td { border: 1px solid #E5E8EE; padding: 0; vertical-align: middle; }
-  .action-input { border: none; outline: none; font-size: 0.82rem; color: #2B2F3A; background: transparent; font-family: inherit; width: 100%; padding: 8px 12px; }
-  .action-input:focus { background: #FFFBEF; }
-  .status-select { border: none; outline: none; font-size: 0.78rem; color: #2B2F3A; background: transparent; font-family: inherit; width: 100%; padding: 8px 12px; cursor: pointer; appearance: none; -webkit-appearance: none; }
-  .add-row-btn { margin-top: 8px; margin-bottom: 16px; background: transparent; border: 1px dashed #C8A84B; color: #B07D00; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; padding: 6px 16px; cursor: pointer; border-radius: 3px; font-family: inherit; }
-  .add-row-btn:hover { background: #FEF9ED; }
-
-  /* ---- VALIDATION ---- */
-  .cell-input.invalid { border-bottom: 1px solid #C0392B !important; background: #FFF5F5 !important; }
-
-  /* ---- FOOTER ---- */
-  .footer { text-align: center; padding: 16px; font-size: 0.68rem; color: #B0B5C0; letter-spacing: 0.04em; }
-  .footer button { background: none; border: none; color: #B0B5C0; font-size: 0.68rem; cursor: pointer; text-decoration: underline; font-family: inherit; padding: 0; }
-
-  /* ---- PRINT ---- */
-  @media print {
-    @page { size: A4 landscape; margin: 12mm; }
-    body { background: #fff; font-size: 11px; }
-    .header, .card-header, .total-row td { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .sync-bar, .print-btn, .add-row-btn, .rollover-banner, .unsaved-badge { display: none !important; }
-    .main { padding: 8px 0; gap: 12px; }
-    .card { box-shadow: none; border: 1px solid #E5E8EE; page-break-inside: avoid; }
-    .cell-input, .kpi-input, .meta-input, .agenda-text, .action-input, .status-select { background: transparent !important; }
-  }
-</style>
-</head>
-<body>
-
-<!-- ============================================================
-  HEADER — change "Property Name" to your venue
-  ============================================================ -->
-<header class="header">
-  <div class="header-left">
-    <div class="header-property">Property Name</div>
-    <div class="header-meta">
-      <span class="header-sub">GM Dashboard</span>
-      <select class="month-selector" id="month-selector" onchange="onMonthChange()"></select>
-      <span class="unsaved-badge" id="unsaved-badge">● Unsaved changes</span>
-    </div>
-  </div>
-  <div class="header-right">
-    <div class="live-date" id="liveDate"></div>
-    <button class="print-btn" onclick="window.print()">↓ Print</button>
-  </div>
-</header>
-
-<!-- ============================================================
-  SYNC BAR — explicit Save / Load buttons
-  ============================================================ -->
-<div class="sync-bar">
-  <div class="sync-left">
-    <div class="sync-dot" id="sync-dot"></div>
-    <span class="sync-msg" id="sync-msg">Ready</span>
-  </div>
-  <div class="sync-right">
-    <button class="sync-btn" onclick="loadFromSheets()">↓ Load from Sheets</button>
-    <button class="sync-btn primary" id="save-btn" onclick="saveToSheets()">↑ Save to Sheets</button>
-  </div>
-</div>
-
-<div class="main">
-
-  <!-- Month rollover banner -->
-  <div class="rollover-banner" id="rollover-banner">
-    <div class="rollover-banner-text">
-      <strong>New month detected.</strong> You're viewing <span id="rollover-prev-month"></span> data.
-      Start fresh for <span id="rollover-curr-month"></span> by clearing the figures below, or load from Sheets if you've already entered this month's data.
-    </div>
-    <button class="rollover-btn" onclick="startNewMonth()">Start New Month</button>
-    <button class="rollover-btn" onclick="loadFromSheets()">Load from Sheets</button>
-    <button class="rollover-btn" style="background:#3A3F4E;color:#8A8F9C;" onclick="dismissRollover()">Dismiss</button>
-  </div>
-
-  <!-- ========================================================
-    SECTION 1: RESTAURANT
-    ======================================================== -->
-  <div class="card">
-    <div class="card-header">
-      <span class="card-title">Restaurant Performance</span>
-      <span class="card-badge">MTD</span>
-    </div>
-    <div class="card-body">
-      <table>
-        <thead>
-          <tr>
-            <th style="width:28%">Category</th>
-            <th>Monthly Budget</th>
-            <th>MTD Actual</th>
-            <th>MTD Variance $</th>
-            <th>MTD Variance %</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="subsection-row"><td colspan="5">Food Sales</td></tr>
-          <tr>
-            <td>Food Revenue</td>
-            <td><input class="cell-input" type="number" id="r-food-budget" value="42000" oninput="calc('r-food');markUnsaved()" placeholder="0" min="0"></td>
-            <td><input class="cell-input" type="number" id="r-food-actual" value="13800" oninput="calc('r-food');markUnsaved()" placeholder="0" min="0"></td>
-            <td id="r-food-var-d">—</td>
-            <td id="r-food-var-p">—</td>
-          </tr>
-          <tr class="subsection-row"><td colspan="5">Beverage Sales</td></tr>
-          <tr>
-            <td>Beverage Revenue</td>
-            <td><input class="cell-input" type="number" id="r-bev-budget" value="18000" oninput="calc('r-bev');markUnsaved()" placeholder="0" min="0"></td>
-            <td><input class="cell-input" type="number" id="r-bev-actual" value="6100"  oninput="calc('r-bev');markUnsaved()" placeholder="0" min="0"></td>
-            <td id="r-bev-var-d">—</td>
-            <td id="r-bev-var-p">—</td>
-          </tr>
-          <tr class="total-row">
-            <td>Restaurant Total</td>
-            <td id="r-total-budget">—</td>
-            <td id="r-total-actual">—</td>
-            <td id="r-total-var-d">—</td>
-            <td id="r-total-var-p">—</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <!-- Recommended operational KPIs -->
-      <div class="kpi-strip">
-        <div class="kpi-item">
-          <div class="kpi-label">Avg Spend / Cover <span class="rec-note">★ Recommended</span></div>
-          <div><span style="font-size:0.8rem;color:#8A8F9C;margin-right:4px;">$</span>
-            <input class="kpi-input" id="kpi-spend" type="number" style="width:90px" readonly tabindex="-1">
-          </div>
-          <div class="kpi-sub">MTD actual ÷ covers entered below</div>
-        </div>
-        <div class="kpi-item">
-          <div class="kpi-label">Covers MTD <span class="rec-note">★ Recommended</span></div>
-          <div style="display:flex;align-items:baseline;gap:8px;">
-            <input class="kpi-input" id="kpi-covers" type="number" value="290" style="width:80px" oninput="calcKPIs();markUnsaved()" placeholder="0" min="0">
-          </div>
-          <div class="kpi-sub">Enter total covers served this month</div>
-          <div class="kpi-note" id="util-note"></div>
-        </div>
-        <div class="kpi-item">
-          <div class="kpi-label">Avg Table Turns / Day <span class="rec-note">★ Recommended</span></div>
-          <div><input class="kpi-input" id="kpi-turns" type="number" value="1.4" step="0.1" style="width:70px" oninput="markUnsaved()"></div>
-          <div class="kpi-sub">Enter manually — turns per trading day</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ========================================================
-    SECTION 2: BREWERY
-    ======================================================== -->
-  <div class="card">
-    <div class="card-header">
-      <span class="card-title">Brewery Performance</span>
-      <span class="card-badge">MTD</span>
-    </div>
-    <div class="card-body">
-      <table>
-        <thead>
-          <tr>
-            <th style="width:28%">Category</th>
-            <th>Monthly Budget</th>
-            <th>MTD Actual</th>
-            <th>MTD Variance $</th>
-            <th>MTD Variance %</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="subsection-row"><td colspan="5">Keg Sales</td></tr>
-          <tr>
-            <td>Keg Revenue</td>
-            <td><input class="cell-input" type="number" id="b-keg-budget"  value="38000" oninput="calc('b-keg');markUnsaved()"  placeholder="0" min="0"></td>
-            <td><input class="cell-input" type="number" id="b-keg-actual"  value="11200" oninput="calc('b-keg');markUnsaved()"  placeholder="0" min="0"></td>
-            <td id="b-keg-var-d">—</td>
-            <td id="b-keg-var-p">—</td>
-          </tr>
-          <tr class="subsection-row"><td colspan="5">Pack Sales</td></tr>
-          <tr>
-            <td>Pack Revenue</td>
-            <td><input class="cell-input" type="number" id="b-pack-budget" value="22000" oninput="calc('b-pack');markUnsaved()" placeholder="0" min="0"></td>
-            <td><input class="cell-input" type="number" id="b-pack-actual" value="7800"  oninput="calc('b-pack');markUnsaved()" placeholder="0" min="0"></td>
-            <td id="b-pack-var-d">—</td>
-            <td id="b-pack-var-p">—</td>
-          </tr>
-          <tr class="total-row">
-            <td>Brewery Total</td>
-            <td id="b-total-budget">—</td>
-            <td id="b-total-actual">—</td>
-            <td id="b-total-var-d">—</td>
-            <td id="b-total-var-p">—</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- ========================================================
-    SECTION 3: EV / PV FORECAST
-    PV  = budget × (days elapsed ÷ days in month)
-    EV  = MTD actual
-    SPI = EV ÷ PV  (1.0 = on pace)
-    Projected = EV ÷ % elapsed  (run-rate to month end)
-    ======================================================== -->
-  <div class="card">
-    <div class="card-header">
-      <span class="card-title">Revenue Forecast — Earned vs Planned</span>
-      <span class="card-badge">Pace to Monthly Budget</span>
-    </div>
-    <div class="card-body">
-      <div class="ev-grid">
-        <div class="ev-inputs">
-          <div class="ev-inputs-title">Inputs</div>
-          <div>
-            <div style="font-size:0.68rem;color:#8A8F9C;margin-bottom:6px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;">Scope</div>
-            <div class="ev-scope-toggle">
-              <button class="ev-scope-btn active" id="ev-scope-restaurant" onclick="setEVScope('restaurant')">Restaurant</button>
-              <button class="ev-scope-btn"        id="ev-scope-brewery"    onclick="setEVScope('brewery')">Brewery</button>
-              <button class="ev-scope-btn"        id="ev-scope-combined"   onclick="setEVScope('combined')">Combined</button>
-            </div>
-          </div>
-          <div class="ev-input-row">
-            <span class="ev-input-label">Days elapsed this month</span>
-            <input class="ev-input-field" type="number" id="ev-days-elapsed" min="1" max="31" oninput="calcEV();markUnsaved()">
-            <span style="font-size:0.75rem;color:#8A8F9C;">days</span>
-          </div>
-          <div class="ev-input-row">
-            <span class="ev-input-label">Total days in month</span>
-            <input class="ev-input-field" type="number" id="ev-days-total" min="1" max="31" oninput="calcEV();markUnsaved()">
-            <span style="font-size:0.75rem;color:#8A8F9C;">days</span>
-          </div>
-          <div style="padding-top:10px;border-top:1px solid #F0F2F5;font-size:0.68rem;color:#8A8F9C;line-height:1.7;">
-            Days auto-fill from today's date — override if needed.<br>
-            Budget and actuals are pulled from the tables above.
-          </div>
-        </div>
-        <div class="ev-results">
-          <div class="ev-kpi">
-            <div class="ev-kpi-label">Planned Value (PV)</div>
-            <div class="ev-kpi-value" id="ev-pv">—</div>
-            <div class="ev-kpi-sub">What you should have earned by today</div>
-          </div>
-          <div class="ev-kpi">
-            <div class="ev-kpi-label">Earned Value (EV)</div>
-            <div class="ev-kpi-value" id="ev-ev">—</div>
-            <div class="ev-kpi-sub">MTD actual revenue</div>
-          </div>
-          <div class="ev-kpi">
-            <div class="ev-kpi-label">Performance Index (SPI)</div>
-            <div class="ev-kpi-value" id="ev-spi">—</div>
-            <div class="ev-kpi-sub" id="ev-spi-sub">EV ÷ PV · 1.0 = on pace</div>
-          </div>
-          <div class="ev-kpi">
-            <div class="ev-kpi-label">Projected Month-End Revenue</div>
-            <div class="ev-kpi-value" id="ev-proj">—</div>
-            <div class="ev-kpi-sub" id="ev-proj-sub">vs <span id="ev-budget-label">—</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ========================================================
-    SECTION 4: MEETING AGENDA
-    ======================================================== -->
-  <div class="card">
-    <div class="card-header">
-      <span class="card-title">Meeting Agenda</span>
-    </div>
-    <div class="card-body">
-      <div class="agenda-meta">
-        <div class="agenda-meta-item">
-          <span class="meta-label">Meeting Date</span>
-          <input class="meta-input" id="meeting-date" type="date" oninput="markUnsaved()">
-        </div>
-        <div class="agenda-meta-item">
-          <span class="meta-label">Time</span>
-          <input class="meta-input" id="meeting-time" type="time" value="09:00" oninput="markUnsaved()">
-        </div>
-        <div class="agenda-meta-item">
-          <span class="meta-label">Attendees</span>
-          <input class="meta-input" id="meeting-attendees" type="text" placeholder="e.g. GM, Head Chef, Head Brewer, Sales Manager" oninput="markUnsaved()">
-        </div>
-      </div>
-      <div class="agenda-items" id="agenda-items"></div>
-      <div class="action-section">
-        <div class="action-title">Action Items</div>
-        <table class="action-table">
-          <thead>
-            <tr>
-              <th style="width:42%">Action</th>
-              <th style="width:18%">Owner</th>
-              <th style="width:16%">Due Date</th>
-              <th style="width:14%">Status</th>
-            </tr>
-          </thead>
-          <tbody id="action-tbody"></tbody>
-        </table>
-        <button class="add-row-btn" onclick="addActionRow()">+ Add Action Item</button>
-      </div>
-    </div>
-  </div>
-
-</div><!-- /main -->
-
-<div class="footer">
-  GM Operations Dashboard · Month to Date · <span id="footer-date"></span>
-  &nbsp;·&nbsp;
-  <button onclick="clearLocal()">Clear local cache</button>
-</div>
-
-<!-- ============================================================
-  JAVASCRIPT
-  ============================================================ -->
-<script>
 // ============================================================
-//  CONFIG
+//  GM DASHBOARD — Google Apps Script v3
+//  Handles: financial fields, agenda, action items (ops),
+//           3-month action plan, narrative/board report fields
+//
+//  Sheet tabs (auto-created):
+//    "Monthly Data"   — one row per month, all financial fields
+//    "Action Log"     — action items appended each save (dated)
+//    "Action Plan"    — 3-month plan, overwrites each save
+//    "Narrative"      — board report narrative, overwrites each save
+//    "Agenda"         — agenda items, overwrites each save
 // ============================================================
-var CONFIG = {
-  tolerancePct: 2.5,
-  seatCapacity: 190,
-  currency: '$',
-  SHEETS_URL: 'https://script.google.com/macros/s/AKfycbzKIiCnIm2mFDC-hUM1X0sbf_PWX8GJgZvy7Tu4K3C6BNOS0BbYd3fptgWel6iq4gRLyQ/exec'
-};
+
+var MONTHLY_SHEET  = 'Monthly Data';
+var ACTIONS_SHEET  = 'Action Log';
+var PLAN_SHEET     = 'Action Plan';
+var NARRATIVE_SHEET= 'Narrative';
+var AGENDA_SHEET   = 'Agenda';
 
 // ============================================================
-//  STATE
+//  ENTRY POINTS
 // ============================================================
-var evScope      = 'restaurant';
-var currentMonth = '';   // e.g. "2026-06"
-var hasUnsaved   = false;
-
-// ============================================================
-//  MONTH SELECTOR
-//  Builds a 12-month dropdown (current month + 11 prior).
-//  Switching months loads that month's data from Sheets.
-// ============================================================
-function buildMonthSelector() {
-  var sel = document.getElementById('month-selector');
-  var now = new Date();
-  sel.innerHTML = '';
-  for (var i = 0; i < 12; i++) {
-    var d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-    var key   = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
-    var label = d.toLocaleDateString('en-AU', {month:'long', year:'numeric'});
-    var opt   = document.createElement('option');
-    opt.value = key;
-    opt.textContent = label;
-    sel.appendChild(opt);
-  }
-  currentMonth = sel.value;
+function doGet(e) {
+  var params = e.parameter;
+  if (params.action === 'load') return handleLoad(params.monthKey);
+  return jsonResponse({status:'error', error:'Unknown GET action'});
 }
 
-function onMonthChange() {
-  if (hasUnsaved) {
-    if (!confirm('You have unsaved changes. Switch month without saving?')) {
-      // Revert selector
-      document.getElementById('month-selector').value = currentMonth;
+function doPost(e) {
+  try {
+    var payload = JSON.parse(e.postData.contents);
+    if (payload.action === 'save') return handleSave(payload);
+    return jsonResponse({status:'error', error:'Unknown POST action'});
+  } catch(err) {
+    return jsonResponse({status:'error', error:err.toString()});
+  }
+}
+
+// ============================================================
+//  LOAD
+// ============================================================
+function handleLoad(monthKey) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  // Monthly financial fields
+  var sheet = getOrCreateSheet(ss, MONTHLY_SHEET);
+  var data  = sheet.getDataRange().getValues();
+  var fields = {}, evScope = 'restaurant';
+
+  for (var i = 1; i < data.length; i++) {
+    if (data[i][0] === monthKey) {
+      var headers = data[0];
+      for (var j = 1; j < headers.length; j++) {
+        if (headers[j]) fields[headers[j]] = data[i][j];
+      }
+      evScope = fields['evScope'] || 'restaurant';
+      delete fields['evScope'];
+      break;
+    }
+  }
+
+  return jsonResponse({
+    status: 'ok',
+    data: {
+      fields:     fields,
+      evScope:    evScope,
+      actions:    loadActionsForMonth(ss, monthKey),
+      actionPlan: loadActionPlan(ss),
+      narrative:  loadNarrative(ss),
+      agenda:     loadAgenda(ss)
+    }
+  });
+}
+
+// ============================================================
+//  SAVE
+// ============================================================
+function handleSave(payload) {
+  var ss       = SpreadsheetApp.getActiveSpreadsheet();
+  var monthKey = payload.monthKey;
+
+  saveMonthlyData(ss, monthKey, payload.fields||{}, payload.evScope, payload.savedAt);
+  appendActionLog(ss, monthKey, payload.savedAt, payload.actions||[]);
+  saveActionPlan(ss, payload.actionPlan||[]);
+  saveNarrative(ss, payload.narrative||{}, monthKey, payload.savedAt);
+  saveAgenda(ss, payload.agenda||[]);
+
+  return jsonResponse({status:'ok'});
+}
+
+// ============================================================
+//  MONTHLY DATA — financial fields
+// ============================================================
+function saveMonthlyData(ss, monthKey, fields, evScope, savedAt) {
+  var sheet = getOrCreateSheet(ss, MONTHLY_SHEET);
+  var COLUMNS = [
+    'monthKey','savedAt','evScope',
+    'r-food-budget','r-food-actual','r-food-sply',
+    'r-bev-budget', 'r-bev-actual', 'r-bev-sply',
+    'b-keg-budget', 'b-keg-actual', 'b-keg-sply',
+    'b-pack-budget','b-pack-actual','b-pack-sply',
+    'r-wages','r-labour-target','b-wages','b-labour-target',
+    'kpi-covers','kpi-turns',
+    'ev-days-elapsed','ev-days-total',
+    'meeting-date','meeting-time','meeting-attendees'
+  ];
+
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(COLUMNS);
+    sheet.getRange(1,1,1,COLUMNS.length).setFontWeight('bold')
+         .setBackground('#1E222D').setFontColor('#C8A84B');
+  }
+
+  var row = COLUMNS.map(function(col) {
+    if (col==='monthKey') return monthKey;
+    if (col==='savedAt')  return savedAt;
+    if (col==='evScope')  return evScope||'restaurant';
+    return fields[col]!==undefined ? fields[col] : '';
+  });
+
+  var data = sheet.getDataRange().getValues();
+  for (var i = 1; i < data.length; i++) {
+    if (data[i][0] === monthKey) {
+      sheet.getRange(i+1,1,1,row.length).setValues([row]);
       return;
     }
   }
-  currentMonth = document.getElementById('month-selector').value;
-  loadFromSheets();
+  sheet.appendRow(row);
 }
 
 // ============================================================
-//  MONTH ROLLOVER DETECTION
-//  If local cache is from a different month, prompt the user.
+//  ACTION LOG — ops action items, appended each save
 // ============================================================
-function checkRollover(cachedMonth) {
-  if (!cachedMonth) return;
-  // Only compare YYYY-MM keys — ignore ISO timestamps or other formats
-  var keyMatch = cachedMonth.match(/^(\d{4}-\d{2})/);
-  if (!keyMatch) return;
-  var cachedKey = keyMatch[1];
-  var now = new Date();
-  var thisMonth = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
-  if (cachedKey !== thisMonth) {
-    document.getElementById('rollover-prev-month').textContent = monthLabel(cachedKey);
-    document.getElementById('rollover-curr-month').textContent = monthLabel(thisMonth);
-    document.getElementById('rollover-banner').classList.add('visible');
+function appendActionLog(ss, monthKey, savedAt, actions) {
+  var sheet = getOrCreateSheet(ss, ACTIONS_SHEET);
+  if (sheet.getLastRow()===0) {
+    var h = ['Month','Saved At','Action','Owner','Due Date','Status'];
+    sheet.appendRow(h);
+    sheet.getRange(1,1,1,h.length).setFontWeight('bold').setBackground('#1E222D').setFontColor('#C8A84B');
   }
-}
-
-function monthLabel(key) {
-  var parts = key.split('-');
-  var d = new Date(parseInt(parts[0]), parseInt(parts[1])-1, 1);
-  return d.toLocaleDateString('en-AU', {month:'long', year:'numeric'});
-}
-
-function startNewMonth() {
-  clearFields();
-  dismissRollover();
-  markUnsaved();
-  setSyncStatus('', 'New month started — enter this month\'s figures then save');
-}
-
-function dismissRollover() {
-  document.getElementById('rollover-banner').classList.remove('visible');
-}
-
-// ============================================================
-//  UNSAVED CHANGES INDICATOR
-// ============================================================
-function markUnsaved() {
-  hasUnsaved = true;
-  document.getElementById('unsaved-badge').classList.add('visible');
-}
-
-function markSaved() {
-  hasUnsaved = false;
-  document.getElementById('unsaved-badge').classList.remove('visible');
-}
-
-// ============================================================
-//  SYNC STATUS
-// ============================================================
-function setSyncStatus(state, msg) {
-  var dot = document.getElementById('sync-dot');
-  var txt = document.getElementById('sync-msg');
-  dot.className = 'sync-dot' + (state ? ' ' + state : '');
-  txt.className = 'sync-msg'  + (state ? ' ' + state : '');
-  txt.textContent = msg;
-}
-
-function setSaveBtn(disabled) {
-  document.getElementById('save-btn').disabled = disabled;
-}
-
-// ============================================================
-//  GOOGLE SHEETS — SAVE
-//  Called only by the explicit Save button.
-//  Action items are appended as a dated snapshot (new rows).
-//  Financial fields overwrite the current month's row.
-// ============================================================
-function saveToSheets() {
-  if (!CONFIG.SHEETS_URL) {
-    setSyncStatus('error', 'SHEETS_URL not configured in CONFIG block');
-    return;
-  }
-
-  setSyncStatus('syncing', 'Saving to Sheets…');
-  setSaveBtn(true);
-
-  var payload = {
-    action:    'save',
-    monthKey:  currentMonth,
-    savedAt:   new Date().toISOString(),
-    evScope:   evScope,
-    fields:    collectFields(),
-    agenda:    collectAgenda(),
-    actions:   collectActions()
-  };
-
-  fetch(CONFIG.SHEETS_URL, { method: 'POST', body: JSON.stringify(payload) })
-    .then(function(r) { return r.json(); })
-    .then(function(res) {
-      setSaveBtn(false);
-      if (res.status === 'ok') {
-        setSyncStatus('ok', 'Saved to Sheets · ' + timeNow());
-        markSaved();
-        cacheLocal(payload);
-      } else {
-        setSyncStatus('error', 'Save failed: ' + (res.error || 'check Apps Script logs'));
-      }
-    })
-    .catch(function(err) {
-      setSaveBtn(false);
-      // CORS is the most common failure from GitHub Pages
-      setSyncStatus('error', 'Could not reach Sheets (CORS / network). Data cached locally. Try opening the Apps Script URL directly to re-authorise.');
-      cacheLocal(payload);
-    });
-}
-
-// ============================================================
-//  GOOGLE SHEETS — LOAD
-// ============================================================
-function loadFromSheets() {
-  if (!CONFIG.SHEETS_URL) {
-    setSyncStatus('warn', 'SHEETS_URL not configured — loading local cache only');
-    restoreLocal();
-    return;
-  }
-
-  setSyncStatus('syncing', 'Loading from Sheets…');
-
-  var url = CONFIG.SHEETS_URL + '?action=load&monthKey=' + currentMonth;
-
-  fetch(url)
-    .then(function(r) { return r.json(); })
-    .then(function(res) {
-      if (res.status === 'ok' && res.data) {
-        applyData(res.data);
-        setSyncStatus('ok', 'Loaded from Sheets · ' + timeNow());
-        markSaved();
-        cacheLocal(res.data);
-      } else {
-        // No data for this month yet — try local cache, otherwise keep defaults
-        setSyncStatus('warn', 'No Sheets data for ' + monthLabel(currentMonth) + ' — enter figures and save');
-        var restored = restoreLocal();
-        if (!restored) {
-          // Keep the HTML default values, just run calcs
-          ['r-food','r-bev','b-keg','b-pack'].forEach(calc);
-          calcEV(); calcKPIs();
-          markSaved(); // not really saved, but suppresses the unsaved badge on fresh load
-        }
-      }
-    })
-    .catch(function() {
-      setSyncStatus('error', 'Could not reach Sheets (CORS / network) — loading local cache. To fix: open the Apps Script URL in your browser and re-authorise.');
-      var restored = restoreLocal();
-      if (!restored) {
-        ['r-food','r-bev','b-keg','b-pack'].forEach(calc);
-        calcEV(); calcKPIs();
-      }
-    });
-}
-
-// ============================================================
-//  APPLY DATA
-// ============================================================
-function applyData(data) {
-  if (data.fields) {
-    Object.keys(data.fields).forEach(function(id) {
-      var el = document.getElementById(id);
-      if (el) el.value = data.fields[id];
-    });
-  }
-  if (data.evScope) { evScope = data.evScope; setEVScope(evScope); }
-
-  if (data.actions && data.actions.length) {
-    actionRows = data.actions;
-    document.getElementById('action-tbody').innerHTML = '';
-    actionRows.forEach(function(r) {
-      document.getElementById('action-tbody').appendChild(makeActionRow(r));
-    });
-  }
-
-  if (data.agenda && data.agenda.length) {
-    var inputs = document.querySelectorAll('#agenda-items .agenda-text');
-    data.agenda.forEach(function(val, i) { if (inputs[i]) inputs[i].value = val; });
-  }
-
-  ['r-food','r-bev','b-keg','b-pack'].forEach(calc);
-  calcEV();
-  calcKPIs();
-  validateAll();
-}
-
-// ============================================================
-//  COLLECT HELPERS
-// ============================================================
-var SAVE_FIELDS = [
-  'r-food-budget','r-food-actual',
-  'r-bev-budget', 'r-bev-actual',
-  'b-keg-budget', 'b-keg-actual',
-  'b-pack-budget','b-pack-actual',
-  'kpi-covers',   'kpi-turns',
-  'ev-days-elapsed','ev-days-total',
-  'meeting-date', 'meeting-time', 'meeting-attendees'
-];
-
-function collectFields() {
-  var f = {};
-  SAVE_FIELDS.forEach(function(id) { var el=document.getElementById(id); if(el) f[id]=el.value; });
-  return f;
-}
-
-function collectAgenda() {
-  var a = [];
-  document.querySelectorAll('#agenda-items .agenda-text').forEach(function(inp) { a.push(inp.value); });
-  return a;
-}
-
-function collectActions() {
-  var a = [];
-  document.querySelectorAll('#action-tbody tr').forEach(function(tr) {
-    var f = tr.querySelectorAll('input,select');
-    a.push({ action:f[0]?f[0].value:'', owner:f[1]?f[1].value:'', due:f[2]?f[2].value:'', status:f[3]?f[3].value:'Open' });
-  });
-  return a;
-}
-
-// ============================================================
-//  LOCAL CACHE — offline fallback only, not primary storage
-// ============================================================
-var CACHE_KEY = 'gm_dash_v3';
-
-function cacheLocal(data) {
-  try { localStorage.setItem(CACHE_KEY, JSON.stringify(data)); } catch(e) {}
-}
-
-function restoreLocal() {
-  var raw; try { raw = localStorage.getItem(CACHE_KEY); } catch(e) {}
-  if (!raw) {
-    ['r-food','r-bev','b-keg','b-pack'].forEach(calc);
-    calcEV(); calcKPIs();
-    setSyncStatus('', 'No saved data found — enter figures and save');
-    return false;
-  }
-  var data; try { data = JSON.parse(raw); } catch(e) { return false; }
-  checkRollover(data.monthKey || data.savedAt);
-  applyData(data);
-  setSyncStatus('warn', 'Loaded from local cache — save to Sheets when online');
-  return true;
-}
-
-function clearLocal() {
-  if (!confirm('Clear local cache and reset to defaults?')) return;
-  try { localStorage.removeItem(CACHE_KEY); } catch(e) {}
-  location.reload();
-}
-
-function clearFields() {
-  SAVE_FIELDS.forEach(function(id) {
-    var el = document.getElementById(id);
-    if (el && el.type === 'number') el.value = '';
-  });
-  ['r-food','r-bev','b-keg','b-pack'].forEach(calc);
-  calcEV(); calcKPIs();
-}
-
-// ============================================================
-//  INPUT VALIDATION
-//  Flags actuals that exceed 3× budget (likely entry error)
-//  and negative values.
-// ============================================================
-var VALIDATE_PAIRS = [
-  ['r-food-budget','r-food-actual'],
-  ['r-bev-budget', 'r-bev-actual'],
-  ['b-keg-budget', 'b-keg-actual'],
-  ['b-pack-budget','b-pack-actual']
-];
-
-function validateAll() {
-  VALIDATE_PAIRS.forEach(function(pair) {
-    var bEl = document.getElementById(pair[0]);
-    var aEl = document.getElementById(pair[1]);
-    var b = parseFloat(bEl.value) || 0;
-    var a = parseFloat(aEl.value) || 0;
-    // Flag negative values
-    bEl.classList.toggle('invalid', b < 0);
-    aEl.classList.toggle('invalid', a < 0 || (b > 0 && a > b * 3));
+  actions.forEach(function(a) {
+    if (!a.action||!a.action.trim()) return;
+    sheet.appendRow([monthKey, savedAt, a.action, a.owner, a.due, a.status]);
   });
 }
 
-// ============================================================
-//  VARIANCE CALC
-// ============================================================
-function calc(prefix) {
-  var b = parseFloat(document.getElementById(prefix+'-budget').value) || 0;
-  var a = parseFloat(document.getElementById(prefix+'-actual').value) || 0;
-  var vd = a - b, vp = b !== 0 ? (vd/b)*100 : 0;
-  setVC(prefix+'-var-d', formatCurrency(vd), vp);
-  setVC(prefix+'-var-p', formatPct(vp), vp);
-  updateRestTotal(); updateBrewTotal();
-  validateAll();
-}
-
-function setVC(id, text, pct) {
-  var el = document.getElementById(id);
-  el.textContent = text;
-  el.className = vc(pct);
-}
-
-function updateRestTotal() {
-  var bF=val('r-food-budget'), aF=val('r-food-actual'), bB=val('r-bev-budget'), aB=val('r-bev-actual');
-  var tB=bF+bB, tA=aF+aB, vd=tA-tB, vp=tB?((vd/tB)*100):0;
-  document.getElementById('r-total-budget').textContent = fa(tB);
-  document.getElementById('r-total-actual').textContent = fa(tA);
-  setVC('r-total-var-d', formatCurrency(vd), vp);
-  setVC('r-total-var-p', formatPct(vp), vp);
-  calcKPIs(tA); calcEV();
-}
-
-function updateBrewTotal() {
-  var bK=val('b-keg-budget'), aK=val('b-keg-actual'), bP=val('b-pack-budget'), aP=val('b-pack-actual');
-  var tB=bK+bP, tA=aK+aP, vd=tA-tB, vp=tB?((vd/tB)*100):0;
-  document.getElementById('b-total-budget').textContent = fa(tB);
-  document.getElementById('b-total-actual').textContent = fa(tA);
-  setVC('b-total-var-d', formatCurrency(vd), vp);
-  setVC('b-total-var-p', formatPct(vp), vp);
-  calcEV();
-}
-
-// ============================================================
-//  KPIs — seat utilisation uses days open, not total capacity
-// ============================================================
-function calcKPIs(totalActual) {
-  var covers  = val('kpi-covers');
-  var elapsed = val('ev-days-elapsed');
-  var rev = totalActual !== undefined ? totalActual : val('r-food-actual') + val('r-bev-actual');
-
-  // Avg spend per cover
-  document.getElementById('kpi-spend').value = covers > 0 ? (rev / covers).toFixed(2) : '';
-
-  // Seat utilisation: covers ÷ (capacity × days open) — more meaningful than vs static total
-  var noteEl = document.getElementById('util-note');
-  if (covers > 0 && elapsed > 0) {
-    var util = (covers / (CONFIG.seatCapacity * elapsed)) * 100;
-    noteEl.textContent = util.toFixed(1) + '% utilisation vs ' + CONFIG.seatCapacity + ' seats × ' + elapsed + ' days';
-  } else {
-    noteEl.textContent = '';
+function loadActionsForMonth(ss, monthKey) {
+  var sheet = getOrCreateSheet(ss, ACTIONS_SHEET);
+  if (sheet.getLastRow()<=1) return [];
+  var data=sheet.getDataRange().getValues(), seen={}, results=[];
+  for (var i=data.length-1; i>=1; i--) {
+    var row=data[i];
+    if (row[0]!==monthKey) continue;
+    var key=row[2];
+    if (!seen[key]) { seen[key]=true; results.unshift({action:row[2],owner:row[3],due:row[4],status:row[5]}); }
   }
+  return results;
 }
 
 // ============================================================
-//  EV / PV
+//  3-MONTH ACTION PLAN — overwrites each save
 // ============================================================
-function setEVScope(s) {
-  evScope = s;
-  ['restaurant','brewery','combined'].forEach(function(x) {
-    document.getElementById('ev-scope-'+x).classList.toggle('active', x===s);
-  });
-  calcEV();
-}
-
-function getEVNums() {
-  var rB = val('r-food-budget')+val('r-bev-budget');
-  var rA = val('r-food-actual')+val('r-bev-actual');
-  var bB = val('b-keg-budget') +val('b-pack-budget');
-  var bA = val('b-keg-actual') +val('b-pack-actual');
-  if (evScope==='restaurant') return {budget:rB,actual:rA};
-  if (evScope==='brewery')    return {budget:bB,actual:bA};
-  return {budget:rB+bB, actual:rA+bA};
-}
-
-function calcEV() {
-  var elapsed = val('ev-days-elapsed'), total = val('ev-days-total') || 1;
-  var nums = getEVNums();
-  var pct  = Math.min(elapsed/total, 1);
-  var pv   = nums.budget * pct;
-  var ev   = nums.actual;
-  var spi  = pv > 0  ? ev/pv  : null;
-  var proj = pct > 0 ? ev/pct : null;
-
-  document.getElementById('ev-pv').textContent = fa(pv);
-  document.getElementById('ev-ev').textContent = fa(ev);
-
-  var spiEl=document.getElementById('ev-spi'), spiSub=document.getElementById('ev-spi-sub');
-  if (spi !== null) {
-    spiEl.textContent = spi.toFixed(2);
-    var sp = (spi-1)*100;
-    spiEl.className = 'ev-kpi-value '+vc(sp);
-    spiSub.textContent = spi>=1 ? 'Ahead of pace — tracking above budget'
-      : Math.abs(sp)<=CONFIG.tolerancePct ? 'On track — within tolerance band'
-      : 'Behind pace — intervention may be needed';
-  } else {
-    spiEl.textContent='—'; spiEl.className='ev-kpi-value';
-    spiSub.textContent='Enter days elapsed to calculate';
-  }
-
-  var projEl=document.getElementById('ev-proj'), projSub=document.getElementById('ev-proj-sub');
-  if (proj !== null) {
-    projEl.textContent = fa(proj);
-    var pv2=proj-nums.budget, pp=nums.budget>0?(pv2/nums.budget)*100:0;
-    projEl.className = 'ev-kpi-value '+vc(pp);
-    projSub.innerHTML = '<span class="'+vc(pp)+'">'+(pv2>=0?'+':'')+formatCurrency(pv2)+
-      ' ('+(pp>=0?'+':'')+pp.toFixed(1)+'%)</span> vs <span id="ev-budget-label">'+fa(nums.budget)+' budget</span>';
-  } else {
-    projEl.textContent='—'; projEl.className='ev-kpi-value';
-    document.getElementById('ev-proj-sub').innerHTML = 'vs <span id="ev-budget-label">'+fa(nums.budget)+' budget</span>';
-  }
-}
-
-// ============================================================
-//  FORMAT / HELPERS
-// ============================================================
-function val(id) { return parseFloat(document.getElementById(id).value) || 0; }
-function fa(n)   { return CONFIG.currency + Math.abs(n).toLocaleString('en-AU',{minimumFractionDigits:0,maximumFractionDigits:0}); }
-function formatCurrency(n) { return (n<0?'-':n>0?'+':'')+CONFIG.currency+Math.abs(n).toLocaleString('en-AU',{minimumFractionDigits:0,maximumFractionDigits:0}); }
-function formatPct(n) { return (n>0?'+':'')+n.toFixed(1)+'%'; }
-function vc(pct) { return Math.abs(pct)<=CONFIG.tolerancePct?'var-neutral':pct>=0?'var-positive':'var-negative'; }
-function timeNow() { return new Date().toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'}); }
-
-// ============================================================
-//  AGENDA
-// ============================================================
-var AGENDA_ITEMS = [
-  'Review of previous meeting actions',
-  'Restaurant food & beverage MTD performance review',
-  'Brewery keg & pack MTD sales review',
-  'Variance & pace-to-budget discussion',
-  'Operational updates',
-  'New business / issues raised',
-  'Action items for next meeting'
-];
-
-function buildAgenda() {
-  var c = document.getElementById('agenda-items');
-  AGENDA_ITEMS.forEach(function(item,i) {
-    var d = document.createElement('div');
-    d.className = 'agenda-item';
-    d.innerHTML = '<div class="agenda-num">'+(i+1)+'</div>'+
-      '<input class="agenda-text" type="text" value="'+item+'" placeholder="Agenda item..." oninput="markUnsaved()">';
-    c.appendChild(d);
+function saveActionPlan(ss, plan) {
+  var sheet = getOrCreateSheet(ss, PLAN_SHEET);
+  sheet.clearContents();
+  var h = ['#','Action','Process / Detail','Timing','Responsibility','Last Updated'];
+  sheet.appendRow(h);
+  sheet.getRange(1,1,1,h.length).setFontWeight('bold').setBackground('#1E222D').setFontColor('#C8A84B');
+  var now = new Date().toISOString();
+  plan.forEach(function(r,i) {
+    if(!r.action&&!r.process) return;
+    sheet.appendRow([i+1, r.action, r.process, r.timing, r.responsibility, now]);
   });
 }
 
-// ============================================================
-//  ACTION ITEMS
-// ============================================================
-var actionRows = [
-  {action:'Review restaurant food cost MTD variance', owner:'Head Chef',     due:'', status:'Open'},
-  {action:'Follow up keg sales pace with distributor',owner:'Sales Manager', due:'', status:'Open'},
-  {action:'', owner:'', due:'', status:'Open'}
-];
-var STATUS_OPTIONS = ['Open','In Progress','Complete','Deferred'];
-
-function buildActionTable() {
-  var tbody = document.getElementById('action-tbody');
-  actionRows.forEach(function(r) { tbody.appendChild(makeActionRow(r)); });
-}
-
-function makeActionRow(r) {
-  var tr = document.createElement('tr');
-  var opts = STATUS_OPTIONS.map(function(s) {
-    return '<option'+(s===r.status?' selected':'')+'>'+s+'</option>';
-  }).join('');
-  tr.innerHTML =
-    '<td><input class="action-input" type="text" value="'+(r.action||'')+'" placeholder="Describe the action..." oninput="markUnsaved()"></td>'+
-    '<td><input class="action-input" type="text" value="'+(r.owner||'')+'" placeholder="Name" oninput="markUnsaved()"></td>'+
-    '<td><input class="action-input" type="date" value="'+(r.due||'')+'" oninput="markUnsaved()"></td>'+
-    '<td><select class="status-select" onchange="markUnsaved()">'+opts+'</select></td>';
-  return tr;
-}
-
-function addActionRow() {
-  actionRows.push({action:'',owner:'',due:'',status:'Open'});
-  document.getElementById('action-tbody').appendChild(makeActionRow(actionRows[actionRows.length-1]));
-  markUnsaved();
+function loadActionPlan(ss) {
+  var sheet = getOrCreateSheet(ss, PLAN_SHEET);
+  if (sheet.getLastRow()<=1) return [];
+  var data=sheet.getRange(2,1,sheet.getLastRow()-1,5).getValues();
+  return data.map(function(r){ return {action:r[1],process:r[2],timing:r[3],responsibility:r[4]}; }).filter(function(r){ return r.action||r.process; });
 }
 
 // ============================================================
-//  DATE / CLOCK
+//  NARRATIVE — board report fields, overwrites each save
+//  Also keeps a history tab so previous months are preserved
 // ============================================================
-function updateDate() {
-  var now  = new Date();
-  var opts = {weekday:'long',year:'numeric',month:'long',day:'numeric'};
-  document.getElementById('liveDate').innerHTML =
-    now.toLocaleDateString('en-AU',opts)+'<br>'+
-    now.toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'});
-  document.getElementById('footer-date').textContent = now.toLocaleDateString('en-AU',opts);
-
-  // Auto-fill meeting date if empty
-  var iso = now.toISOString().split('T')[0];
-  var md = document.getElementById('meeting-date');
-  if (!md.value) md.value = iso;
-
-  // Auto-fill EV days from calendar (don't override user edits)
-  var elEl  = document.getElementById('ev-days-elapsed');
-  var totEl = document.getElementById('ev-days-total');
-  if (!elEl.dataset.u)  elEl.value  = now.getDate();
-  if (!totEl.dataset.u) totEl.value = new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
-}
-
-// ============================================================
-//  INIT
-// ============================================================
-(function init() {
-  // Suppress unsaved badge during initial setup
-  var initialising = true;
-
-  buildMonthSelector();
-  updateDate();
-  setInterval(updateDate, 60000);
-  buildAgenda();
-  buildActionTable();
-
-  // EV day override flag
-  ['ev-days-elapsed','ev-days-total'].forEach(function(id) {
-    document.getElementById(id).addEventListener('input', function() { this.dataset.u='1'; });
+function saveNarrative(ss, narrative, monthKey, savedAt) {
+  var sheet = getOrCreateSheet(ss, NARRATIVE_SHEET);
+  sheet.clearContents();
+  var h=['Field','Value','Month','Saved At'];
+  sheet.appendRow(h);
+  sheet.getRange(1,1,1,h.length).setFontWeight('bold').setBackground('#1E222D').setFontColor('#C8A84B');
+  Object.keys(narrative).forEach(function(key) {
+    sheet.appendRow([key, narrative[key], monthKey, savedAt]);
   });
+}
 
-  // Load: try Sheets first, fall back to local cache
-  if (CONFIG.SHEETS_URL) {
-    loadFromSheets();
-  } else {
-    var restored = restoreLocal();
-    if (!restored) {
-      ['r-food','r-bev','b-keg','b-pack'].forEach(calc);
-      calcEV(); calcKPIs();
-    }
-    setSyncStatus('warn', 'SHEETS_URL not set — data saves locally only');
-  }
+function loadNarrative(ss) {
+  var sheet = getOrCreateSheet(ss, NARRATIVE_SHEET);
+  if (sheet.getLastRow()<=1) return {};
+  var data=sheet.getRange(2,1,sheet.getLastRow()-1,2).getValues();
+  var n={};
+  data.forEach(function(row){ if(row[0]) n[row[0]]=row[1]; });
+  return n;
+}
 
-  // Allow markUnsaved to fire only after init completes
-  setTimeout(function() { initialising = false; }, 500);
+// ============================================================
+//  AGENDA — overwrites each save
+// ============================================================
+function saveAgenda(ss, agenda) {
+  var sheet = getOrCreateSheet(ss, AGENDA_SHEET);
+  sheet.clearContents();
+  sheet.appendRow(['Agenda Items','Last Updated']);
+  sheet.getRange(1,1,1,2).setFontWeight('bold').setBackground('#1E222D').setFontColor('#C8A84B');
+  var now=new Date().toISOString();
+  agenda.forEach(function(item){ sheet.appendRow([item,now]); });
+}
 
-  // Override markUnsaved to respect the init flag
-  var _markUnsaved = markUnsaved;
-  markUnsaved = function() { if (!initialising) _markUnsaved(); };
-})();
-</script>
-</body>
-</html>
+function loadAgenda(ss) {
+  var sheet=getOrCreateSheet(ss, AGENDA_SHEET);
+  if(sheet.getLastRow()<=1) return [];
+  return sheet.getRange(2,1,sheet.getLastRow()-1,1).getValues()
+    .map(function(r){ return r[0]; }).filter(Boolean);
+}
+
+// ============================================================
+//  HELPERS
+// ============================================================
+function getOrCreateSheet(ss, name) {
+  var s=ss.getSheetByName(name);
+  if(!s) s=ss.insertSheet(name);
+  return s;
+}
+
+function jsonResponse(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function doOptions(e) {
+  return ContentService.createTextOutput('')
+    .setMimeType(ContentService.MimeType.TEXT);
+}
