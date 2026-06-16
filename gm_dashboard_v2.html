@@ -278,11 +278,11 @@ tbody td:first-child { text-align: left; font-weight: 600; color: #1A1D23; }
 <body>
 
 <!-- ============================================================
-   HEADER — change "Prancing Pony Brewery" to your venue
+   HEADER — change "Property Name" to your venue
    ============================================================ -->
 <header class="header">
   <div class="header-left">
-    <div class="header-property">Prancing Pony Brewery</div>
+    <div class="header-property">Property Name</div>
     <div class="header-meta">
       <span class="header-sub">GM Dashboard</span>
       <select class="month-selector" id="month-selector" onchange="onMonthChange()"></select>
@@ -366,6 +366,15 @@ tbody td:first-child { text-align: left; font-weight: 600; color: #1A1D23; }
             <td><input class="cell-input" type="number" id="r-bev-sply"   placeholder="SPLY" oninput="markUnsaved()"></td>
             <td id="r-bev-var-d">—</td>
             <td id="r-bev-var-p">—</td>
+          </tr>
+          <tr class="subsection-row"><td colspan="6">Other Sales</td></tr>
+          <tr>
+            <td>Other Revenue</td>
+            <td><input class="cell-input" type="number" id="r-other-budget" placeholder="0" oninput="calc('r-other');markUnsaved()" min="0"></td>
+            <td><input class="cell-input" type="number" id="r-other-actual" placeholder="0" oninput="calc('r-other');markUnsaved()" min="0"></td>
+            <td><input class="cell-input" type="number" id="r-other-sply"   placeholder="SPLY" oninput="markUnsaved()"></td>
+            <td id="r-other-var-d">—</td>
+            <td id="r-other-var-p">—</td>
           </tr>
           <tr class="total-row">
             <td>Restaurant Total</td>
@@ -468,6 +477,15 @@ tbody td:first-child { text-align: left; font-weight: 600; color: #1A1D23; }
             <td><input class="cell-input" type="number" id="b-pack-sply"   placeholder="SPLY" oninput="markUnsaved()"></td>
             <td id="b-pack-var-d">—</td>
             <td id="b-pack-var-p">—</td>
+          </tr>
+          <tr class="subsection-row"><td colspan="6">Other Sales</td></tr>
+          <tr>
+            <td>Other Revenue</td>
+            <td><input class="cell-input" type="number" id="b-other-budget" placeholder="0" oninput="calc('b-other');markUnsaved()" min="0"></td>
+            <td><input class="cell-input" type="number" id="b-other-actual" placeholder="0" oninput="calc('b-other');markUnsaved()" min="0"></td>
+            <td><input class="cell-input" type="number" id="b-other-sply"   placeholder="SPLY" oninput="markUnsaved()"></td>
+            <td id="b-other-var-d">—</td>
+            <td id="b-other-var-p">—</td>
           </tr>
           <tr class="total-row">
             <td>Brewery Total</td>
@@ -1155,8 +1173,10 @@ function applyData(data) {
 var SAVE_FIELDS = [
   'r-food-budget','r-food-actual','r-food-sply',
   'r-bev-budget', 'r-bev-actual', 'r-bev-sply',
+  'r-other-budget','r-other-actual','r-other-sply',
   'b-keg-budget', 'b-keg-actual', 'b-keg-sply',
   'b-pack-budget','b-pack-actual','b-pack-sply',
+  'b-other-budget','b-other-actual','b-other-sply',
   'r-wages','r-labour-target','b-wages','b-labour-target',
   'kpi-covers','kpi-turns',
   'ev-days-elapsed','ev-days-total',
@@ -1232,8 +1252,8 @@ function clearFields() {
 //  VALIDATION
 // ============================================================
 var VALIDATE_PAIRS = [
-  ['r-food-budget','r-food-actual'],['r-bev-budget','r-bev-actual'],
-  ['b-keg-budget','b-keg-actual'],  ['b-pack-budget','b-pack-actual']
+  ['r-food-budget','r-food-actual'],['r-bev-budget','r-bev-actual'],['r-other-budget','r-other-actual'],
+  ['b-keg-budget','b-keg-actual'],  ['b-pack-budget','b-pack-actual'],['b-other-budget','b-other-actual']
 ];
 function validateAll() {
   VALIDATE_PAIRS.forEach(function(p){
@@ -1261,18 +1281,18 @@ function setVC(id,text,pct) {
 function setVC2(id,text,pct) { setVC(id,text,pct); }
 
 function updateRestTotal() {
-  var bF=val('r-food-budget'),aF=val('r-food-actual'),bB=val('r-bev-budget'),aB=val('r-bev-actual');
-  var tB=bF+bB,tA=aF+aB,vd=tA-tB,vp=tB?(vd/tB)*100:0;
-  var sBF=val('r-food-sply'),sBB=val('r-bev-sply');
-  setText('r-total-budget',fa(tB)); setText('r-total-actual',fa(tA)); setText('r-total-sply',fa(sBF+sBB));
+  var bF=val('r-food-budget'),aF=val('r-food-actual'),bB=val('r-bev-budget'),aB=val('r-bev-actual'),bO=val('r-other-budget'),aO=val('r-other-actual');
+  var tB=bF+bB+bO,tA=aF+aB+aO,vd=tA-tB,vp=tB?(vd/tB)*100:0;
+  var sBF=val('r-food-sply'),sBB=val('r-bev-sply'),sBO=val('r-other-sply');
+  setText('r-total-budget',fa(tB)); setText('r-total-actual',fa(tA)); setText('r-total-sply',fa(sBF+sBB+sBO));
   setVC('r-total-var-d',formatCurrency(vd),vp); setVC('r-total-var-p',formatPct(vp),vp);
   calcKPIs(tA); calcEV(); calcLabour();
 }
 function updateBrewTotal() {
-  var bK=val('b-keg-budget'),aK=val('b-keg-actual'),bP=val('b-pack-budget'),aP=val('b-pack-actual');
-  var tB=bK+bP,tA=aK+aP,vd=tA-tB,vp=tB?(vd/tB)*100:0;
-  var sK=val('b-keg-sply'),sP=val('b-pack-sply');
-  setText('b-total-budget',fa(tB)); setText('b-total-actual',fa(tA)); setText('b-total-sply',fa(sK+sP));
+  var bK=val('b-keg-budget'),aK=val('b-keg-actual'),bP=val('b-pack-budget'),aP=val('b-pack-actual'),bO=val('b-other-budget'),aO=val('b-other-actual');
+  var tB=bK+bP+bO,tA=aK+aP+aO,vd=tA-tB,vp=tB?(vd/tB)*100:0;
+  var sK=val('b-keg-sply'),sP=val('b-pack-sply'),sO=val('b-other-sply');
+  setText('b-total-budget',fa(tB)); setText('b-total-actual',fa(tA)); setText('b-total-sply',fa(sK+sP+sO));
   setVC('b-total-var-d',formatCurrency(vd),vp); setVC('b-total-var-p',formatPct(vp),vp);
   calcEV(); calcLabour();
 }
