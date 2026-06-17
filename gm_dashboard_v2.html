@@ -532,9 +532,9 @@
             <input class="ev-input-field" type="number" id="ev-days-total" min="1" max="31" oninput="calcEV();markUnsaved()">
             <span style="font-size:0.75rem;color:#8A8F9C;">days</span>
           </div>
-          <div style="padding-top:10px;border-top:1px solid #F0F2F5;font-size:0.68rem;color:#8A8F9C;line-height:1.7;">
-            Days auto-fill from today's date — override if needed.<br>
-            Budget and actuals are pulled from the tables above.
+          <div style="padding-top:10px;border-top:1px solid #F0F2F5;">
+            <button onclick="setEndOfMonth()" style="background:#1E222D;border:none;color:#C8A84B;font-size:0.68rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;padding:5px 12px;cursor:pointer;border-radius:3px;font-family:inherit;margin-bottom:8px;">Set End of Month</button>
+            <div style="font-size:0.68rem;color:#8A8F9C;line-height:1.7;margin-top:6px;">Days auto-fill from today — override manually or use button above for completed months.</div>
           </div>
         </div>
         <div class="ev-results">
@@ -1139,13 +1139,26 @@ function setEVScope(s) {
 }
 
 function getEVNums() {
-  var rB = val('r-food-budget')+val('r-bev-budget');
-  var rA = val('r-food-actual')+val('r-bev-actual');
-  var bB = val('b-keg-budget') +val('b-pack-budget');
-  var bA = val('b-keg-actual') +val('b-pack-actual');
+  var rB = val('r-food-budget')+val('r-bev-budget')+val('r-other-budget');
+  var rA = val('r-food-actual')+val('r-bev-actual')+val('r-other-actual');
+  var bB = val('b-keg-budget')+val('b-pack-budget')+val('b-other-budget');
+  var bA = val('b-keg-actual')+val('b-pack-actual')+val('b-other-actual');
   if (evScope==='restaurant') return {budget:rB,actual:rA};
   if (evScope==='brewery')    return {budget:bB,actual:bA};
   return {budget:rB+bB, actual:rA+bA};
+}
+
+function setEndOfMonth() {
+  // Sets days elapsed = total days so PV = full budget (for reviewing completed months)
+  var total = val('ev-days-total') || new Date(new Date().getFullYear(), new Date().getMonth()+1, 0).getDate();
+  var elEl  = document.getElementById('ev-days-elapsed');
+  var totEl = document.getElementById('ev-days-total');
+  elEl.value  = total;
+  totEl.value = total;
+  elEl.dataset.u  = '1';
+  totEl.dataset.u = '1';
+  calcEV();
+  markUnsaved();
 }
 
 function calcEV() {
