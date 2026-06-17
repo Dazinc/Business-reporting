@@ -569,8 +569,18 @@
   <div class="card">
     <div class="card-header">
       <span class="card-title">Meeting Agenda</span>
+      <span class="card-badge">Weekly</span>
     </div>
     <div class="card-body">
+      <div class="meeting-bar">
+        <span class="meeting-bar-label">History:</span>
+        <select class="meeting-select" id="meeting-history-select">
+          <option value="">&#8212; Select a past meeting to review &#8212;</option>
+        </select>
+        <button class="meeting-bar-btn" onclick="loadPastMeeting()">&#8595; Load</button>
+        <button class="meeting-bar-btn new-mtg" onclick="newMeeting()">+ New Meeting</button>
+        <span class="meeting-viewing-badge" id="meeting-viewing-badge">Viewing past meeting &#8212; read only</span>
+      </div>
       <div class="agenda-meta">
         <div class="agenda-meta-item">
           <span class="meta-label">Meeting Date</span>
