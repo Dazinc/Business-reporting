@@ -142,19 +142,106 @@
   /* ---- VALIDATION ---- */
   .cell-input.invalid { border-bottom: 1px solid #C0392B !important; background: #FFF5F5 !important; }
 
+
+  /* ---- MEETING SELECTOR BAR ---- */
+  .meeting-bar { background: #F7F8FA; border-bottom: 1px solid #E5E8EE; padding: 10px 20px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .meeting-bar-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8F9C; }
+  .meeting-select { border: 1px solid #E5E8EE; border-radius: 3px; padding: 5px 10px; font-size: 0.78rem; font-family: inherit; color: #1A1D23; background: #fff; outline: none; cursor: pointer; min-width: 200px; }
+  .meeting-select:focus { border-color: #C8A84B; }
+  .meeting-bar-btn { background: transparent; border: 1px solid #3A3F4E; color: #6B7080; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 5px 12px; cursor: pointer; border-radius: 3px; font-family: inherit; }
+  .meeting-bar-btn:hover { border-color: #C8A84B; color: #C8A84B; }
+  .meeting-bar-btn.new-mtg { background: #1E222D; border-color: #1E222D; color: #C8A84B; }
+  .meeting-viewing-badge { font-size: 0.68rem; color: #B07D00; font-style: italic; background: #FEF9ED; padding: 3px 8px; border-radius: 3px; display: none; }
+  .meeting-viewing-badge.visible { display: inline-block; }
+
+  /* ---- LABOUR PRODUCTIVITY ---- */
+  .labour-strip { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid #E5E8EE; }
+  .labour-item { padding: 14px 20px; border-right: 1px solid #E5E8EE; display: flex; flex-direction: column; gap: 4px; }
+  .labour-item:last-child { border-right: none; }
+  .labour-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8F9C; }
+  .labour-value { font-size: 1.3rem; font-weight: 700; color: #1A1D23; line-height: 1.1; }
+  .labour-sub   { font-size: 0.72rem; color: #8A8F9C; }
+  .labour-input { font-size: 1.2rem; font-weight: 700; color: #1A1D23; border: none; outline: none; background: transparent; font-family: inherit; width: 100%; }
+  .labour-input:focus { border-bottom: 1px solid #C8A84B; }
+  .ratio-good { color: #1A7A4A; }
+  .ratio-warn { color: #B07D00; }
+  .ratio-bad  { color: #C0392B; }
+
+  /* ---- TAB NAV ---- */
+  .tab-nav { background: #1E222D; padding: 0 32px; display: flex; align-items: center; justify-content: space-between; }
+  .tab-nav-left { display: flex; }
+  .tab-btn { background: transparent; border: none; border-bottom: 3px solid transparent; color: #8A8F9C; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 12px 20px; cursor: pointer; font-family: inherit; }
+  .tab-btn:hover { color: #C8A84B; }
+  .tab-btn.active { color: #C8A84B; border-bottom-color: #C8A84B; }
+  .tab-nav-right { display: flex; gap: 8px; align-items: center; padding: 8px 0; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ---- BOARD REPORT ---- */
+  .report-main { padding: 32px; max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
+  .report-cover { background: #fff; border-radius: 5px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); overflow: hidden; }
+  .report-cover-header { background: #12151C; padding: 24px 32px; border-bottom: 3px solid #C8A84B; }
+  .report-cover-title { font-size: 1.4rem; font-weight: 700; color: #C8A84B; letter-spacing: 0.04em; text-transform: uppercase; }
+  .report-cover-sub { font-size: 0.85rem; color: #8A8F9C; margin-top: 4px; }
+  .report-cover-meta { display: grid; grid-template-columns: repeat(4, 1fr); }
+  .report-cover-meta-item { padding: 14px 20px; border-right: 1px solid #E5E8EE; display: flex; flex-direction: column; gap: 3px; }
+  .report-cover-meta-item:last-child { border-right: none; }
+  .rcm-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8F9C; }
+  .rcm-input { border: none; outline: none; font-size: 0.9rem; color: #1A1D23; font-weight: 600; background: transparent; font-family: inherit; width: 100%; }
+  .rcm-input:focus { border-bottom: 1px solid #C8A84B; }
+  .mission-critical { background: #FEF9ED; border: 1px solid #C8A84B; border-radius: 5px; padding: 16px 20px; }
+  .mission-critical-title { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #B07D00; margin-bottom: 8px; }
+  .mission-textarea { border: none; outline: none; font-size: 0.85rem; color: #2B2F3A; background: transparent; font-family: inherit; width: 100%; min-height: 80px; resize: vertical; line-height: 1.7; }
+  .report-section { background: #fff; border-radius: 5px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); overflow: hidden; }
+  .report-section-header { background: #1E222D; color: #fff; padding: 10px 20px; display: flex; align-items: center; gap: 10px; }
+  .report-section-num { background: #C8A84B; color: #12151C; font-size: 0.7rem; font-weight: 700; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .report-section-title { font-size: 0.82rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; }
+  .narrative-block { padding: 16px 20px; border-bottom: 1px solid #F0F2F5; }
+  .narrative-block:last-child { border-bottom: none; }
+  .narrative-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8F9C; margin-bottom: 6px; }
+  .narrative-textarea { border: none; outline: none; font-size: 0.85rem; color: #2B2F3A; background: transparent; font-family: inherit; width: 100%; min-height: 70px; resize: vertical; line-height: 1.7; }
+  .narrative-textarea:focus { background: #FFFBEF; border-radius: 3px; padding: 4px; }
+  .report-table-wrap { padding: 0; overflow-x: auto; }
+  .report-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  .report-table thead th { background: #F7F8FA; color: #6B7080; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; padding: 8px 14px; text-align: right; border-bottom: 1px solid #E5E8EE; }
+  .report-table thead th:first-child { text-align: left; }
+  .report-table tbody td { padding: 9px 14px; text-align: right; border-bottom: 1px solid #F0F2F5; color: #2B2F3A; }
+  .report-table tbody td:first-child { text-align: left; font-weight: 600; color: #1A1D23; }
+  .report-table tbody tr:last-child td { border-bottom: none; }
+  .rt-total td { background: #1E222D; color: #fff; font-weight: 700; }
+  .rt-ebitda td { background: #2A2F3E; color: #C8A84B; font-weight: 700; }
+  .rt-input { background: transparent; border: none; text-align: right; font-size: 0.82rem; color: #2B2F3A; width: 100%; min-width: 70px; outline: none; font-family: inherit; }
+  .rt-input:focus { background: #FFFBEF; border-bottom: 1px solid #C8A84B; }
+  .rt-total .rt-input { color: #fff; }
+  .rt-ebitda .rt-input { color: #C8A84B; }
+  .labour-report-strip { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid #E5E8EE; }
+  .lrs-item { padding: 14px 20px; border-right: 1px solid #E5E8EE; display: flex; flex-direction: column; gap: 3px; }
+  .lrs-item:last-child { border-right: none; }
+  .lrs-label { font-size: 0.63rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8F9C; }
+  .lrs-value { font-size: 1.2rem; font-weight: 700; color: #1A1D23; }
+  .lrs-sub   { font-size: 0.68rem; color: #8A8F9C; }
+  .action-plan-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  .action-plan-table th { background: #F7F8FA; color: #6B7080; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 8px 12px; text-align: left; border: 1px solid #E5E8EE; }
+  .action-plan-table td { border: 1px solid #E5E8EE; padding: 0; vertical-align: top; }
+  .ap-input { border: none; outline: none; font-size: 0.82rem; color: #2B2F3A; background: transparent; font-family: inherit; width: 100%; padding: 8px 12px; min-height: 36px; resize: none; }
+  .ap-input:focus { background: #FFFBEF; }
+
   /* ---- FOOTER ---- */
   .footer { text-align: center; padding: 16px; font-size: 0.68rem; color: #B0B5C0; letter-spacing: 0.04em; }
   .footer button { background: none; border: none; color: #B0B5C0; font-size: 0.68rem; cursor: pointer; text-decoration: underline; font-family: inherit; padding: 0; }
 
   /* ---- PRINT ---- */
   @media print {
-    @page { size: A4 landscape; margin: 12mm; }
+    @page { size: A4 portrait; margin: 15mm; }
     body { background: #fff; font-size: 11px; }
-    .header, .card-header, .total-row td { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .sync-bar, .print-btn, .add-row-btn, .rollover-banner, .unsaved-badge { display: none !important; }
-    .main { padding: 8px 0; gap: 12px; }
-    .card { box-shadow: none; border: 1px solid #E5E8EE; page-break-inside: avoid; }
-    .cell-input, .kpi-input, .meta-input, .agenda-text, .action-input, .status-select { background: transparent !important; }
+    .header, .card-header, .total-row td, .report-cover-header, .report-section-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .tab-nav, .print-btn, .add-row-btn, .rollover-banner, .unsaved-badge { display: none !important; }
+    #tab-dashboard { display: none !important; }
+    #tab-report { display: block !important; }
+    .report-main { padding: 0; max-width: 100%; }
+    .report-section, .report-cover, .mission-critical { box-shadow: none; page-break-inside: avoid; }
+    .cell-input, .kpi-input, .meta-input, .agenda-text, .action-input, .status-select,
+    .narrative-textarea, .mission-textarea, .rcm-input, .rt-input, .ap-input, .labour-input { background: transparent !important; }
   }
 </style>
 </head>
@@ -178,20 +265,23 @@
   </div>
 </header>
 
-<!-- ============================================================
-  SYNC BAR — explicit Save / Load buttons
-  ============================================================ -->
-<div class="sync-bar">
-  <div class="sync-left">
-    <div class="sync-dot" id="sync-dot"></div>
-    <span class="sync-msg" id="sync-msg">Ready</span>
+<!-- TAB NAV + SYNC -->
+<div class="tab-nav">
+  <div class="tab-nav-left">
+    <button class="tab-btn active" onclick="switchTab('dashboard')">Operations Dashboard</button>
+    <button class="tab-btn" onclick="switchTab('report')">Board Report</button>
   </div>
-  <div class="sync-right">
-    <button class="sync-btn" onclick="loadFromSheets()">↓ Load from Sheets</button>
-    <button class="sync-btn primary" id="save-btn" onclick="saveToSheets()">↑ Save to Sheets</button>
+  <div class="tab-nav-right">
+    <div class="sync-left" style="display:flex;align-items:center;gap:8px;">
+      <div class="sync-dot" id="sync-dot"></div>
+      <span class="sync-msg" id="sync-msg">Ready</span>
+    </div>
+    <button class="sync-btn" onclick="loadFromSheets()">&#8595; Load</button>
+    <button class="sync-btn primary" id="save-btn" onclick="saveToSheets()">&#8593; Save to Sheets</button>
   </div>
 </div>
 
+<div class="tab-panel active" id="tab-dashboard">
 <div class="main">
 
   <!-- Month rollover banner -->
@@ -217,39 +307,81 @@
       <table>
         <thead>
           <tr>
-            <th style="width:28%">Category</th>
+            <th style="width:24%">Category</th>
             <th>Monthly Budget</th>
             <th>MTD Actual</th>
+            <th>SPLY</th>
             <th>MTD Variance $</th>
             <th>MTD Variance %</th>
           </tr>
         </thead>
         <tbody>
-          <tr class="subsection-row"><td colspan="5">Food Sales</td></tr>
+          <tr class="subsection-row"><td colspan="6">Food Sales</td></tr>
           <tr>
             <td>Food Revenue</td>
-            <td><input class="cell-input" type="number" id="r-food-budget" value="42000" oninput="calc('r-food');markUnsaved()" placeholder="0" min="0"></td>
-            <td><input class="cell-input" type="number" id="r-food-actual" value="13800" oninput="calc('r-food');markUnsaved()" placeholder="0" min="0"></td>
+            <td><input class="cell-input" type="number" id="r-food-budget" value="42000" oninput="calc('r-food');markUnsaved()" min="0"></td>
+            <td><input class="cell-input" type="number" id="r-food-actual" value="13800" oninput="calc('r-food');markUnsaved()" min="0"></td>
+            <td><input class="cell-input" type="number" id="r-food-sply" placeholder="SPLY" oninput="markUnsaved()"></td>
             <td id="r-food-var-d">—</td>
             <td id="r-food-var-p">—</td>
           </tr>
-          <tr class="subsection-row"><td colspan="5">Beverage Sales</td></tr>
+          <tr class="subsection-row"><td colspan="6">Beverage Sales</td></tr>
           <tr>
             <td>Beverage Revenue</td>
-            <td><input class="cell-input" type="number" id="r-bev-budget" value="18000" oninput="calc('r-bev');markUnsaved()" placeholder="0" min="0"></td>
-            <td><input class="cell-input" type="number" id="r-bev-actual" value="6100"  oninput="calc('r-bev');markUnsaved()" placeholder="0" min="0"></td>
+            <td><input class="cell-input" type="number" id="r-bev-budget" value="18000" oninput="calc('r-bev');markUnsaved()" min="0"></td>
+            <td><input class="cell-input" type="number" id="r-bev-actual" value="6100" oninput="calc('r-bev');markUnsaved()" min="0"></td>
+            <td><input class="cell-input" type="number" id="r-bev-sply" placeholder="SPLY" oninput="markUnsaved()"></td>
             <td id="r-bev-var-d">—</td>
             <td id="r-bev-var-p">—</td>
+          </tr>
+          <tr class="subsection-row"><td colspan="6">Other Sales</td></tr>
+          <tr>
+            <td>Other Revenue</td>
+            <td><input class="cell-input" type="number" id="r-other-budget" placeholder="0" oninput="calc('r-other');markUnsaved()" min="0"></td>
+            <td><input class="cell-input" type="number" id="r-other-actual" placeholder="0" oninput="calc('r-other');markUnsaved()" min="0"></td>
+            <td><input class="cell-input" type="number" id="r-other-sply" placeholder="SPLY" oninput="markUnsaved()"></td>
+            <td id="r-other-var-d">—</td>
+            <td id="r-other-var-p">—</td>
           </tr>
           <tr class="total-row">
             <td>Restaurant Total</td>
             <td id="r-total-budget">—</td>
             <td id="r-total-actual">—</td>
+            <td id="r-total-sply">—</td>
             <td id="r-total-var-d">—</td>
             <td id="r-total-var-p">—</td>
           </tr>
         </tbody>
       </table>
+
+      <!-- Labour Productivity — Restaurant -->
+      <div class="labour-strip">
+        <div class="labour-item">
+          <div class="labour-label">Wages MTD</div>
+          <div style="display:flex;align-items:baseline;gap:4px;"><span style="font-size:0.8rem;color:#8A8F9C;">$</span>
+            <input class="labour-input" type="number" id="r-wages" placeholder="0" oninput="calcLabour();markUnsaved()" style="width:100px">
+          </div>
+          <div class="labour-sub">Enter total wages incl. super</div>
+        </div>
+        <div class="labour-item">
+          <div class="labour-label">Revenue MTD</div>
+          <div class="labour-value" id="r-labour-rev">—</div>
+          <div class="labour-sub">Auto from actuals above</div>
+        </div>
+        <div class="labour-item">
+          <div class="labour-label">Productivity Ratio</div>
+          <div class="labour-value" id="r-labour-ratio">—</div>
+          <div class="labour-sub">Wages ÷ Revenue × 100</div>
+        </div>
+        <div class="labour-item">
+          <div class="labour-label">Target Ratio</div>
+          <div style="display:flex;align-items:baseline;gap:4px;">
+            <input class="labour-input" type="number" id="r-labour-target" value="30" style="width:60px" oninput="calcLabour();markUnsaved()">
+            <span style="font-size:0.8rem;color:#8A8F9C;">%</span>
+          </div>
+          <div class="labour-sub">Edit to set your target</div>
+        </div>
+      </div>
 
       <!-- Recommended operational KPIs -->
       <div class="kpi-strip">
@@ -289,39 +421,80 @@
       <table>
         <thead>
           <tr>
-            <th style="width:28%">Category</th>
+            <th style="width:24%">Category</th>
             <th>Monthly Budget</th>
             <th>MTD Actual</th>
+            <th>SPLY</th>
             <th>MTD Variance $</th>
             <th>MTD Variance %</th>
           </tr>
         </thead>
         <tbody>
-          <tr class="subsection-row"><td colspan="5">Keg Sales</td></tr>
+          <tr class="subsection-row"><td colspan="6">Keg Sales</td></tr>
           <tr>
             <td>Keg Revenue</td>
-            <td><input class="cell-input" type="number" id="b-keg-budget"  value="38000" oninput="calc('b-keg');markUnsaved()"  placeholder="0" min="0"></td>
-            <td><input class="cell-input" type="number" id="b-keg-actual"  value="11200" oninput="calc('b-keg');markUnsaved()"  placeholder="0" min="0"></td>
+            <td><input class="cell-input" type="number" id="b-keg-budget" value="38000" oninput="calc('b-keg');markUnsaved()" min="0"></td>
+            <td><input class="cell-input" type="number" id="b-keg-actual" value="11200" oninput="calc('b-keg');markUnsaved()" min="0"></td>
+            <td><input class="cell-input" type="number" id="b-keg-sply" placeholder="SPLY" oninput="markUnsaved()"></td>
             <td id="b-keg-var-d">—</td>
             <td id="b-keg-var-p">—</td>
           </tr>
-          <tr class="subsection-row"><td colspan="5">Pack Sales</td></tr>
+          <tr class="subsection-row"><td colspan="6">Pack Sales</td></tr>
           <tr>
             <td>Pack Revenue</td>
-            <td><input class="cell-input" type="number" id="b-pack-budget" value="22000" oninput="calc('b-pack');markUnsaved()" placeholder="0" min="0"></td>
-            <td><input class="cell-input" type="number" id="b-pack-actual" value="7800"  oninput="calc('b-pack');markUnsaved()" placeholder="0" min="0"></td>
+            <td><input class="cell-input" type="number" id="b-pack-budget" value="22000" oninput="calc('b-pack');markUnsaved()" min="0"></td>
+            <td><input class="cell-input" type="number" id="b-pack-actual" value="7800" oninput="calc('b-pack');markUnsaved()" min="0"></td>
+            <td><input class="cell-input" type="number" id="b-pack-sply" placeholder="SPLY" oninput="markUnsaved()"></td>
             <td id="b-pack-var-d">—</td>
             <td id="b-pack-var-p">—</td>
+          </tr>
+          <tr class="subsection-row"><td colspan="6">Other Sales</td></tr>
+          <tr>
+            <td>Other Revenue</td>
+            <td><input class="cell-input" type="number" id="b-other-budget" placeholder="0" oninput="calc('b-other');markUnsaved()" min="0"></td>
+            <td><input class="cell-input" type="number" id="b-other-actual" placeholder="0" oninput="calc('b-other');markUnsaved()" min="0"></td>
+            <td><input class="cell-input" type="number" id="b-other-sply" placeholder="SPLY" oninput="markUnsaved()"></td>
+            <td id="b-other-var-d">—</td>
+            <td id="b-other-var-p">—</td>
           </tr>
           <tr class="total-row">
             <td>Brewery Total</td>
             <td id="b-total-budget">—</td>
             <td id="b-total-actual">—</td>
+            <td id="b-total-sply">—</td>
             <td id="b-total-var-d">—</td>
             <td id="b-total-var-p">—</td>
           </tr>
         </tbody>
       </table>
+      <!-- Labour Productivity — Brewery -->
+      <div class="labour-strip">
+        <div class="labour-item">
+          <div class="labour-label">Wages MTD</div>
+          <div style="display:flex;align-items:baseline;gap:4px;"><span style="font-size:0.8rem;color:#8A8F9C;">$</span>
+            <input class="labour-input" type="number" id="b-wages" placeholder="0" oninput="calcLabour();markUnsaved()" style="width:100px">
+          </div>
+          <div class="labour-sub">Enter total wages incl. super</div>
+        </div>
+        <div class="labour-item">
+          <div class="labour-label">Revenue MTD</div>
+          <div class="labour-value" id="b-labour-rev">—</div>
+          <div class="labour-sub">Auto from actuals above</div>
+        </div>
+        <div class="labour-item">
+          <div class="labour-label">Productivity Ratio</div>
+          <div class="labour-value" id="b-labour-ratio">—</div>
+          <div class="labour-sub">Wages ÷ Revenue × 100</div>
+        </div>
+        <div class="labour-item">
+          <div class="labour-label">Target Ratio</div>
+          <div style="display:flex;align-items:baseline;gap:4px;">
+            <input class="labour-input" type="number" id="b-labour-target" value="20" style="width:60px" oninput="calcLabour();markUnsaved()">
+            <span style="font-size:0.8rem;color:#8A8F9C;">%</span>
+          </div>
+          <div class="labour-sub">Edit to set your target</div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -396,18 +569,8 @@
   <div class="card">
     <div class="card-header">
       <span class="card-title">Meeting Agenda</span>
-      <span class="card-badge">Weekly</span>
     </div>
     <div class="card-body">
-      <div class="meeting-bar">
-        <span class="meeting-bar-label">History:</span>
-        <select class="meeting-select" id="meeting-history-select">
-          <option value="">&#8212; Select a past meeting to review &#8212;</option>
-        </select>
-        <button class="meeting-bar-btn" onclick="loadPastMeeting()">&#8595; Load</button>
-        <button class="meeting-bar-btn new-mtg" onclick="newMeeting()">+ New Meeting</button>
-        <span class="meeting-viewing-badge" id="meeting-viewing-badge">Viewing past meeting &#8212; read only</span>
-      </div>
       <div class="agenda-meta">
         <div class="agenda-meta-item">
           <span class="meta-label">Meeting Date</span>
@@ -442,6 +605,108 @@
   </div>
 
 </div><!-- /main -->
+</div><!-- /tab-dashboard -->
+
+<!-- ============================================================
+   BOARD REPORT TAB
+   ============================================================ -->
+<div class="tab-panel" id="tab-report">
+<div class="report-main">
+
+  <div class="report-cover">
+    <div class="report-cover-header">
+      <div class="report-cover-title">Property Name &#8212; Management Report</div>
+      <div class="report-cover-sub">Confidential &#8212; Board use only</div>
+    </div>
+    <div class="report-cover-meta">
+      <div class="report-cover-meta-item"><span class="rcm-label">Reporting Month</span><input class="rcm-input" id="report-month-label" type="text" placeholder="e.g. June 2026" oninput="markUnsaved()"></div>
+      <div class="report-cover-meta-item"><span class="rcm-label">Date Prepared</span><input class="rcm-input" id="report-date" type="date" oninput="markUnsaved()"></div>
+      <div class="report-cover-meta-item"><span class="rcm-label">Prepared By</span><input class="rcm-input" id="report-author" type="text" placeholder="General Manager" oninput="markUnsaved()"></div>
+      <div class="report-cover-meta-item"><span class="rcm-label">Next Board Meeting</span><input class="rcm-input" id="report-next-board" type="date" oninput="markUnsaved()"></div>
+    </div>
+  </div>
+
+  <div class="mission-critical">
+    <div class="mission-critical-title">&#9889; Mission Critical &#8212; As of reporting date</div>
+    <textarea class="mission-textarea" id="mission-critical-text" placeholder="BAS &#10;Excise &#10;Super &#10;AP / AR &#10;Any urgent items..." oninput="markUnsaved()"></textarea>
+  </div>
+
+  <div class="report-section">
+    <div class="report-section-header"><div class="report-section-num">1</div><span class="report-section-title">Revenue &#8212; Brewery &amp; Restaurant vs Budget, SPLY &amp; YTD</span></div>
+    <div class="report-section-body">
+      <div class="report-table-wrap">
+        <table class="report-table">
+          <thead><tr><th style="width:22%">Revenue</th><th>Month Actual</th><th>Month Budget</th><th>SPLY</th><th>vs Budget $</th><th>vs Budget %</th><th>YTD Actual</th><th>YTD Budget</th></tr></thead>
+          <tbody>
+            <tr><td>Brewery</td><td id="sr-brewery-actual">&#8212;</td><td id="sr-brewery-budget">&#8212;</td><td><input class="rt-input" type="number" id="sr-brewery-sply" placeholder="0" oninput="calcSummary();markUnsaved()"></td><td id="sr-brewery-var-d">&#8212;</td><td id="sr-brewery-var-p">&#8212;</td><td><input class="rt-input" type="number" id="sr-brewery-ytd" placeholder="0" oninput="markUnsaved()"></td><td><input class="rt-input" type="number" id="sr-brewery-ytd-budget" placeholder="0" oninput="markUnsaved()"></td></tr>
+            <tr><td>Restaurant</td><td id="sr-rest-actual">&#8212;</td><td id="sr-rest-budget">&#8212;</td><td><input class="rt-input" type="number" id="sr-rest-sply" placeholder="0" oninput="calcSummary();markUnsaved()"></td><td id="sr-rest-var-d">&#8212;</td><td id="sr-rest-var-p">&#8212;</td><td><input class="rt-input" type="number" id="sr-rest-ytd" placeholder="0" oninput="markUnsaved()"></td><td><input class="rt-input" type="number" id="sr-rest-ytd-budget" placeholder="0" oninput="markUnsaved()"></td></tr>
+            <tr class="rt-total"><td>Total Revenue</td><td id="sr-total-actual">&#8212;</td><td id="sr-total-budget">&#8212;</td><td id="sr-total-sply">&#8212;</td><td id="sr-total-var-d">&#8212;</td><td id="sr-total-var-p">&#8212;</td><td id="sr-total-ytd">&#8212;</td><td id="sr-total-ytd-budget">&#8212;</td></tr>
+            <tr class="rt-ebitda"><td>EBITDA</td><td><input class="rt-input" type="number" id="sr-ebitda-actual" placeholder="0" oninput="markUnsaved()"></td><td><input class="rt-input" type="number" id="sr-ebitda-budget" placeholder="0" oninput="markUnsaved()"></td><td><input class="rt-input" type="number" id="sr-ebitda-sply" placeholder="0" oninput="markUnsaved()"></td><td id="sr-ebitda-var-d">&#8212;</td><td id="sr-ebitda-var-p">&#8212;</td><td><input class="rt-input" type="number" id="sr-ebitda-ytd" placeholder="0" oninput="markUnsaved()"></td><td><input class="rt-input" type="number" id="sr-ebitda-ytd-budget" placeholder="0" oninput="markUnsaved()"></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="labour-report-strip">
+        <div class="lrs-item"><div class="lrs-label">Restaurant Productivity</div><div class="lrs-value" id="lrs-rest-ratio">&#8212;</div><div class="lrs-sub">Wages &#247; Revenue (target: <span id="lrs-rest-target">30</span>%)</div></div>
+        <div class="lrs-item"><div class="lrs-label">Brewery Productivity</div><div class="lrs-value" id="lrs-brew-ratio">&#8212;</div><div class="lrs-sub">Wages &#247; Revenue (target: <span id="lrs-brew-target">20</span>%)</div></div>
+        <div class="lrs-item"><div class="lrs-label">Combined Wages MTD</div><div class="lrs-value" id="lrs-combined-wages">&#8212;</div><div class="lrs-sub">Restaurant + Brewery</div></div>
+        <div class="lrs-item"><div class="lrs-label">Combined Productivity</div><div class="lrs-value" id="lrs-combined-ratio">&#8212;</div><div class="lrs-sub">Total wages &#247; Total revenue</div></div>
+      </div>
+      <div class="narrative-block"><div class="narrative-label">Trading Summary</div><textarea class="narrative-textarea" id="n-trading-summary" rows="4" placeholder="Overall trading narrative..." oninput="markUnsaved()"></textarea></div>
+    </div>
+  </div>
+
+  <div class="report-section">
+    <div class="report-section-header"><div class="report-section-num">2</div><span class="report-section-title">Restaurant Performance &amp; Commentary</span></div>
+    <div class="report-section-body">
+      <div class="narrative-block"><div class="narrative-label">Performance Commentary</div><textarea class="narrative-textarea" id="n-restaurant" rows="4" placeholder="Covers, spend per head, food cost, service observations..." oninput="markUnsaved()"></textarea></div>
+      <div class="narrative-block"><div class="narrative-label">Key Actions / Corrections</div><textarea class="narrative-textarea" id="n-restaurant-actions" rows="3" placeholder="&#8226; Action 1&#10;&#8226; Action 2" oninput="markUnsaved()"></textarea></div>
+    </div>
+  </div>
+
+  <div class="report-section">
+    <div class="report-section-header"><div class="report-section-num">3</div><span class="report-section-title">Brewery &amp; Wholesale Performance</span></div>
+    <div class="report-section-body">
+      <div class="narrative-block"><div class="narrative-label">Revenue Performance</div><textarea class="narrative-textarea" id="n-brewery" rows="4" placeholder="Keg vs pack, key accounts, contract brewing..." oninput="markUnsaved()"></textarea></div>
+      <div class="narrative-block"><div class="narrative-label">Sales &amp; Marketing Initiatives</div><textarea class="narrative-textarea" id="n-brewery-sales" rows="3" placeholder="New accounts, venue partnerships, events pipeline..." oninput="markUnsaved()"></textarea></div>
+      <div class="narrative-block"><div class="narrative-label">Key Actions / Corrections</div><textarea class="narrative-textarea" id="n-brewery-actions" rows="3" placeholder="&#8226; Action 1&#10;&#8226; Action 2" oninput="markUnsaved()"></textarea></div>
+    </div>
+  </div>
+
+  <div class="report-section">
+    <div class="report-section-header"><div class="report-section-num">4</div><span class="report-section-title">HR</span></div>
+    <div class="report-section-body">
+      <div class="narrative-block"><div class="narrative-label">HR Update</div><textarea class="narrative-textarea" id="n-hr" rows="4" placeholder="Staffing, training, leave, recruitment..." oninput="markUnsaved()"></textarea></div>
+    </div>
+  </div>
+
+  <div class="report-section">
+    <div class="report-section-header"><div class="report-section-num">5</div><span class="report-section-title">Operations</span></div>
+    <div class="report-section-body">
+      <div class="narrative-block"><div class="narrative-label">Operational Update</div><textarea class="narrative-textarea" id="n-ops" rows="4" placeholder="Equipment, maintenance, production, compliance..." oninput="markUnsaved()"></textarea></div>
+    </div>
+  </div>
+
+  <div class="report-section">
+    <div class="report-section-header"><div class="report-section-num">6</div><span class="report-section-title">Cashflow &amp; Outlook</span></div>
+    <div class="report-section-body">
+      <div class="narrative-block"><div class="narrative-label">Cashflow Position</div><textarea class="narrative-textarea" id="n-cashflow" rows="3" placeholder="Cash position, AP/AR, loans, overdraft..." oninput="markUnsaved()"></textarea></div>
+      <div class="narrative-block"><div class="narrative-label">Outlook &#8212; Next Month</div><textarea class="narrative-textarea" id="n-outlook" rows="3" placeholder="Trading expectations, key risks, opportunities..." oninput="markUnsaved()"></textarea></div>
+    </div>
+  </div>
+
+  <div class="report-section">
+    <div class="report-section-header"><div class="report-section-num">7</div><span class="report-section-title">3-Month Action Plan &#8212; Wholesale &amp; Sales</span></div>
+    <div class="report-section-body">
+      <div style="padding:12px 20px 8px;">
+        <table class="action-plan-table"><thead><tr><th style="width:5%">#</th><th style="width:28%">Action</th><th style="width:30%">Process / Detail</th><th style="width:18%">Timing</th><th style="width:19%">Responsibility</th></tr></thead>
+        <tbody id="action-plan-tbody"></tbody></table>
+        <button class="add-row-btn" onclick="addActionPlanRow()">+ Add Action</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div><!-- /tab-report -->
 
 <div class="footer">
   GM Operations Dashboard · Month to Date · <span id="footer-date"></span>
@@ -589,8 +854,7 @@ function saveToSheets() {
     evScope:   evScope,
     fields:    collectFields(),
     agenda:    collectAgenda(),
-    actions:   collectActions(),
-    weeklyMeeting: collectWeeklyMeeting()
+    actions:   collectActions()
   };
 
   fetch(CONFIG.SHEETS_URL, { method: 'POST', body: JSON.stringify(payload) })
@@ -641,8 +905,8 @@ function loadFromSheets() {
         var restored = restoreLocal();
         if (!restored) {
           // Keep the HTML default values, just run calcs
-          ['r-food','r-bev','b-keg','b-pack'].forEach(calc);
-          calcEV(); calcKPIs();
+          ['r-food','r-bev','r-other','b-keg','b-pack','b-other'].forEach(calc);
+          calcEV(); calcKPIs(); calcLabour();
           markSaved(); // not really saved, but suppresses the unsaved badge on fresh load
         }
       }
@@ -651,8 +915,8 @@ function loadFromSheets() {
       setSyncStatus('error', 'Could not reach Sheets (CORS / network) — loading local cache. To fix: open the Apps Script URL in your browser and re-authorise.');
       var restored = restoreLocal();
       if (!restored) {
-        ['r-food','r-bev','b-keg','b-pack'].forEach(calc);
-        calcEV(); calcKPIs();
+        ['r-food','r-bev','r-other','b-keg','b-pack','b-other'].forEach(calc);
+        calcEV(); calcKPIs(); calcLabour();
       }
     });
 }
@@ -682,23 +946,32 @@ function applyData(data) {
     data.agenda.forEach(function(val, i) { if (inputs[i]) inputs[i].value = val; });
   }
 
-  ['r-food','r-bev','b-keg','b-pack'].forEach(calc);
-  calcEV();
-  calcKPIs();
-  validateAll();
+  if (data.actionPlan && data.actionPlan.length) {
+    actionPlanRows = data.actionPlan;
+    document.getElementById('action-plan-tbody').innerHTML='';
+    actionPlanRows.forEach(function(r,i){ document.getElementById('action-plan-tbody').appendChild(makeActionPlanRow(r,i+1)); });
+  }
+  if (data.narrative) {
+    NARRATIVE_IDS.forEach(function(id){ var el=document.getElementById(id); if(el&&data.narrative[id]!==undefined) el.value=data.narrative[id]; });
+  }
+  ['r-food','r-bev','r-other','b-keg','b-pack','b-other'].forEach(calc);
+  calcEV(); calcKPIs(); calcLabour(); validateAll();
 }
 
 // ============================================================
 //  COLLECT HELPERS
 // ============================================================
 var SAVE_FIELDS = [
-  'r-food-budget','r-food-actual',
-  'r-bev-budget', 'r-bev-actual',
-  'b-keg-budget', 'b-keg-actual',
-  'b-pack-budget','b-pack-actual',
-  'kpi-covers',   'kpi-turns',
+  'r-food-budget','r-food-actual','r-food-sply',
+  'r-bev-budget', 'r-bev-actual', 'r-bev-sply',
+  'r-other-budget','r-other-actual','r-other-sply',
+  'b-keg-budget', 'b-keg-actual', 'b-keg-sply',
+  'b-pack-budget','b-pack-actual','b-pack-sply',
+  'b-other-budget','b-other-actual','b-other-sply',
+  'r-wages','r-labour-target','b-wages','b-labour-target',
+  'kpi-covers','kpi-turns',
   'ev-days-elapsed','ev-days-total',
-  'meeting-date', 'meeting-time', 'meeting-attendees'
+  'meeting-date','meeting-time','meeting-attendees'
 ];
 
 function collectFields() {
@@ -767,10 +1040,8 @@ function clearFields() {
 //  and negative values.
 // ============================================================
 var VALIDATE_PAIRS = [
-  ['r-food-budget','r-food-actual'],
-  ['r-bev-budget', 'r-bev-actual'],
-  ['b-keg-budget', 'b-keg-actual'],
-  ['b-pack-budget','b-pack-actual']
+  ['r-food-budget','r-food-actual'],['r-bev-budget','r-bev-actual'],['r-other-budget','r-other-actual'],
+  ['b-keg-budget','b-keg-actual'],['b-pack-budget','b-pack-actual'],['b-other-budget','b-other-actual']
 ];
 
 function validateAll() {
@@ -805,23 +1076,23 @@ function setVC(id, text, pct) {
 }
 
 function updateRestTotal() {
-  var bF=val('r-food-budget'), aF=val('r-food-actual'), bB=val('r-bev-budget'), aB=val('r-bev-actual');
-  var tB=bF+bB, tA=aF+aB, vd=tA-tB, vp=tB?((vd/tB)*100):0;
-  document.getElementById('r-total-budget').textContent = fa(tB);
-  document.getElementById('r-total-actual').textContent = fa(tA);
+  var bF=val('r-food-budget'),aF=val('r-food-actual'),bB=val('r-bev-budget'),aB=val('r-bev-actual'),bO=val('r-other-budget'),aO=val('r-other-actual');
+  var tB=bF+bB+bO, tA=aF+aB+aO, vd=tA-tB, vp=tB?((vd/tB)*100):0;
+  var sF=val('r-food-sply'),sB=val('r-bev-sply'),sO=val('r-other-sply');
+  setText('r-total-budget',fa(tB)); setText('r-total-actual',fa(tA)); setText('r-total-sply',fa(sF+sB+sO));
   setVC('r-total-var-d', formatCurrency(vd), vp);
   setVC('r-total-var-p', formatPct(vp), vp);
-  calcKPIs(tA); calcEV();
+  calcKPIs(tA); calcEV(); calcLabour();
 }
 
 function updateBrewTotal() {
-  var bK=val('b-keg-budget'), aK=val('b-keg-actual'), bP=val('b-pack-budget'), aP=val('b-pack-actual');
-  var tB=bK+bP, tA=aK+aP, vd=tA-tB, vp=tB?((vd/tB)*100):0;
-  document.getElementById('b-total-budget').textContent = fa(tB);
-  document.getElementById('b-total-actual').textContent = fa(tA);
+  var bK=val('b-keg-budget'),aK=val('b-keg-actual'),bP=val('b-pack-budget'),aP=val('b-pack-actual'),bO=val('b-other-budget'),aO=val('b-other-actual');
+  var tB=bK+bP+bO, tA=aK+aP+aO, vd=tA-tB, vp=tB?((vd/tB)*100):0;
+  var sK=val('b-keg-sply'),sP=val('b-pack-sply'),sO=val('b-other-sply');
+  setText('b-total-budget',fa(tB)); setText('b-total-actual',fa(tA)); setText('b-total-sply',fa(sK+sP+sO));
   setVC('b-total-var-d', formatCurrency(vd), vp);
   setVC('b-total-var-p', formatPct(vp), vp);
-  calcEV();
+  calcEV(); calcLabour();
 }
 
 // ============================================================
@@ -905,8 +1176,118 @@ function calcEV() {
 }
 
 // ============================================================
+//  TAB SWITCHING
+// ============================================================
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelector('[onclick="switchTab(\''+tab+'\')"]').classList.add('active');
+  document.getElementById('tab-'+tab).classList.add('active');
+  if (tab==='report') syncReportFromDashboard();
+}
+
+// ============================================================
+//  BOARD REPORT SYNC
+// ============================================================
+function syncReportFromDashboard() {
+  var rB=val('r-food-budget')+val('r-bev-budget')+val('r-other-budget');
+  var rA=val('r-food-actual')+val('r-bev-actual')+val('r-other-actual');
+  var bB=val('b-keg-budget')+val('b-pack-budget')+val('b-other-budget');
+  var bA=val('b-keg-actual')+val('b-pack-actual')+val('b-other-actual');
+  var tB=rB+bB, tA=rA+bA;
+  setText('sr-brewery-actual',fa(bA)); setText('sr-brewery-budget',fa(bB));
+  setText('sr-rest-actual',fa(rA));    setText('sr-rest-budget',fa(rB));
+  setText('sr-total-actual',fa(tA));   setText('sr-total-budget',fa(tB));
+  var bVD=bA-bB,bVP=bB?(bVD/bB)*100:0; setVC2('sr-brewery-var-d',formatCurrency(bVD),bVP); setVC2('sr-brewery-var-p',formatPct(bVP),bVP);
+  var rVD=rA-rB,rVP=rB?(rVD/rB)*100:0; setVC2('sr-rest-var-d',formatCurrency(rVD),rVP); setVC2('sr-rest-var-p',formatPct(rVP),rVP);
+  var tVD=tA-tB,tVP=tB?(tVD/tB)*100:0; setVC2('sr-total-var-d',formatCurrency(tVD),tVP); setVC2('sr-total-var-p',formatPct(tVP),tVP);
+  setText('sr-total-sply',fa(val('sr-brewery-sply')+val('sr-rest-sply')));
+  setText('sr-total-ytd',fa(val('sr-brewery-ytd')+val('sr-rest-ytd')));
+  setText('sr-total-ytd-budget',fa(val('sr-brewery-ytd-budget')+val('sr-rest-ytd-budget')));
+  var eA=val('sr-ebitda-actual'),eB=val('sr-ebitda-budget'),eVD=eA-eB,eVP=eB?(eVD/eB)*100:0;
+  setVC2('sr-ebitda-var-d',formatCurrency(eVD),eVP); setVC2('sr-ebitda-var-p',formatPct(eVP),eVP);
+  syncLabourReport();
+}
+function calcSummary(){ syncReportFromDashboard(); }
+function setVC2(id,text,pct){ setVC(id,text,pct); }
+
+function syncLabourReport() {
+  var rW=val('r-wages'),rR=val('r-food-actual')+val('r-bev-actual')+val('r-other-actual'),rT=val('r-labour-target');
+  var bW=val('b-wages'),bR=val('b-keg-actual')+val('b-pack-actual')+val('b-other-actual'),bT=val('b-labour-target');
+  var rRatio=rR>0?(rW/rR)*100:null, bRatio=bR>0?(bW/bR)*100:null;
+  var tW=rW+bW,tR=rR+bR,tRatio=tR>0?(tW/tR)*100:null;
+  setText('lrs-rest-ratio',rRatio!==null?rRatio.toFixed(1)+'%':'—');
+  setText('lrs-brew-ratio',bRatio!==null?bRatio.toFixed(1)+'%':'—');
+  setText('lrs-combined-wages',fa(tW));
+  setText('lrs-combined-ratio',tRatio!==null?tRatio.toFixed(1)+'%':'—');
+  setText('lrs-rest-target',rT); setText('lrs-brew-target',bT);
+  colourRatio('lrs-rest-ratio',rRatio,rT); colourRatio('lrs-brew-ratio',bRatio,bT); colourRatio('lrs-combined-ratio',tRatio,(rT+bT)/2);
+}
+function colourRatio(id,ratio,target){
+  var el=document.getElementById(id); if(!el||ratio===null) return;
+  el.className='lrs-value '+(ratio<=target?'ratio-good':ratio<=target*1.1?'ratio-warn':'ratio-bad');
+}
+
+// ============================================================
+//  LABOUR PRODUCTIVITY
+// ============================================================
+function calcLabour() {
+  var rW=val('r-wages'),rR=val('r-food-actual')+val('r-bev-actual')+val('r-other-actual'),rT=val('r-labour-target');
+  var bW=val('b-wages'),bR=val('b-keg-actual')+val('b-pack-actual')+val('b-other-actual'),bT=val('b-labour-target');
+  var rRatio=rR>0?(rW/rR)*100:null, bRatio=bR>0?(bW/bR)*100:null;
+  setText('r-labour-rev',fa(rR)); setText('b-labour-rev',fa(bR));
+  var rEl=document.getElementById('r-labour-ratio');
+  if(rEl){ rEl.textContent=rRatio!==null?rRatio.toFixed(1)+'%':'—'; rEl.className='labour-value '+(rRatio===null?'':rRatio<=rT?'ratio-good':rRatio<=rT*1.1?'ratio-warn':'ratio-bad'); }
+  var bEl=document.getElementById('b-labour-ratio');
+  if(bEl){ bEl.textContent=bRatio!==null?bRatio.toFixed(1)+'%':'—'; bEl.className='labour-value '+(bRatio===null?'':bRatio<=bT?'ratio-good':bRatio<=bT*1.1?'ratio-warn':'ratio-bad'); }
+  syncLabourReport();
+}
+
+// ============================================================
+//  3-MONTH ACTION PLAN
+// ============================================================
+var actionPlanRows=[
+  {action:'House Pour / White Label Program',process:'Formalise structured offer for venue-branded beers',timing:'Month 1',responsibility:'GM / Sales'},
+  {action:'Keg sales key account training',process:'Targeted training across key accounts to improve sell-through',timing:'Ongoing',responsibility:'GM / Sales'},
+  {action:'Sporting clubs expansion',process:'Target additional football, cricket and netball clubs',timing:'Ongoing',responsibility:'GM / Sales'},
+  {action:'',process:'',timing:'',responsibility:''}
+];
+function buildActionPlanTable(){
+  var tbody=document.getElementById('action-plan-tbody');
+  actionPlanRows.forEach(function(r,i){ tbody.appendChild(makeActionPlanRow(r,i+1)); });
+}
+function makeActionPlanRow(r,num){
+  var tr=document.createElement('tr');
+  tr.innerHTML='<td style="text-align:center;color:#8A8F9C;font-size:0.78rem;padding:8px;">'+num+'</td>'+
+    '<td><textarea class="ap-input" rows="2" oninput="markUnsaved()">'+(r.action||'')+'</textarea></td>'+
+    '<td><textarea class="ap-input" rows="2" oninput="markUnsaved()">'+(r.process||'')+'</textarea></td>'+
+    '<td><textarea class="ap-input" rows="2" oninput="markUnsaved()">'+(r.timing||'')+'</textarea></td>'+
+    '<td><textarea class="ap-input" rows="2" oninput="markUnsaved()">'+(r.responsibility||'')+'</textarea></td>';
+  return tr;
+}
+function addActionPlanRow(){
+  var tbody=document.getElementById('action-plan-tbody');
+  actionPlanRows.push({action:'',process:'',timing:'',responsibility:''});
+  tbody.appendChild(makeActionPlanRow(actionPlanRows[actionPlanRows.length-1],tbody.rows.length+1));
+  markUnsaved();
+}
+
+// ============================================================
+//  NARRATIVE COLLECT / APPLY
+// ============================================================
+var NARRATIVE_IDS=['mission-critical-text','report-month-label','report-date','report-author','report-next-board',
+  'n-trading-summary','n-restaurant','n-restaurant-actions','n-brewery','n-brewery-sales','n-brewery-actions',
+  'n-hr','n-ops','n-cashflow','n-outlook',
+  'sr-brewery-sply','sr-rest-sply','sr-brewery-ytd','sr-rest-ytd','sr-brewery-ytd-budget','sr-rest-ytd-budget',
+  'sr-ebitda-actual','sr-ebitda-budget','sr-ebitda-sply','sr-ebitda-ytd','sr-ebitda-ytd-budget'];
+function collectNarrative(){
+  var n={}; NARRATIVE_IDS.forEach(function(id){ var el=document.getElementById(id); if(el) n[id]=el.value; }); return n;
+}
+
+// ============================================================
 //  FORMAT / HELPERS
 // ============================================================
+function setText(id,t){ var el=document.getElementById(id); if(el) el.textContent=t; }
 function val(id) { return parseFloat(document.getElementById(id).value) || 0; }
 function fa(n)   { return CONFIG.currency + Math.abs(n).toLocaleString('en-AU',{minimumFractionDigits:0,maximumFractionDigits:0}); }
 function formatCurrency(n) { return (n<0?'-':n>0?'+':'')+CONFIG.currency+Math.abs(n).toLocaleString('en-AU',{minimumFractionDigits:0,maximumFractionDigits:0}); }
@@ -1007,7 +1388,7 @@ function buildMeetingDropdown() {
   weeklyMeetings.forEach(function(m) {
     var opt = document.createElement('option');
     opt.value = m.meetingKey;
-    var d = m.date ? new Date(m.date + 'T00:00:00').toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short',year:'numeric'}) : m.meetingKey;
+    var d = m.date ? new Date(m.date+'T00:00:00').toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short',year:'numeric'}) : m.meetingKey;
     opt.textContent = d + (m.attendees ? ' — ' + m.attendees.split(',')[0].trim() : '');
     sel.appendChild(opt);
   });
@@ -1018,7 +1399,7 @@ function loadPastMeeting() {
   var key = sel.value;
   if (!key) { alert('Select a meeting from the dropdown first.'); return; }
   var meeting = null;
-  for (var i=0; i<weeklyMeetings.length; i++) { if (weeklyMeetings[i].meetingKey===key) { meeting=weeklyMeetings[i]; break; } }
+  for (var i=0;i<weeklyMeetings.length;i++) { if(weeklyMeetings[i].meetingKey===key){meeting=weeklyMeetings[i];break;} }
   if (!meeting) { setSyncStatus('error','Meeting not found — try loading from Sheets first'); return; }
   document.getElementById('meeting-date').value      = meeting.date||'';
   document.getElementById('meeting-time').value      = meeting.time||'';
@@ -1069,10 +1450,7 @@ function loadWeeklyMeetingsFromSheets() {
   fetch(CONFIG.SHEETS_URL+'?action=loadMeetings')
     .then(function(r){ return r.json(); })
     .then(function(res){
-      if (res.status==='ok' && res.meetings) {
-        weeklyMeetings = res.meetings;
-        buildMeetingDropdown();
-      }
+      if (res.status==='ok' && res.meetings) { weeklyMeetings=res.meetings; buildMeetingDropdown(); }
     })
     .catch(function(){});
 }
@@ -1089,11 +1467,22 @@ function loadWeeklyMeetingsFromSheets() {
   setInterval(updateDate, 60000);
   buildAgenda();
   buildActionTable();
+  buildActionPlanTable();
 
   // EV day override flag
   ['ev-days-elapsed','ev-days-total'].forEach(function(id) {
     document.getElementById(id).addEventListener('input', function() { this.dataset.u='1'; });
   });
+
+  // Board report SPLY/YTD fields trigger summary recalc
+  ['sr-brewery-sply','sr-rest-sply','sr-brewery-ytd','sr-rest-ytd',
+   'sr-brewery-ytd-budget','sr-rest-ytd-budget','sr-ebitda-actual','sr-ebitda-budget'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el) el.addEventListener('input',function(){ calcSummary(); markUnsaved(); });
+  });
+
+  // Update report date
+  var rd=document.getElementById('report-date'); if(rd&&!rd.value) rd.value=new Date().toISOString().split('T')[0];
 
   // Load: try Sheets first, fall back to local cache
   if (CONFIG.SHEETS_URL) {
