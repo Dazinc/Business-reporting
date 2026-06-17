@@ -735,6 +735,7 @@ var CONFIG = {
   tolerancePct: 2.5,
   seatCapacity: 190,
   currency: '$',
+  boardPIN: '124800',  // Change this to update the Board Report PIN
   SHEETS_URL: 'https://script.google.com/macros/s/AKfycbzKIiCnIm2mFDC-hUM1X0sbf_PWX8GJgZvy7Tu4K3C6BNOS0BbYd3fptgWel6iq4gRLyQ/exec'
 };
 
@@ -1187,8 +1188,21 @@ function calcEV() {
 
 // ============================================================
 //  TAB SWITCHING
+//  Board Report tab is PIN protected.
+//  PIN is set in CONFIG.boardPIN below.
 // ============================================================
+var boardUnlocked = false;
+
 function switchTab(tab) {
+  if (tab === 'report' && !boardUnlocked) {
+    var pin = prompt('Enter PIN to access Board Report:');
+    if (pin === null) return; // user cancelled
+    if (pin !== CONFIG.boardPIN) {
+      alert('Incorrect PIN. Access denied.');
+      return;
+    }
+    boardUnlocked = true;
+  }
   document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
   document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
   document.querySelector('[onclick="switchTab(\''+tab+'\')"]').classList.add('active');
