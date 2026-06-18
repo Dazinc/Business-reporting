@@ -252,7 +252,7 @@
   ============================================================ -->
 <header class="header">
   <div class="header-left">
-    <div class="header-property">Prancing Pony Brewery</div>
+    <div class="header-property">Property Name</div>
     <div class="header-meta">
       <span class="header-sub">GM Dashboard</span>
       <select class="month-selector" id="month-selector" onchange="onMonthChange()"></select>
@@ -625,7 +625,7 @@
 
   <div class="report-cover">
     <div class="report-cover-header">
-      <div class="report-cover-title">Prancing Pony Brewery &#8212; Management Report</div>
+      <div class="report-cover-title">Property Name &#8212; Management Report</div>
       <div class="report-cover-sub">Confidential &#8212; Board use only</div>
     </div>
     <div class="report-cover-meta">
@@ -860,13 +860,16 @@ function saveToSheets() {
   setSaveBtn(true);
 
   var payload = {
-    action:    'save',
-    monthKey:  currentMonth,
-    savedAt:   new Date().toISOString(),
-    evScope:   evScope,
-    fields:    collectFields(),
-    agenda:    collectAgenda(),
-    actions:   collectActions()
+    action:       'save',
+    monthKey:     currentMonth,
+    savedAt:      new Date().toISOString(),
+    evScope:      evScope,
+    fields:       collectFields(),
+    agenda:       collectAgenda(),
+    actions:      collectActions(),
+    weeklyMeeting: collectWeeklyMeeting(),
+    narrative:    collectNarrative(),
+    actionPlan:   (function(){ var a=[]; document.querySelectorAll('#action-plan-tbody tr').forEach(function(tr){ var f=tr.querySelectorAll('textarea'); a.push({action:f[0]?f[0].value:'',process:f[1]?f[1].value:'',timing:f[2]?f[2].value:'',responsibility:f[3]?f[3].value:''}); }); return a; })()
   };
 
   fetch(CONFIG.SHEETS_URL, { method: 'POST', body: JSON.stringify(payload) })
