@@ -651,7 +651,8 @@
             <tr><td>Brewery</td><td id="sr-brewery-actual">&#8212;</td><td id="sr-brewery-budget">&#8212;</td><td><input class="rt-input" type="number" id="sr-brewery-sply" placeholder="0" oninput="calcSummary();markUnsaved()"></td><td id="sr-brewery-var-d">&#8212;</td><td id="sr-brewery-var-p">&#8212;</td><td><input class="rt-input" type="number" id="sr-brewery-ytd" placeholder="0" oninput="markUnsaved()"></td><td><input class="rt-input" type="number" id="sr-brewery-ytd-budget" placeholder="0" oninput="markUnsaved()"></td></tr>
             <tr><td>Restaurant</td><td id="sr-rest-actual">&#8212;</td><td id="sr-rest-budget">&#8212;</td><td><input class="rt-input" type="number" id="sr-rest-sply" placeholder="0" oninput="calcSummary();markUnsaved()"></td><td id="sr-rest-var-d">&#8212;</td><td id="sr-rest-var-p">&#8212;</td><td><input class="rt-input" type="number" id="sr-rest-ytd" placeholder="0" oninput="markUnsaved()"></td><td><input class="rt-input" type="number" id="sr-rest-ytd-budget" placeholder="0" oninput="markUnsaved()"></td></tr>
             <tr class="rt-total"><td>Total Revenue</td><td id="sr-total-actual">&#8212;</td><td id="sr-total-budget">&#8212;</td><td id="sr-total-sply">&#8212;</td><td id="sr-total-var-d">&#8212;</td><td id="sr-total-var-p">&#8212;</td><td id="sr-total-ytd">&#8212;</td><td id="sr-total-ytd-budget">&#8212;</td></tr>
-            <tr class="rt-ebitda"><td>EBITDA</td><td><input class="rt-input" type="number" id="sr-ebitda-actual" placeholder="0" oninput="markUnsaved()"></td><td><input class="rt-input" type="number" id="sr-ebitda-budget" placeholder="0" oninput="markUnsaved()"></td><td><input class="rt-input" type="number" id="sr-ebitda-sply" placeholder="0" oninput="markUnsaved()"></td><td id="sr-ebitda-var-d">&#8212;</td><td id="sr-ebitda-var-p">&#8212;</td><td><input class="rt-input" type="number" id="sr-ebitda-ytd" placeholder="0" oninput="markUnsaved()"></td><td><input class="rt-input" type="number" id="sr-ebitda-ytd-budget" placeholder="0" oninput="markUnsaved()"></td></tr>
+            <tr class="rt-ebitda"><td>EBITDA</td><td><input class="rt-input" type="number" id="sr-ebitda-actual" placeholder="0" oninput="calcSummary();markUnsaved()"></td><td><input class="rt-input" type="number" id="sr-ebitda-budget" placeholder="0" oninput="calcSummary();markUnsaved()"></td><td><input class="rt-input" type="number" id="sr-ebitda-sply" placeholder="0" oninput="calcSummary();markUnsaved()"></td><td id="sr-ebitda-var-d">&#8212;</td><td id="sr-ebitda-var-p">&#8212;</td><td><input class="rt-input" type="number" id="sr-ebitda-ytd" placeholder="0" oninput="markUnsaved()"></td><td><input class="rt-input" type="number" id="sr-ebitda-ytd-budget" placeholder="0" oninput="markUnsaved()"></td></tr>
+            <tr class="rt-ebitda"><td>Net Position</td><td><input class="rt-input" type="number" id="sr-net-actual" placeholder="0" oninput="calcSummary();markUnsaved()"></td><td><input class="rt-input" type="number" id="sr-net-budget" placeholder="0" oninput="calcSummary();markUnsaved()"></td><td><input class="rt-input" type="number" id="sr-net-sply" placeholder="0" oninput="calcSummary();markUnsaved()"></td><td id="sr-net-var-d">&#8212;</td><td id="sr-net-var-p">&#8212;</td><td><input class="rt-input" type="number" id="sr-net-ytd" placeholder="0" oninput="markUnsaved()"></td><td><input class="rt-input" type="number" id="sr-net-ytd-budget" placeholder="0" oninput="markUnsaved()"></td></tr>
           </tbody>
         </table>
       </div>
@@ -1243,6 +1244,8 @@ function syncReportFromDashboard() {
   setText('sr-total-ytd-budget',fa(val('sr-brewery-ytd-budget')+val('sr-rest-ytd-budget')));
   var eA=val('sr-ebitda-actual'),eB=val('sr-ebitda-budget'),eVD=eA-eB,eVP=eB?(eVD/eB)*100:0;
   setVC2('sr-ebitda-var-d',formatCurrency(eVD),eVP); setVC2('sr-ebitda-var-p',formatPct(eVP),eVP);
+  var nA=val('sr-net-actual'),nB=val('sr-net-budget'),nVD=nA-nB,nVP=nB?(nVD/nB)*100:0;
+  setVC2('sr-net-var-d',formatCurrency(nVD),nVP); setVC2('sr-net-var-p',formatPct(nVP),nVP);
   syncLabourReport();
 }
 function calcSummary(){ syncReportFromDashboard(); }
@@ -1316,7 +1319,8 @@ var NARRATIVE_IDS=['mission-critical-text','report-month-label','report-date','r
   'n-trading-summary','n-restaurant','n-restaurant-actions','n-brewery','n-brewery-sales','n-brewery-actions',
   'n-hr','n-ops','n-cashflow','n-outlook',
   'sr-brewery-sply','sr-rest-sply','sr-brewery-ytd','sr-rest-ytd','sr-brewery-ytd-budget','sr-rest-ytd-budget',
-  'sr-ebitda-actual','sr-ebitda-budget','sr-ebitda-sply','sr-ebitda-ytd','sr-ebitda-ytd-budget'];
+  'sr-ebitda-actual','sr-ebitda-budget','sr-ebitda-sply','sr-ebitda-ytd','sr-ebitda-ytd-budget',
+  'sr-net-actual','sr-net-budget','sr-net-sply','sr-net-ytd','sr-net-ytd-budget'];
 function collectNarrative(){
   var n={}; NARRATIVE_IDS.forEach(function(id){ var el=document.getElementById(id); if(el) n[id]=el.value; }); return n;
 }
@@ -1513,7 +1517,8 @@ function loadWeeklyMeetingsFromSheets() {
 
   // Board report SPLY/YTD fields trigger summary recalc
   ['sr-brewery-sply','sr-rest-sply','sr-brewery-ytd','sr-rest-ytd',
-   'sr-brewery-ytd-budget','sr-rest-ytd-budget','sr-ebitda-actual','sr-ebitda-budget'].forEach(function(id){
+   'sr-brewery-ytd-budget','sr-rest-ytd-budget','sr-ebitda-actual','sr-ebitda-budget',
+   'sr-net-actual','sr-net-budget'].forEach(function(id){
     var el=document.getElementById(id);
     if(el) el.addEventListener('input',function(){ calcSummary(); markUnsaved(); });
   });
