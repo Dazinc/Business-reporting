@@ -252,9 +252,9 @@
   ============================================================ -->
 <header class="header">
   <div class="header-left">
-    <div class="header-property">Prancing Pony Brewery</div>
+    <div class="header-property">Property Name</div>
     <div class="header-meta">
-      <span class="header-sub">Dashboard</span>
+      <span class="header-sub">GM Dashboard</span>
       <select class="month-selector" id="month-selector" onchange="onMonthChange()"></select>
       <span class="unsaved-badge" id="unsaved-badge">● Unsaved changes</span>
     </div>
@@ -625,7 +625,7 @@
 
   <div class="report-cover">
     <div class="report-cover-header">
-      <div class="report-cover-title">Prancing Pony Brewery &#8212; Management Report</div>
+      <div class="report-cover-title">Property Name &#8212; Sales &amp; Commercial Report</div>
       <div class="report-cover-sub">Confidential &#8212; Board use only</div>
     </div>
     <div class="report-cover-meta">
@@ -641,72 +641,89 @@
     <textarea class="mission-textarea" id="mission-critical-text" placeholder="BAS &#10;Excise &#10;Super &#10;AP / AR &#10;Any urgent items..." oninput="markUnsaved()"></textarea>
   </div>
 
+  <!-- SECTION 1: REVENUE SUMMARY + CHANNEL BREAKDOWN -->
   <div class="report-section">
-    <div class="report-section-header"><div class="report-section-num">1</div><span class="report-section-title">Revenue &#8212; Brewery &amp; Restaurant vs Budget, SPLY &amp; YTD</span></div>
+    <div class="report-section-header"><div class="report-section-num">1</div><span class="report-section-title">Revenue Summary &#8212; Brewery vs Budget, SPLY &amp; YTD</span></div>
     <div class="report-section-body">
+
+      <!-- Top line summary pulled from dashboard -->
       <div class="report-table-wrap">
         <table class="report-table">
-          <thead><tr><th style="width:22%">Revenue</th><th>Month Actual</th><th>Month Budget</th><th>SPLY</th><th>vs Budget $</th><th>vs Budget %</th><th>YTD Actual</th><th>YTD Budget</th></tr></thead>
+          <thead><tr><th style="width:20%">Revenue</th><th>Month Actual</th><th>Month Budget</th><th>SPLY</th><th>vs Budget $</th><th>vs Budget %</th><th>YTD Actual</th><th>YTD Budget</th></tr></thead>
           <tbody>
-            <tr><td>Brewery</td><td id="sr-brewery-actual">&#8212;</td><td id="sr-brewery-budget">&#8212;</td><td><input class="rt-input" type="number" id="sr-brewery-sply" placeholder="0" oninput="calcSummary();markUnsaved()"></td><td id="sr-brewery-var-d">&#8212;</td><td id="sr-brewery-var-p">&#8212;</td><td><input class="rt-input" type="number" id="sr-brewery-ytd" placeholder="0" oninput="markUnsaved()"></td><td><input class="rt-input" type="number" id="sr-brewery-ytd-budget" placeholder="0" oninput="markUnsaved()"></td></tr>
+            <tr><td>Brewery Total</td><td id="sr-brewery-actual">&#8212;</td><td id="sr-brewery-budget">&#8212;</td><td><input class="rt-input" type="number" id="sr-brewery-sply" placeholder="0" oninput="calcSummary();markUnsaved()"></td><td id="sr-brewery-var-d">&#8212;</td><td id="sr-brewery-var-p">&#8212;</td><td><input class="rt-input" type="number" id="sr-brewery-ytd" placeholder="0" oninput="markUnsaved()"></td><td><input class="rt-input" type="number" id="sr-brewery-ytd-budget" placeholder="0" oninput="markUnsaved()"></td></tr>
             <tr><td>Restaurant</td><td id="sr-rest-actual">&#8212;</td><td id="sr-rest-budget">&#8212;</td><td><input class="rt-input" type="number" id="sr-rest-sply" placeholder="0" oninput="calcSummary();markUnsaved()"></td><td id="sr-rest-var-d">&#8212;</td><td id="sr-rest-var-p">&#8212;</td><td><input class="rt-input" type="number" id="sr-rest-ytd" placeholder="0" oninput="markUnsaved()"></td><td><input class="rt-input" type="number" id="sr-rest-ytd-budget" placeholder="0" oninput="markUnsaved()"></td></tr>
             <tr class="rt-total"><td>Total Revenue</td><td id="sr-total-actual">&#8212;</td><td id="sr-total-budget">&#8212;</td><td id="sr-total-sply">&#8212;</td><td id="sr-total-var-d">&#8212;</td><td id="sr-total-var-p">&#8212;</td><td id="sr-total-ytd">&#8212;</td><td id="sr-total-ytd-budget">&#8212;</td></tr>
-            <tr class="rt-ebitda"><td>EBITDA</td><td><input class="rt-input" type="number" id="sr-ebitda-actual" placeholder="0" oninput="calcSummary();markUnsaved()"></td><td><input class="rt-input" type="number" id="sr-ebitda-budget" placeholder="0" oninput="calcSummary();markUnsaved()"></td><td><input class="rt-input" type="number" id="sr-ebitda-sply" placeholder="0" oninput="calcSummary();markUnsaved()"></td><td id="sr-ebitda-var-d">&#8212;</td><td id="sr-ebitda-var-p">&#8212;</td><td><input class="rt-input" type="number" id="sr-ebitda-ytd" placeholder="0" oninput="markUnsaved()"></td><td><input class="rt-input" type="number" id="sr-ebitda-ytd-budget" placeholder="0" oninput="markUnsaved()"></td></tr>
-            <tr class="rt-ebitda"><td>Net Position</td><td><input class="rt-input" type="number" id="sr-net-actual" placeholder="0" oninput="calcSummary();markUnsaved()"></td><td><input class="rt-input" type="number" id="sr-net-budget" placeholder="0" oninput="calcSummary();markUnsaved()"></td><td><input class="rt-input" type="number" id="sr-net-sply" placeholder="0" oninput="calcSummary();markUnsaved()"></td><td id="sr-net-var-d">&#8212;</td><td id="sr-net-var-p">&#8212;</td><td><input class="rt-input" type="number" id="sr-net-ytd" placeholder="0" oninput="markUnsaved()"></td><td><input class="rt-input" type="number" id="sr-net-ytd-budget" placeholder="0" oninput="markUnsaved()"></td></tr>
+
           </tbody>
         </table>
       </div>
-      <div class="labour-report-strip">
-        <div class="lrs-item"><div class="lrs-label">Restaurant Productivity</div><div class="lrs-value" id="lrs-rest-ratio">&#8212;</div><div class="lrs-sub">Wages &#247; Revenue (target: <span id="lrs-rest-target">30</span>%)</div></div>
-        <div class="lrs-item"><div class="lrs-label">Brewery Productivity</div><div class="lrs-value" id="lrs-brew-ratio">&#8212;</div><div class="lrs-sub">Wages &#247; Revenue (target: <span id="lrs-brew-target">20</span>%)</div></div>
-        <div class="lrs-item"><div class="lrs-label">Combined Wages MTD</div><div class="lrs-value" id="lrs-combined-wages">&#8212;</div><div class="lrs-sub">Restaurant + Brewery</div></div>
-        <div class="lrs-item"><div class="lrs-label">Combined Productivity</div><div class="lrs-value" id="lrs-combined-ratio">&#8212;</div><div class="lrs-sub">Total wages &#247; Total revenue</div></div>
+
+      <!-- Channel breakdown: Keg and Pack by distributor -->
+      <div style="padding:12px 20px 4px;"><div style="font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#6B7080;margin-bottom:8px;">Channel Breakdown &#8212; Keg &amp; Pack Revenue MTD</div></div>
+      <div class="report-table-wrap">
+        <table class="report-table">
+          <thead><tr><th style="width:20%">Channel</th><th>Keg Actual</th><th>Keg Budget</th><th>Keg vs Budget $</th><th>Keg vs Budget %</th><th>Pack Actual</th><th>Pack Budget</th><th>Pack vs Budget $</th><th>Pack vs Budget %</th></tr></thead>
+          <tbody>
+            <tr><td>Direct</td><td><input class="rt-input" type="number" id="ch-direct-keg-a" placeholder="0" oninput="calcChannel();markUnsaved()"></td><td><input class="rt-input" type="number" id="ch-direct-keg-b" placeholder="0" oninput="calcChannel();markUnsaved()"></td><td id="ch-direct-keg-vd">&#8212;</td><td id="ch-direct-keg-vp">&#8212;</td><td><input class="rt-input" type="number" id="ch-direct-pack-a" placeholder="0" oninput="calcChannel();markUnsaved()"></td><td><input class="rt-input" type="number" id="ch-direct-pack-b" placeholder="0" oninput="calcChannel();markUnsaved()"></td><td id="ch-direct-pack-vd">&#8212;</td><td id="ch-direct-pack-vp">&#8212;</td></tr>
+            <tr><td>ALM</td><td><input class="rt-input" type="number" id="ch-alm-keg-a" placeholder="0" oninput="calcChannel();markUnsaved()"></td><td><input class="rt-input" type="number" id="ch-alm-keg-b" placeholder="0" oninput="calcChannel();markUnsaved()"></td><td id="ch-alm-keg-vd">&#8212;</td><td id="ch-alm-keg-vp">&#8212;</td><td><input class="rt-input" type="number" id="ch-alm-pack-a" placeholder="0" oninput="calcChannel();markUnsaved()"></td><td><input class="rt-input" type="number" id="ch-alm-pack-b" placeholder="0" oninput="calcChannel();markUnsaved()"></td><td id="ch-alm-pack-vd">&#8212;</td><td id="ch-alm-pack-vp">&#8212;</td></tr>
+            <tr><td>Paramount</td><td><input class="rt-input" type="number" id="ch-paramount-keg-a" placeholder="0" oninput="calcChannel();markUnsaved()"></td><td><input class="rt-input" type="number" id="ch-paramount-keg-b" placeholder="0" oninput="calcChannel();markUnsaved()"></td><td id="ch-paramount-keg-vd">&#8212;</td><td id="ch-paramount-keg-vp">&#8212;</td><td><input class="rt-input" type="number" id="ch-paramount-pack-a" placeholder="0" oninput="calcChannel();markUnsaved()"></td><td><input class="rt-input" type="number" id="ch-paramount-pack-b" placeholder="0" oninput="calcChannel();markUnsaved()"></td><td id="ch-paramount-pack-vd">&#8212;</td><td id="ch-paramount-pack-vp">&#8212;</td></tr>
+            <tr><td>Coles</td><td><input class="rt-input" type="number" id="ch-coles-keg-a" placeholder="0" oninput="calcChannel();markUnsaved()"></td><td><input class="rt-input" type="number" id="ch-coles-keg-b" placeholder="0" oninput="calcChannel();markUnsaved()"></td><td id="ch-coles-keg-vd">&#8212;</td><td id="ch-coles-keg-vp">&#8212;</td><td><input class="rt-input" type="number" id="ch-coles-pack-a" placeholder="0" oninput="calcChannel();markUnsaved()"></td><td><input class="rt-input" type="number" id="ch-coles-pack-b" placeholder="0" oninput="calcChannel();markUnsaved()"></td><td id="ch-coles-pack-vd">&#8212;</td><td id="ch-coles-pack-vp">&#8212;</td></tr>
+            <tr><td>Endeavour</td><td><input class="rt-input" type="number" id="ch-endeavour-keg-a" placeholder="0" oninput="calcChannel();markUnsaved()"></td><td><input class="rt-input" type="number" id="ch-endeavour-keg-b" placeholder="0" oninput="calcChannel();markUnsaved()"></td><td id="ch-endeavour-keg-vd">&#8212;</td><td id="ch-endeavour-keg-vp">&#8212;</td><td><input class="rt-input" type="number" id="ch-endeavour-pack-a" placeholder="0" oninput="calcChannel();markUnsaved()"></td><td><input class="rt-input" type="number" id="ch-endeavour-pack-b" placeholder="0" oninput="calcChannel();markUnsaved()"></td><td id="ch-endeavour-pack-vd">&#8212;</td><td id="ch-endeavour-pack-vp">&#8212;</td></tr>
+            <tr class="rt-total"><td>Total</td><td id="ch-total-keg-a">&#8212;</td><td id="ch-total-keg-b">&#8212;</td><td id="ch-total-keg-vd">&#8212;</td><td id="ch-total-keg-vp">&#8212;</td><td id="ch-total-pack-a">&#8212;</td><td id="ch-total-pack-b">&#8212;</td><td id="ch-total-pack-vd">&#8212;</td><td id="ch-total-pack-vp">&#8212;</td></tr>
+          </tbody>
+        </table>
       </div>
-      <div class="narrative-block"><div class="narrative-label">Trading Summary</div><textarea class="narrative-textarea" id="n-trading-summary" rows="4" placeholder="Overall trading narrative..." oninput="markUnsaved()"></textarea></div>
+
+      <div class="narrative-block"><div class="narrative-label">Revenue Commentary</div><textarea class="narrative-textarea" id="n-trading-summary" rows="4" placeholder="Overall trading narrative, key drivers, market conditions..." oninput="markUnsaved()"></textarea></div>
     </div>
   </div>
 
+  <!-- SECTION 2: NEW BUSINESS & PIPELINE -->
   <div class="report-section">
-    <div class="report-section-header"><div class="report-section-num">2</div><span class="report-section-title">Restaurant Performance &amp; Commentary</span></div>
+    <div class="report-section-header"><div class="report-section-num">2</div><span class="report-section-title">New Business &amp; Pipeline</span></div>
     <div class="report-section-body">
-      <div class="narrative-block"><div class="narrative-label">Performance Commentary</div><textarea class="narrative-textarea" id="n-restaurant" rows="4" placeholder="Covers, spend per head, food cost, service observations..." oninput="markUnsaved()"></textarea></div>
-      <div class="narrative-block"><div class="narrative-label">Key Actions / Corrections</div><textarea class="narrative-textarea" id="n-restaurant-actions" rows="3" placeholder="&#8226; Action 1&#10;&#8226; Action 2" oninput="markUnsaved()"></textarea></div>
+      <div style="padding:12px 20px 8px;">
+        <table class="action-plan-table">
+          <thead><tr><th style="width:5%">#</th><th style="width:25%">Opportunity</th><th style="width:12%">Value $</th><th style="width:15%">Stage</th><th style="width:15%">Channel</th><th style="width:13%">Owner</th><th style="width:15%">Expected Close</th></tr></thead>
+          <tbody id="pipeline-tbody"></tbody>
+        </table>
+        <button class="add-row-btn" onclick="addPipelineRow()">+ Add Opportunity</button>
+      </div>
+      <div class="narrative-block"><div class="narrative-label">Pipeline Commentary</div><textarea class="narrative-textarea" id="n-pipeline" rows="3" placeholder="Won this month, lost deals, notable movements in pipeline..." oninput="markUnsaved()"></textarea></div>
     </div>
   </div>
 
+  <!-- SECTION 3: CHANNEL, DISTRIBUTION & MARKETING -->
   <div class="report-section">
-    <div class="report-section-header"><div class="report-section-num">3</div><span class="report-section-title">Brewery &amp; Wholesale Performance</span></div>
+    <div class="report-section-header"><div class="report-section-num">3</div><span class="report-section-title">Channel, Distribution &amp; Marketing</span></div>
     <div class="report-section-body">
-      <div class="narrative-block"><div class="narrative-label">Revenue Performance</div><textarea class="narrative-textarea" id="n-brewery" rows="4" placeholder="Keg vs pack, key accounts, contract brewing..." oninput="markUnsaved()"></textarea></div>
-      <div class="narrative-block"><div class="narrative-label">Sales &amp; Marketing Initiatives</div><textarea class="narrative-textarea" id="n-brewery-sales" rows="3" placeholder="New accounts, venue partnerships, events pipeline..." oninput="markUnsaved()"></textarea></div>
-      <div class="narrative-block"><div class="narrative-label">Key Actions / Corrections</div><textarea class="narrative-textarea" id="n-brewery-actions" rows="3" placeholder="&#8226; Action 1&#10;&#8226; Action 2" oninput="markUnsaved()"></textarea></div>
+      <div class="narrative-block"><div class="narrative-label">Channel &amp; Distribution Update</div><textarea class="narrative-textarea" id="n-brewery" rows="4" placeholder="ALM, Paramount, Direct, Coles, Endeavour — volume movements, new listings, ranging changes, delistings..." oninput="markUnsaved()"></textarea></div>
+      <div class="narrative-block"><div class="narrative-label">Activations &amp; Promotional Calendar</div><textarea class="narrative-textarea" id="n-brewery-sales" rows="3" placeholder="Current activations, upcoming promos, ALM promo weeks, event pipeline, venue partnerships..." oninput="markUnsaved()"></textarea></div>
+      <div class="narrative-block"><div class="narrative-label">Key Actions</div><textarea class="narrative-textarea" id="n-brewery-actions" rows="3" placeholder="&#8226; Action 1&#10;&#8226; Action 2" oninput="markUnsaved()"></textarea></div>
     </div>
   </div>
 
+  <!-- SECTION 4: BREWERY PERFORMANCE -->
   <div class="report-section">
-    <div class="report-section-header"><div class="report-section-num">4</div><span class="report-section-title">HR</span></div>
+    <div class="report-section-header"><div class="report-section-num">4</div><span class="report-section-title">Brewery &amp; Wholesale Performance</span></div>
     <div class="report-section-body">
-      <div class="narrative-block"><div class="narrative-label">HR Update</div><textarea class="narrative-textarea" id="n-hr" rows="4" placeholder="Staffing, training, leave, recruitment..." oninput="markUnsaved()"></textarea></div>
+      <div class="narrative-block"><div class="narrative-label">Production &amp; Operations</div><textarea class="narrative-textarea" id="n-ops" rows="4" placeholder="Brew schedule, production volumes, quality, equipment, compliance..." oninput="markUnsaved()"></textarea></div>
+      <div class="narrative-block"><div class="narrative-label">Labour Productivity</div>
+        <div class="labour-report-strip" style="margin-top:8px;">
+          <div class="lrs-item"><div class="lrs-label">Restaurant Productivity</div><div class="lrs-value" id="lrs-rest-ratio">&#8212;</div><div class="lrs-sub">Wages &#247; Revenue (target: <span id="lrs-rest-target">30</span>%)</div></div>
+          <div class="lrs-item"><div class="lrs-label">Brewery Productivity</div><div class="lrs-value" id="lrs-brew-ratio">&#8212;</div><div class="lrs-sub">Wages &#247; Revenue (target: <span id="lrs-brew-target">20</span>%)</div></div>
+          <div class="lrs-item"><div class="lrs-label">Combined Wages MTD</div><div class="lrs-value" id="lrs-combined-wages">&#8212;</div><div class="lrs-sub">Restaurant + Brewery</div></div>
+          <div class="lrs-item"><div class="lrs-label">Combined Productivity</div><div class="lrs-value" id="lrs-combined-ratio">&#8212;</div><div class="lrs-sub">Total wages &#247; Total revenue</div></div>
+        </div>
+      </div>
+
     </div>
   </div>
 
+  <!-- SECTION 5: 3-MONTH ACTION PLAN -->
   <div class="report-section">
-    <div class="report-section-header"><div class="report-section-num">5</div><span class="report-section-title">Operations</span></div>
-    <div class="report-section-body">
-      <div class="narrative-block"><div class="narrative-label">Operational Update</div><textarea class="narrative-textarea" id="n-ops" rows="4" placeholder="Equipment, maintenance, production, compliance..." oninput="markUnsaved()"></textarea></div>
-    </div>
-  </div>
-
-  <div class="report-section">
-    <div class="report-section-header"><div class="report-section-num">6</div><span class="report-section-title">Cashflow &amp; Outlook</span></div>
-    <div class="report-section-body">
-      <div class="narrative-block"><div class="narrative-label">Cashflow Position</div><textarea class="narrative-textarea" id="n-cashflow" rows="3" placeholder="Cash position, AP/AR, loans, overdraft..." oninput="markUnsaved()"></textarea></div>
-      <div class="narrative-block"><div class="narrative-label">Outlook &#8212; Next Month</div><textarea class="narrative-textarea" id="n-outlook" rows="3" placeholder="Trading expectations, key risks, opportunities..." oninput="markUnsaved()"></textarea></div>
-    </div>
-  </div>
-
-  <div class="report-section">
-    <div class="report-section-header"><div class="report-section-num">7</div><span class="report-section-title">3-Month Action Plan &#8212; Wholesale &amp; Sales</span></div>
+    <div class="report-section-header"><div class="report-section-num">5</div><span class="report-section-title">3-Month Action Plan &#8212; Wholesale &amp; Sales</span></div>
     <div class="report-section-body">
       <div style="padding:12px 20px 8px;">
         <table class="action-plan-table"><thead><tr><th style="width:5%">#</th><th style="width:28%">Action</th><th style="width:30%">Process / Detail</th><th style="width:18%">Timing</th><th style="width:19%">Responsibility</th></tr></thead>
@@ -869,7 +886,8 @@ function saveToSheets() {
     actions:      collectActions(),
     weeklyMeeting: collectWeeklyMeeting(),
     narrative:    collectNarrative(),
-    actionPlan:   (function(){ var a=[]; document.querySelectorAll('#action-plan-tbody tr').forEach(function(tr){ var f=tr.querySelectorAll('textarea'); a.push({action:f[0]?f[0].value:'',process:f[1]?f[1].value:'',timing:f[2]?f[2].value:'',responsibility:f[3]?f[3].value:''}); }); return a; })()
+    actionPlan:   (function(){ var a=[]; document.querySelectorAll('#action-plan-tbody tr').forEach(function(tr){ var f=tr.querySelectorAll('textarea'); a.push({action:f[0]?f[0].value:'',process:f[1]?f[1].value:'',timing:f[2]?f[2].value:'',responsibility:f[3]?f[3].value:''}); }); return a; })(),
+    pipeline:     (function(){ var a=[]; document.querySelectorAll('#pipeline-tbody tr').forEach(function(tr){ var f=tr.querySelectorAll('input,select'); a.push({opportunity:f[0]?f[0].value:'',value:f[1]?f[1].value:'',stage:f[2]?f[2].value:'Prospect',channel:f[3]?f[3].value:'',owner:f[4]?f[4].value:'',close:f[5]?f[5].value:''}); }); return a; })()
   };
 
   fetch(CONFIG.SHEETS_URL, { method: 'POST', body: JSON.stringify(payload) })
@@ -965,6 +983,14 @@ function applyData(data) {
     actionPlanRows = data.actionPlan;
     document.getElementById('action-plan-tbody').innerHTML='';
     actionPlanRows.forEach(function(r,i){ document.getElementById('action-plan-tbody').appendChild(makeActionPlanRow(r,i+1)); });
+  }
+  if (data.pipeline && data.pipeline.length) {
+    pipelineRows = data.pipeline;
+    var ptbody = document.getElementById('pipeline-tbody');
+    if (ptbody) {
+      ptbody.innerHTML='';
+      pipelineRows.forEach(function(r,i){ ptbody.appendChild(makePipelineRow(r,i+1)); });
+    }
   }
   if (data.narrative) {
     NARRATIVE_IDS.forEach(function(id){ var el=document.getElementById(id); if(el&&data.narrative[id]!==undefined) el.value=data.narrative[id]; });
@@ -1250,6 +1276,7 @@ function syncReportFromDashboard() {
   var nA=val('sr-net-actual'),nB=val('sr-net-budget'),nVD=nA-nB,nVP=nB?(nVD/nB)*100:0;
   setVC2('sr-net-var-d',formatCurrency(nVD),nVP); setVC2('sr-net-var-p',formatPct(nVP),nVP);
   syncLabourReport();
+  calcChannel();
 }
 function calcSummary(){ syncReportFromDashboard(); }
 function setVC2(id,text,pct){ setVC(id,text,pct); }
@@ -1323,9 +1350,83 @@ var NARRATIVE_IDS=['mission-critical-text','report-month-label','report-date','r
   'n-hr','n-ops','n-cashflow','n-outlook',
   'sr-brewery-sply','sr-rest-sply','sr-brewery-ytd','sr-rest-ytd','sr-brewery-ytd-budget','sr-rest-ytd-budget',
   'sr-ebitda-actual','sr-ebitda-budget','sr-ebitda-sply','sr-ebitda-ytd','sr-ebitda-ytd-budget',
-  'sr-net-actual','sr-net-budget','sr-net-sply','sr-net-ytd','sr-net-ytd-budget'];
+  'sr-net-actual','sr-net-budget','sr-net-sply','sr-net-ytd','sr-net-ytd-budget',
+  'n-pipeline',
+  'ch-direct-keg-a','ch-direct-keg-b','ch-direct-pack-a','ch-direct-pack-b',
+  'ch-alm-keg-a','ch-alm-keg-b','ch-alm-pack-a','ch-alm-pack-b',
+  'ch-paramount-keg-a','ch-paramount-keg-b','ch-paramount-pack-a','ch-paramount-pack-b',
+  'ch-coles-keg-a','ch-coles-keg-b','ch-coles-pack-a','ch-coles-pack-b',
+  'ch-endeavour-keg-a','ch-endeavour-keg-b','ch-endeavour-pack-a','ch-endeavour-pack-b'];
 function collectNarrative(){
   var n={}; NARRATIVE_IDS.forEach(function(id){ var el=document.getElementById(id); if(el) n[id]=el.value; }); return n;
+}
+
+// ============================================================
+//  CHANNEL BREAKDOWN CALC
+// ============================================================
+var CHANNELS = ['direct','alm','paramount','coles','endeavour'];
+
+function calcChannel() {
+  var totalKegA=0, totalKegB=0, totalPackA=0, totalPackB=0;
+  CHANNELS.forEach(function(ch) {
+    var kA=val('ch-'+ch+'-keg-a'),  kB=val('ch-'+ch+'-keg-b');
+    var pA=val('ch-'+ch+'-pack-a'), pB=val('ch-'+ch+'-pack-b');
+    var kVD=kA-kB, kVP=kB?(kVD/kB)*100:0;
+    var pVD=pA-pB, pVP=pB?(pVD/pB)*100:0;
+    setVC2('ch-'+ch+'-keg-vd',  formatCurrency(kVD), kVP);
+    setVC2('ch-'+ch+'-keg-vp',  formatPct(kVP), kVP);
+    setVC2('ch-'+ch+'-pack-vd', formatCurrency(pVD), pVP);
+    setVC2('ch-'+ch+'-pack-vp', formatPct(pVP), pVP);
+    totalKegA+=kA; totalKegB+=kB; totalPackA+=pA; totalPackB+=pB;
+  });
+  var tkVD=totalKegA-totalKegB,   tkVP=totalKegB?(tkVD/totalKegB)*100:0;
+  var tpVD=totalPackA-totalPackB, tpVP=totalPackB?(tpVD/totalPackB)*100:0;
+  setText('ch-total-keg-a',  fa(totalKegA));
+  setText('ch-total-keg-b',  fa(totalKegB));
+  setText('ch-total-pack-a', fa(totalPackA));
+  setText('ch-total-pack-b', fa(totalPackB));
+  setVC2('ch-total-keg-vd',  formatCurrency(tkVD), tkVP);
+  setVC2('ch-total-keg-vp',  formatPct(tkVP), tkVP);
+  setVC2('ch-total-pack-vd', formatCurrency(tpVD), tpVP);
+  setVC2('ch-total-pack-vp', formatPct(tpVP), tpVP);
+}
+
+// ============================================================
+//  PIPELINE TABLE
+// ============================================================
+var PIPELINE_STAGES = ['Prospect','Qualified','Proposal','Negotiation','Won','Lost'];
+var pipelineRows = [
+  {opportunity:'',value:'',stage:'Prospect',channel:'',owner:'',close:''},
+  {opportunity:'',value:'',stage:'Prospect',channel:'',owner:'',close:''}
+];
+
+function buildPipelineTable() {
+  var tbody = document.getElementById('pipeline-tbody');
+  if (!tbody) return;
+  pipelineRows.forEach(function(r,i){ tbody.appendChild(makePipelineRow(r,i+1)); });
+}
+
+function makePipelineRow(r,num) {
+  var tr = document.createElement('tr');
+  var stageOpts = PIPELINE_STAGES.map(function(s){
+    return '<option'+(s===r.stage?' selected':'')+'>'+s+'</option>';
+  }).join('');
+  tr.innerHTML = '<td style="text-align:center;color:#8A8F9C;font-size:0.78rem;padding:8px;">'+num+'</td>'+
+    '<td><input class="action-input" type="text" value="'+(r.opportunity||'')+'" placeholder="Account / opportunity..." oninput="markUnsaved()"></td>'+
+    '<td><input class="action-input" type="number" value="'+(r.value||'')+'" placeholder="0" oninput="markUnsaved()"></td>'+
+    '<td><select class="status-select" onchange="markUnsaved()">'+stageOpts+'</select></td>'+
+    '<td><input class="action-input" type="text" value="'+(r.channel||'')+'" placeholder="e.g. ALM, Direct" oninput="markUnsaved()"></td>'+
+    '<td><input class="action-input" type="text" value="'+(r.owner||'')+'" placeholder="Name" oninput="markUnsaved()"></td>'+
+    '<td><input class="action-input" type="date" value="'+(r.close||'')+'" oninput="markUnsaved()"></td>';
+  return tr;
+}
+
+function addPipelineRow() {
+  var tbody = document.getElementById('pipeline-tbody');
+  if (!tbody) return;
+  pipelineRows.push({opportunity:'',value:'',stage:'Prospect',channel:'',owner:'',close:''});
+  tbody.appendChild(makePipelineRow(pipelineRows[pipelineRows.length-1], tbody.rows.length+1));
+  markUnsaved();
 }
 
 // ============================================================
@@ -1512,6 +1613,7 @@ function loadWeeklyMeetingsFromSheets() {
   buildAgenda();
   buildActionTable();
   buildActionPlanTable();
+  buildPipelineTable();
 
   // EV day override flag
   ['ev-days-elapsed','ev-days-total'].forEach(function(id) {
