@@ -636,11 +636,6 @@
     </div>
   </div>
 
-  <div class="mission-critical">
-    <div class="mission-critical-title">&#9889; Mission Critical &#8212; As of reporting date</div>
-    <textarea class="mission-textarea" id="mission-critical-text" placeholder="BAS &#10;Excise &#10;Super &#10;AP / AR &#10;Any urgent items..." oninput="markUnsaved()"></textarea>
-  </div>
-
   <!-- SECTION 1: REVENUE SUMMARY + CHANNEL BREAKDOWN -->
   <div class="report-section">
     <div class="report-section-header"><div class="report-section-num">1</div><span class="report-section-title">Revenue Summary &#8212; Brewery vs Budget, SPLY &amp; YTD</span></div>
@@ -652,8 +647,8 @@
           <thead><tr><th style="width:20%">Revenue</th><th>Month Actual</th><th>Month Budget</th><th>SPLY</th><th>vs Budget $</th><th>vs Budget %</th><th>YTD Actual</th><th>YTD Budget</th></tr></thead>
           <tbody>
             <tr><td>Brewery Total</td><td id="sr-brewery-actual">&#8212;</td><td id="sr-brewery-budget">&#8212;</td><td><input class="rt-input" type="number" id="sr-brewery-sply" placeholder="0" oninput="calcSummary();markUnsaved()"></td><td id="sr-brewery-var-d">&#8212;</td><td id="sr-brewery-var-p">&#8212;</td><td><input class="rt-input" type="number" id="sr-brewery-ytd" placeholder="0" oninput="markUnsaved()"></td><td><input class="rt-input" type="number" id="sr-brewery-ytd-budget" placeholder="0" oninput="markUnsaved()"></td></tr>
-            <tr><td>Restaurant</td><td id="sr-rest-actual">&#8212;</td><td id="sr-rest-budget">&#8212;</td><td><input class="rt-input" type="number" id="sr-rest-sply" placeholder="0" oninput="calcSummary();markUnsaved()"></td><td id="sr-rest-var-d">&#8212;</td><td id="sr-rest-var-p">&#8212;</td><td><input class="rt-input" type="number" id="sr-rest-ytd" placeholder="0" oninput="markUnsaved()"></td><td><input class="rt-input" type="number" id="sr-rest-ytd-budget" placeholder="0" oninput="markUnsaved()"></td></tr>
-            <tr class="rt-total"><td>Total Revenue</td><td id="sr-total-actual">&#8212;</td><td id="sr-total-budget">&#8212;</td><td id="sr-total-sply">&#8212;</td><td id="sr-total-var-d">&#8212;</td><td id="sr-total-var-p">&#8212;</td><td id="sr-total-ytd">&#8212;</td><td id="sr-total-ytd-budget">&#8212;</td></tr>
+
+
 
           </tbody>
         </table>
@@ -675,6 +670,15 @@
         </table>
       </div>
 
+      <!-- Labour Productivity — Brewery (pulled from dashboard) -->
+      <div style="padding:4px 20px 0;">
+        <div style="font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#6B7080;margin-bottom:4px;margin-top:12px;">Labour Productivity &#8212; Brewery</div>
+      </div>
+      <div class="labour-report-strip" style="grid-template-columns:1fr 1fr 1fr;">
+        <div class="lrs-item"><div class="lrs-label">Brewery Wages MTD</div><div class="lrs-value" id="lrs-combined-wages">&#8212;</div><div class="lrs-sub">Total wages incl. super</div></div>
+        <div class="lrs-item"><div class="lrs-label">Brewery Revenue MTD</div><div class="lrs-value" id="lrs-brew-rev-report">&#8212;</div><div class="lrs-sub">Keg + Pack + Other actuals</div></div>
+        <div class="lrs-item"><div class="lrs-label">Productivity Ratio</div><div class="lrs-value" id="lrs-brew-ratio">&#8212;</div><div class="lrs-sub">Wages &#247; Revenue (target: <span id="lrs-brew-target">20</span>%)</div></div>
+      </div>
       <div class="narrative-block"><div class="narrative-label">Revenue Commentary</div><textarea class="narrative-textarea" id="n-trading-summary" rows="4" placeholder="Overall trading narrative, key drivers, market conditions..." oninput="markUnsaved()"></textarea></div>
     </div>
   </div>
@@ -709,14 +713,7 @@
     <div class="report-section-header"><div class="report-section-num">4</div><span class="report-section-title">Brewery &amp; Wholesale Performance</span></div>
     <div class="report-section-body">
       <div class="narrative-block"><div class="narrative-label">Production &amp; Operations</div><textarea class="narrative-textarea" id="n-ops" rows="4" placeholder="Brew schedule, production volumes, quality, equipment, compliance..." oninput="markUnsaved()"></textarea></div>
-      <div class="narrative-block"><div class="narrative-label">Labour Productivity</div>
-        <div class="labour-report-strip" style="margin-top:8px;">
-          <div class="lrs-item"><div class="lrs-label">Restaurant Productivity</div><div class="lrs-value" id="lrs-rest-ratio">&#8212;</div><div class="lrs-sub">Wages &#247; Revenue (target: <span id="lrs-rest-target">30</span>%)</div></div>
-          <div class="lrs-item"><div class="lrs-label">Brewery Productivity</div><div class="lrs-value" id="lrs-brew-ratio">&#8212;</div><div class="lrs-sub">Wages &#247; Revenue (target: <span id="lrs-brew-target">20</span>%)</div></div>
-          <div class="lrs-item"><div class="lrs-label">Combined Wages MTD</div><div class="lrs-value" id="lrs-combined-wages">&#8212;</div><div class="lrs-sub">Restaurant + Brewery</div></div>
-          <div class="lrs-item"><div class="lrs-label">Combined Productivity</div><div class="lrs-value" id="lrs-combined-ratio">&#8212;</div><div class="lrs-sub">Total wages &#247; Total revenue</div></div>
-        </div>
-      </div>
+
 
     </div>
   </div>
@@ -1288,8 +1285,9 @@ function syncLabourReport() {
   var tW=rW+bW,tR=rR+bR,tRatio=tR>0?(tW/tR)*100:null;
   setText('lrs-rest-ratio',rRatio!==null?rRatio.toFixed(1)+'%':'—');
   setText('lrs-brew-ratio',bRatio!==null?bRatio.toFixed(1)+'%':'—');
-  setText('lrs-combined-wages',fa(tW));
+  setText('lrs-combined-wages',fa(bW));
   setText('lrs-combined-ratio',tRatio!==null?tRatio.toFixed(1)+'%':'—');
+  setText('lrs-brew-rev-report',fa(bR));
   setText('lrs-rest-target',rT); setText('lrs-brew-target',bT);
   colourRatio('lrs-rest-ratio',rRatio,rT); colourRatio('lrs-brew-ratio',bRatio,bT); colourRatio('lrs-combined-ratio',tRatio,(rT+bT)/2);
 }
