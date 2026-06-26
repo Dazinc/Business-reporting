@@ -269,7 +269,7 @@
 <div class="tab-nav">
   <div class="tab-nav-left">
     <button class="tab-btn active" onclick="switchTab('dashboard')">Operations Dashboard</button>
-    <button class="tab-btn" onclick="switchTab('report')">Board Report</button>
+    <button class="tab-btn" onclick="switchTab('report')">Sales Report</button>
   </div>
   <div class="tab-nav-right">
     <div class="sync-left" style="display:flex;align-items:center;gap:8px;">
@@ -625,7 +625,7 @@
 
   <div class="report-cover">
     <div class="report-cover-header">
-      <div class="report-cover-title">Property Name &#8212; Sales &amp; Commercial Report</div>
+      <div class="report-cover-title">Property Name &#8212; Sales Report</div>
       <div class="report-cover-sub">Confidential &#8212; Board use only</div>
     </div>
     <div class="report-cover-meta">
@@ -700,27 +700,18 @@
 
   <!-- SECTION 3: CHANNEL, DISTRIBUTION & MARKETING -->
   <div class="report-section">
-    <div class="report-section-header"><div class="report-section-num">3</div><span class="report-section-title">Channel, Distribution &amp; Marketing</span></div>
+    <div class="report-section-header"><div class="report-section-num">3</div><span class="report-section-title">Brewery, Channel &amp; Commercial Update</span></div>
     <div class="report-section-body">
-      <div class="narrative-block"><div class="narrative-label">Channel &amp; Distribution Update</div><textarea class="narrative-textarea" id="n-brewery" rows="4" placeholder="ALM, Paramount, Direct, Coles, Endeavour — volume movements, new listings, ranging changes, delistings..." oninput="markUnsaved()"></textarea></div>
+      <div class="narrative-block"><div class="narrative-label">Channel &amp; Distribution</div><textarea class="narrative-textarea" id="n-brewery" rows="4" placeholder="ALM, Paramount, Direct, Coles, Endeavour — volume movements, new listings, ranging changes, delistings..." oninput="markUnsaved()"></textarea></div>
       <div class="narrative-block"><div class="narrative-label">Activations &amp; Promotional Calendar</div><textarea class="narrative-textarea" id="n-brewery-sales" rows="3" placeholder="Current activations, upcoming promos, ALM promo weeks, event pipeline, venue partnerships..." oninput="markUnsaved()"></textarea></div>
+      <div class="narrative-block"><div class="narrative-label">Production &amp; Operations</div><textarea class="narrative-textarea" id="n-ops" rows="3" placeholder="Brew schedule, production volumes, quality, equipment, compliance..." oninput="markUnsaved()"></textarea></div>
       <div class="narrative-block"><div class="narrative-label">Key Actions</div><textarea class="narrative-textarea" id="n-brewery-actions" rows="3" placeholder="&#8226; Action 1&#10;&#8226; Action 2" oninput="markUnsaved()"></textarea></div>
     </div>
   </div>
 
-  <!-- SECTION 4: BREWERY PERFORMANCE -->
+  <!-- SECTION 4: 3-MONTH ACTION PLAN -->
   <div class="report-section">
-    <div class="report-section-header"><div class="report-section-num">4</div><span class="report-section-title">Brewery &amp; Wholesale Performance</span></div>
-    <div class="report-section-body">
-      <div class="narrative-block"><div class="narrative-label">Production &amp; Operations</div><textarea class="narrative-textarea" id="n-ops" rows="4" placeholder="Brew schedule, production volumes, quality, equipment, compliance..." oninput="markUnsaved()"></textarea></div>
-
-
-    </div>
-  </div>
-
-  <!-- SECTION 5: 3-MONTH ACTION PLAN -->
-  <div class="report-section">
-    <div class="report-section-header"><div class="report-section-num">5</div><span class="report-section-title">3-Month Action Plan &#8212; Wholesale &amp; Sales</span></div>
+    <div class="report-section-header"><div class="report-section-num">4</div><span class="report-section-title">3-Month Action Plan &#8212; Wholesale &amp; Sales</span></div>
     <div class="report-section-body">
       <div style="padding:12px 20px 8px;">
         <table class="action-plan-table"><thead><tr><th style="width:5%">#</th><th style="width:28%">Action</th><th style="width:30%">Process / Detail</th><th style="width:18%">Timing</th><th style="width:19%">Responsibility</th></tr></thead>
