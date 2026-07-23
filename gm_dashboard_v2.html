@@ -5,274 +5,235 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GM Operations Dashboard</title>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { font-size: 14px; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #F0F2F5; color: #1A1D23; min-height: 100vh; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 14px; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #F0F2F5; color: #1A1D23; min-height: 100vh; }
 
-  /* ---- HEADER ---- */
-  .header { background: #12151C; color: #fff; padding: 18px 32px; display: flex; align-items: center; justify-content: space-between; border-bottom: 3px solid #C8A84B; }
-  .header-left { display: flex; flex-direction: column; gap: 4px; }
-  .header-property { font-size: 1.25rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #C8A84B; }
-  .header-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-  .header-sub { font-size: 0.78rem; color: #8A8F9C; letter-spacing: 0.06em; text-transform: uppercase; }
-  .month-selector { background: #2A2F3E; border: 1px solid #3A3F4E; color: #C8A84B; font-size: 0.75rem; font-weight: 700; padding: 3px 10px; border-radius: 3px; font-family: inherit; cursor: pointer; outline: none; }
-  .month-selector:focus { border-color: #C8A84B; }
-  .header-right { display: flex; align-items: center; gap: 12px; }
-  .live-date { font-size: 0.78rem; color: #8A8F9C; text-align: right; line-height: 1.6; }
-  .print-btn { background: #C8A84B; color: #12151C; border: none; padding: 7px 16px; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer; border-radius: 3px; }
-  .print-btn:hover { background: #dfc06a; }
+/* ---- HEADER ---- */
+.header { background: #12151C; color: #fff; padding: 18px 32px; display: flex; align-items: center; justify-content: space-between; border-bottom: 3px solid #C8A84B; }
+.header-left { display: flex; flex-direction: column; gap: 4px; }
+.header-property { font-size: 1.25rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #C8A84B; }
+.header-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.header-sub { font-size: 0.78rem; color: #8A8F9C; letter-spacing: 0.06em; text-transform: uppercase; }
+.month-selector { background: #2A2F3E; border: 1px solid #3A3F4E; color: #C8A84B; font-size: 0.75rem; font-weight: 700; padding: 3px 10px; border-radius: 3px; font-family: inherit; cursor: pointer; outline: none; }
+.header-right { display: flex; align-items: center; gap: 12px; }
+.live-date { font-size: 0.78rem; color: #8A8F9C; text-align: right; line-height: 1.6; }
+.print-btn { background: #C8A84B; color: #12151C; border: none; padding: 7px 16px; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer; border-radius: 3px; }
+.unsaved-badge { display: none; background: #C8A84B; color: #12151C; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 2px 8px; border-radius: 2px; }
+.unsaved-badge.visible { display: inline-block; }
 
-  /* ---- SYNC BAR ---- */
-  .sync-bar { background: #1E222D; padding: 10px 32px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-  .sync-left { display: flex; align-items: center; gap: 10px; }
-  .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #8A8F9C; flex-shrink: 0; transition: background 0.3s; }
-  .sync-dot.syncing { background: #C8A84B; animation: blink 1s infinite; }
-  .sync-dot.ok      { background: #1A7A4A; }
-  .sync-dot.error   { background: #C0392B; }
-  .sync-dot.warn    { background: #C8A84B; }
-  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-  .sync-msg { font-size: 0.72rem; color: #8A8F9C; }
-  .sync-msg.ok    { color: #1A7A4A; }
-  .sync-msg.error { color: #C0392B; }
-  .sync-msg.warn  { color: #C8A84B; }
-  .sync-right { display: flex; gap: 8px; align-items: center; }
-  .sync-btn { background: transparent; border: 1px solid #3A3F4E; color: #8A8F9C; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 5px 14px; cursor: pointer; border-radius: 3px; font-family: inherit; transition: all 0.15s; }
-  .sync-btn:hover { border-color: #C8A84B; color: #C8A84B; }
-  .sync-btn.primary { background: #C8A84B; border-color: #C8A84B; color: #12151C; }
-  .sync-btn.primary:hover { background: #dfc06a; }
-  .sync-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+/* ---- TAB NAV ---- */
+.tab-nav { background: #1E222D; padding: 0 32px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+.tab-nav-left { display: flex; }
+.tab-btn { background: transparent; border: none; border-bottom: 3px solid transparent; color: #8A8F9C; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 12px 20px; cursor: pointer; font-family: inherit; }
+.tab-btn:hover { color: #C8A84B; }
+.tab-btn.active { color: #C8A84B; border-bottom-color: #C8A84B; }
+.tab-nav-right { display: flex; gap: 8px; align-items: center; padding: 8px 0; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
 
-  /* ---- UNSAVED INDICATOR ---- */
-  .unsaved-badge { display: none; background: #C8A84B; color: #12151C; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 2px 8px; border-radius: 2px; }
-  .unsaved-badge.visible { display: inline-block; }
+/* ---- SYNC ---- */
+.sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #8A8F9C; flex-shrink: 0; transition: background 0.3s; }
+.sync-dot.syncing { background: #C8A84B; animation: blink 1s infinite; }
+.sync-dot.ok      { background: #1A7A4A; }
+.sync-dot.error   { background: #C0392B; }
+.sync-dot.warn    { background: #C8A84B; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.sync-msg { font-size: 0.72rem; color: #8A8F9C; }
+.sync-msg.ok { color: #1A7A4A; } .sync-msg.error { color: #C0392B; } .sync-msg.warn { color: #C8A84B; }
+.sync-btn { background: transparent; border: 1px solid #3A3F4E; color: #8A8F9C; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 5px 14px; cursor: pointer; border-radius: 3px; font-family: inherit; }
+.sync-btn:hover { border-color: #C8A84B; color: #C8A84B; }
+.sync-btn.primary { background: #C8A84B; border-color: #C8A84B; color: #12151C; }
+.sync-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-  /* ---- MAIN ---- */
-  .main { padding: 24px 32px; display: flex; flex-direction: column; gap: 20px; }
+/* ---- MAIN / CARDS ---- */
+.main { padding: 24px 32px; display: flex; flex-direction: column; gap: 20px; }
+.rollover-banner { background: #FEF9ED; border: 1px solid #C8A84B; border-radius: 5px; padding: 14px 20px; display: none; align-items: center; gap: 16px; }
+.rollover-banner.visible { display: flex; }
+.rollover-banner-text { flex: 1; font-size: 0.8rem; color: #6B7080; line-height: 1.6; }
+.rollover-btn { background: #1E222D; border: none; color: #C8A84B; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 6px 14px; cursor: pointer; border-radius: 3px; white-space: nowrap; font-family: inherit; }
+.card { background: #fff; border-radius: 5px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); overflow: hidden; }
+.card-header { background: #1E222D; color: #fff; padding: 12px 20px; display: flex; align-items: baseline; gap: 12px; }
+.card-title { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+.card-badge { background: #C8A84B; color: #12151C; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 8px; border-radius: 2px; }
 
-  /* ---- MONTH ROLLOVER BANNER ---- */
-  .rollover-banner { background: #FEF9ED; border: 1px solid #C8A84B; border-radius: 5px; padding: 14px 20px; display: none; align-items: center; gap: 16px; }
-  .rollover-banner.visible { display: flex; }
-  .rollover-banner-text { flex: 1; font-size: 0.8rem; color: #6B7080; line-height: 1.6; }
-  .rollover-banner-text strong { color: #1A1D23; }
-  .rollover-btn { background: #1E222D; border: none; color: #C8A84B; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 6px 14px; cursor: pointer; border-radius: 3px; white-space: nowrap; font-family: inherit; }
+/* ---- TABLES ---- */
+table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+thead th { background: #F7F8FA; color: #6B7080; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 9px 16px; text-align: right; border-bottom: 1px solid #E5E8EE; }
+thead th:first-child { text-align: left; }
+tbody tr { border-bottom: 1px solid #F0F2F5; }
+tbody tr:last-child { border-bottom: none; }
+tbody td { padding: 10px 16px; text-align: right; vertical-align: middle; color: #2B2F3A; }
+tbody td:first-child { text-align: left; font-weight: 600; color: #1A1D23; }
+.cell-input { background: transparent; border: none; text-align: right; font-size: 0.85rem; color: #2B2F3A; width: 100%; min-width: 70px; outline: none; font-family: inherit; }
+.cell-input:focus { background: #FFFBEF; border-bottom: 1px solid #C8A84B; }
+.subsection-row td { background: #F7F8FA; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #6B7080; padding: 6px 16px; border-top: 1px solid #E5E8EE; }
+.total-row td { background: #1E222D; color: #fff; font-weight: 700; padding: 10px 16px; }
 
-  /* ---- CARDS ---- */
-  .card { background: #fff; border-radius: 5px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); overflow: hidden; }
-  .card-header { background: #1E222D; color: #fff; padding: 12px 20px; display: flex; align-items: baseline; gap: 12px; }
-  .card-title { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
-  .card-badge { background: #C8A84B; color: #12151C; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 8px; border-radius: 2px; }
-  .card-body { padding: 0; }
+/* ---- VARIANCE ---- */
+.var-positive { color: #1A7A4A; font-weight: 700; }
+.var-negative { color: #C0392B; font-weight: 700; }
+.var-neutral  { color: #B07D00; font-weight: 700; }
 
-  /* ---- TABLES ---- */
-  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-  thead th { background: #F7F8FA; color: #6B7080; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 9px 16px; text-align: right; border-bottom: 1px solid #E5E8EE; }
-  thead th:first-child { text-align: left; }
-  tbody tr { border-bottom: 1px solid #F0F2F5; }
-  tbody tr:last-child { border-bottom: none; }
-  tbody tr:hover { background: #FAFBFD; }
-  tbody td { padding: 10px 16px; text-align: right; vertical-align: middle; color: #2B2F3A; }
-  tbody td:first-child { text-align: left; font-weight: 600; color: #1A1D23; }
-  .cell-input { background: transparent; border: none; text-align: right; font-size: 0.85rem; color: #2B2F3A; width: 100%; min-width: 80px; outline: none; font-family: inherit; }
-  .cell-input:focus { background: #FFFBEF; border-bottom: 1px solid #C8A84B; }
-  .subsection-row td { background: #F7F8FA; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #6B7080; padding: 6px 16px; border-top: 1px solid #E5E8EE; }
-  .total-row td { background: #1E222D; color: #fff; font-weight: 700; padding: 10px 16px; }
+/* ---- KPI STRIP ---- */
+.kpi-strip { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid #E5E8EE; }
+.kpi-item { padding: 16px 20px; border-right: 1px solid #E5E8EE; display: flex; flex-direction: column; gap: 4px; }
+.kpi-item:last-child { border-right: none; }
+.kpi-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8F9C; }
+.kpi-sub { font-size: 0.72rem; color: #8A8F9C; }
+.kpi-note { font-size: 0.68rem; color: #B07D00; margin-top: 2px; font-style: italic; }
+.kpi-input { font-size: 1.4rem; font-weight: 700; color: #1A1D23; border: none; outline: none; width: 100%; background: transparent; font-family: inherit; }
+.kpi-input:focus { border-bottom: 1px solid #C8A84B; }
 
-  /* ---- VARIANCE ---- */
-  .var-positive { color: #1A7A4A; font-weight: 700; }
-  .var-negative { color: #C0392B; font-weight: 700; }
-  .var-neutral  { color: #B07D00; font-weight: 700; }
+/* ---- LABOUR ---- */
+.labour-strip { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid #E5E8EE; }
+.labour-item { padding: 14px 20px; border-right: 1px solid #E5E8EE; display: flex; flex-direction: column; gap: 4px; }
+.labour-item:last-child { border-right: none; }
+.labour-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8F9C; }
+.labour-value { font-size: 1.3rem; font-weight: 700; color: #1A1D23; line-height: 1.1; }
+.labour-sub { font-size: 0.72rem; color: #8A8F9C; }
+.labour-input { font-size: 1.2rem; font-weight: 700; color: #1A1D23; border: none; outline: none; background: transparent; font-family: inherit; width: 100%; }
+.labour-input:focus { border-bottom: 1px solid #C8A84B; }
+.ratio-good { color: #1A7A4A; } .ratio-warn { color: #B07D00; } .ratio-bad { color: #C0392B; }
 
-  /* ---- KPI STRIP ---- */
-  .rec-note { font-size: 0.68rem; color: #8A8F9C; font-weight: 400; font-style: italic; margin-left: 6px; }
-  .kpi-strip { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid #E5E8EE; }
-  .kpi-item { padding: 16px 20px; border-right: 1px solid #E5E8EE; display: flex; flex-direction: column; gap: 4px; }
-  .kpi-item:last-child { border-right: none; }
-  .kpi-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8F9C; }
-  .kpi-value { font-size: 1.5rem; font-weight: 700; color: #1A1D23; line-height: 1; }
-  .kpi-sub   { font-size: 0.72rem; color: #8A8F9C; }
-  .kpi-input { font-size: 1.4rem; font-weight: 700; color: #1A1D23; border: none; outline: none; width: 100%; background: transparent; font-family: inherit; }
-  .kpi-input:focus { border-bottom: 1px solid #C8A84B; }
-  .kpi-note { font-size: 0.68rem; color: #B07D00; margin-top: 2px; font-style: italic; }
+/* ---- EV/PV ---- */
+.ev-grid { display: grid; grid-template-columns: 1fr 1fr; }
+.ev-inputs { padding: 16px 20px; border-right: 1px solid #E5E8EE; display: flex; flex-direction: column; gap: 12px; }
+.ev-inputs-title { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8F9C; }
+.ev-input-row { display: flex; align-items: center; gap: 10px; }
+.ev-input-label { font-size: 0.78rem; color: #6B7080; min-width: 160px; }
+.ev-input-field { border: 1px solid #E5E8EE; border-radius: 3px; padding: 5px 10px; font-size: 0.85rem; font-family: inherit; color: #1A1D23; width: 80px; text-align: right; outline: none; background: #FAFBFD; }
+.ev-input-field:focus { border-color: #C8A84B; background: #FFFBEF; }
+.ev-results { padding: 16px 20px; display: grid; grid-template-columns: 1fr 1fr; }
+.ev-kpi { padding: 10px 16px; border-right: 1px solid #F0F2F5; border-bottom: 1px solid #F0F2F5; display: flex; flex-direction: column; gap: 3px; }
+.ev-kpi:nth-child(even) { border-right: none; }
+.ev-kpi:nth-last-child(-n+2) { border-bottom: none; }
+.ev-kpi-label { font-size: 0.63rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8F9C; }
+.ev-kpi-value { font-size: 1.25rem; font-weight: 700; color: #1A1D23; line-height: 1.1; }
+.ev-kpi-sub { font-size: 0.68rem; color: #8A8F9C; line-height: 1.4; }
+.eom-btn { background: #1E222D; border: none; color: #C8A84B; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 5px 12px; cursor: pointer; border-radius: 3px; font-family: inherit; }
 
-  /* ---- EV/PV ---- */
-  .ev-grid { display: grid; grid-template-columns: 1fr 1fr; }
-  .ev-inputs { padding: 16px 20px; border-right: 1px solid #E5E8EE; display: flex; flex-direction: column; gap: 12px; }
-  .ev-inputs-title { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8F9C; }
-  .ev-input-row { display: flex; align-items: center; gap: 10px; }
-  .ev-input-label { font-size: 0.78rem; color: #6B7080; min-width: 160px; }
-  .ev-input-field { border: 1px solid #E5E8EE; border-radius: 3px; padding: 5px 10px; font-size: 0.85rem; font-family: inherit; color: #1A1D23; width: 80px; text-align: right; outline: none; background: #FAFBFD; }
-  .ev-input-field:focus { border-color: #C8A84B; background: #FFFBEF; }
-  .ev-results { padding: 16px 20px; display: grid; grid-template-columns: 1fr 1fr; }
-  .ev-kpi { padding: 10px 16px; border-right: 1px solid #F0F2F5; border-bottom: 1px solid #F0F2F5; display: flex; flex-direction: column; gap: 3px; }
-  .ev-kpi:nth-child(even)      { border-right: none; }
-  .ev-kpi:nth-last-child(-n+2) { border-bottom: none; }
-  .ev-kpi-label { font-size: 0.63rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8F9C; }
-  .ev-kpi-value { font-size: 1.25rem; font-weight: 700; color: #1A1D23; line-height: 1.1; }
-  .ev-kpi-sub   { font-size: 0.68rem; color: #8A8F9C; line-height: 1.4; }
-  .ev-scope-toggle { display: flex; gap: 6px; }
-  .ev-scope-btn { background: transparent; border: 1px solid #E5E8EE; color: #8A8F9C; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 3px 10px; cursor: pointer; border-radius: 3px; font-family: inherit; }
-  .ev-scope-btn.active { background: #1E222D; border-color: #1E222D; color: #C8A84B; }
+/* ---- MEETING ---- */
+.meeting-bar { background: #F7F8FA; border-bottom: 1px solid #E5E8EE; padding: 10px 20px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.meeting-bar-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8F9C; }
+.meeting-select { border: 1px solid #E5E8EE; border-radius: 3px; padding: 5px 10px; font-size: 0.78rem; font-family: inherit; color: #1A1D23; background: #fff; outline: none; cursor: pointer; min-width: 200px; }
+.meeting-bar-btn { background: transparent; border: 1px solid #3A3F4E; color: #6B7080; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 5px 12px; cursor: pointer; border-radius: 3px; font-family: inherit; }
+.meeting-bar-btn:hover { border-color: #C8A84B; color: #C8A84B; }
+.meeting-bar-btn.new-mtg { background: #1E222D; border-color: #1E222D; color: #C8A84B; }
+.meeting-viewing-badge { font-size: 0.68rem; color: #B07D00; font-style: italic; background: #FEF9ED; padding: 3px 8px; border-radius: 3px; display: none; }
+.meeting-viewing-badge.visible { display: inline-block; }
+.agenda-meta { display: grid; grid-template-columns: repeat(3, 1fr); border-bottom: 1px solid #E5E8EE; }
+.agenda-meta-item { padding: 14px 20px; border-right: 1px solid #E5E8EE; display: flex; flex-direction: column; gap: 4px; }
+.agenda-meta-item:last-child { border-right: none; }
+.meta-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8F9C; }
+.meta-input { border: none; outline: none; font-size: 0.85rem; color: #1A1D23; font-weight: 600; background: transparent; font-family: inherit; width: 100%; }
+.meta-input:focus { border-bottom: 1px solid #C8A84B; }
+.agenda-items { padding: 4px 0; }
+.agenda-item { display: flex; align-items: flex-start; gap: 12px; padding: 10px 20px; border-bottom: 1px solid #F0F2F5; }
+.agenda-item:last-child { border-bottom: none; }
+.agenda-num { min-width: 24px; height: 24px; background: #1E222D; color: #C8A84B; font-size: 0.7rem; font-weight: 700; display: flex; align-items: center; justify-content: center; border-radius: 3px; margin-top: 1px; }
+.agenda-text { border: none; outline: none; font-size: 0.85rem; color: #2B2F3A; background: transparent; font-family: inherit; width: 100%; line-height: 1.5; }
+.agenda-text:focus { border-bottom: 1px solid #C8A84B; }
+.action-section { padding: 16px 20px 8px; }
+.action-title { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #1A1D23; margin-bottom: 10px; }
+.action-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+.action-table th { background: #F7F8FA; color: #6B7080; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 8px 12px; text-align: left; border: 1px solid #E5E8EE; }
+.action-table td { border: 1px solid #E5E8EE; padding: 0; vertical-align: middle; }
+.action-input { border: none; outline: none; font-size: 0.82rem; color: #2B2F3A; background: transparent; font-family: inherit; width: 100%; padding: 8px 12px; }
+.action-input:focus { background: #FFFBEF; }
+.status-select { border: none; outline: none; font-size: 0.78rem; color: #2B2F3A; background: transparent; font-family: inherit; width: 100%; padding: 8px 12px; cursor: pointer; appearance: none; -webkit-appearance: none; }
+.add-row-btn { margin-top: 8px; margin-bottom: 16px; background: transparent; border: 1px dashed #C8A84B; color: #B07D00; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; padding: 6px 16px; cursor: pointer; border-radius: 3px; font-family: inherit; }
+.add-row-btn:hover { background: #FEF9ED; }
 
-  /* ---- AGENDA ---- */
-  .agenda-meta { display: grid; grid-template-columns: repeat(3, 1fr); border-bottom: 1px solid #E5E8EE; }
-  .agenda-meta-item { padding: 14px 20px; border-right: 1px solid #E5E8EE; display: flex; flex-direction: column; gap: 4px; }
-  .agenda-meta-item:last-child { border-right: none; }
-  .meta-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8F9C; }
-  .meta-input { border: none; outline: none; font-size: 0.85rem; color: #1A1D23; font-weight: 600; background: transparent; font-family: inherit; width: 100%; }
-  .meta-input:focus { border-bottom: 1px solid #C8A84B; }
-  .agenda-items { padding: 4px 0; }
-  .agenda-item { display: flex; align-items: flex-start; gap: 12px; padding: 10px 20px; border-bottom: 1px solid #F0F2F5; }
-  .agenda-item:last-child { border-bottom: none; }
-  .agenda-num { min-width: 24px; height: 24px; background: #1E222D; color: #C8A84B; font-size: 0.7rem; font-weight: 700; display: flex; align-items: center; justify-content: center; border-radius: 3px; margin-top: 1px; }
-  .agenda-text { border: none; outline: none; font-size: 0.85rem; color: #2B2F3A; background: transparent; font-family: inherit; width: 100%; line-height: 1.5; }
-  .agenda-text:focus { border-bottom: 1px solid #C8A84B; }
+/* ---- REPORT ---- */
+.report-main { padding: 32px; max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
+.report-cover { background: #fff; border-radius: 5px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); overflow: hidden; }
+.report-cover-header { background: #12151C; padding: 24px 32px; border-bottom: 3px solid #C8A84B; }
+.report-cover-title { font-size: 1.4rem; font-weight: 700; color: #C8A84B; letter-spacing: 0.04em; text-transform: uppercase; }
+.report-cover-sub { font-size: 0.85rem; color: #8A8F9C; margin-top: 4px; }
+.report-cover-meta { display: grid; grid-template-columns: repeat(4, 1fr); }
+.report-cover-meta-item { padding: 14px 20px; border-right: 1px solid #E5E8EE; display: flex; flex-direction: column; gap: 3px; }
+.report-cover-meta-item:last-child { border-right: none; }
+.rcm-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8F9C; }
+.rcm-input { border: none; outline: none; font-size: 0.9rem; color: #1A1D23; font-weight: 600; background: transparent; font-family: inherit; width: 100%; }
+.rcm-input:focus { border-bottom: 1px solid #C8A84B; }
+.report-section { background: #fff; border-radius: 5px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); overflow: hidden; }
+.report-section-header { background: #1E222D; color: #fff; padding: 10px 20px; display: flex; align-items: center; gap: 10px; }
+.report-section-num { background: #C8A84B; color: #12151C; font-size: 0.7rem; font-weight: 700; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.report-section-title { font-size: 0.82rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; }
+.narrative-block { padding: 16px 20px; border-bottom: 1px solid #F0F2F5; }
+.narrative-block:last-child { border-bottom: none; }
+.narrative-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8F9C; margin-bottom: 6px; }
+.narrative-textarea { border: none; outline: none; font-size: 0.85rem; color: #2B2F3A; background: transparent; font-family: inherit; width: 100%; min-height: 70px; resize: vertical; line-height: 1.7; }
+.narrative-textarea:focus { background: #FFFBEF; border-radius: 3px; padding: 4px; }
+.report-table-wrap { padding: 0; overflow-x: auto; }
+.report-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+.report-table thead th { background: #F7F8FA; color: #6B7080; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; padding: 8px 14px; text-align: right; border-bottom: 1px solid #E5E8EE; }
+.report-table thead th:first-child { text-align: left; }
+.report-table tbody td { padding: 9px 14px; text-align: right; border-bottom: 1px solid #F0F2F5; color: #2B2F3A; }
+.report-table tbody td:first-child { text-align: left; font-weight: 600; color: #1A1D23; }
+.report-table tbody tr:last-child td { border-bottom: none; }
+.rt-total td { background: #1E222D; color: #fff; font-weight: 700; }
+.rt-input { background: transparent; border: none; text-align: right; font-size: 0.82rem; color: #2B2F3A; width: 100%; min-width: 70px; outline: none; font-family: inherit; }
+.rt-input:focus { background: #FFFBEF; border-bottom: 1px solid #C8A84B; }
+.labour-report-strip { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid #E5E8EE; }
+.lrs-item { padding: 14px 20px; border-right: 1px solid #E5E8EE; display: flex; flex-direction: column; gap: 3px; }
+.lrs-item:last-child { border-right: none; }
+.lrs-label { font-size: 0.63rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8F9C; }
+.lrs-value { font-size: 1.2rem; font-weight: 700; color: #1A1D23; }
+.lrs-sub { font-size: 0.68rem; color: #8A8F9C; }
+.action-plan-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+.action-plan-table th { background: #F7F8FA; color: #6B7080; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 8px 12px; text-align: left; border: 1px solid #E5E8EE; }
+.action-plan-table td { border: 1px solid #E5E8EE; padding: 0; vertical-align: top; }
+.ap-input { border: none; outline: none; font-size: 0.82rem; color: #2B2F3A; background: transparent; font-family: inherit; width: 100%; padding: 8px 12px; min-height: 36px; resize: none; }
+.ap-input:focus { background: #FFFBEF; }
 
-  /* ---- ACTION ITEMS ---- */
-  .action-section { padding: 16px 20px 8px; }
-  .action-title { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #1A1D23; margin-bottom: 10px; }
-  .action-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
-  .action-table th { background: #F7F8FA; color: #6B7080; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 8px 12px; text-align: left; border: 1px solid #E5E8EE; }
-  .action-table td { border: 1px solid #E5E8EE; padding: 0; vertical-align: middle; }
-  .action-input { border: none; outline: none; font-size: 0.82rem; color: #2B2F3A; background: transparent; font-family: inherit; width: 100%; padding: 8px 12px; }
-  .action-input:focus { background: #FFFBEF; }
-  .status-select { border: none; outline: none; font-size: 0.78rem; color: #2B2F3A; background: transparent; font-family: inherit; width: 100%; padding: 8px 12px; cursor: pointer; appearance: none; -webkit-appearance: none; }
-  .add-row-btn { margin-top: 8px; margin-bottom: 16px; background: transparent; border: 1px dashed #C8A84B; color: #B07D00; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; padding: 6px 16px; cursor: pointer; border-radius: 3px; font-family: inherit; }
-  .add-row-btn:hover { background: #FEF9ED; }
+/* ---- FOOTER ---- */
+.footer { text-align: center; padding: 16px; font-size: 0.68rem; color: #B0B5C0; letter-spacing: 0.04em; }
+.footer button { background: none; border: none; color: #B0B5C0; font-size: 0.68rem; cursor: pointer; text-decoration: underline; font-family: inherit; padding: 0; }
 
-  /* ---- VALIDATION ---- */
-  .cell-input.invalid { border-bottom: 1px solid #C0392B !important; background: #FFF5F5 !important; }
-
-
-  /* ---- MEETING SELECTOR BAR ---- */
-  .meeting-bar { background: #F7F8FA; border-bottom: 1px solid #E5E8EE; padding: 10px 20px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-  .meeting-bar-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8F9C; }
-  .meeting-select { border: 1px solid #E5E8EE; border-radius: 3px; padding: 5px 10px; font-size: 0.78rem; font-family: inherit; color: #1A1D23; background: #fff; outline: none; cursor: pointer; min-width: 200px; }
-  .meeting-select:focus { border-color: #C8A84B; }
-  .meeting-bar-btn { background: transparent; border: 1px solid #3A3F4E; color: #6B7080; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 5px 12px; cursor: pointer; border-radius: 3px; font-family: inherit; }
-  .meeting-bar-btn:hover { border-color: #C8A84B; color: #C8A84B; }
-  .meeting-bar-btn.new-mtg { background: #1E222D; border-color: #1E222D; color: #C8A84B; }
-  .meeting-viewing-badge { font-size: 0.68rem; color: #B07D00; font-style: italic; background: #FEF9ED; padding: 3px 8px; border-radius: 3px; display: none; }
-  .meeting-viewing-badge.visible { display: inline-block; }
-
-  /* ---- LABOUR PRODUCTIVITY ---- */
-  .labour-strip { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid #E5E8EE; }
-  .labour-item { padding: 14px 20px; border-right: 1px solid #E5E8EE; display: flex; flex-direction: column; gap: 4px; }
-  .labour-item:last-child { border-right: none; }
-  .labour-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8F9C; }
-  .labour-value { font-size: 1.3rem; font-weight: 700; color: #1A1D23; line-height: 1.1; }
-  .labour-sub   { font-size: 0.72rem; color: #8A8F9C; }
-  .labour-input { font-size: 1.2rem; font-weight: 700; color: #1A1D23; border: none; outline: none; background: transparent; font-family: inherit; width: 100%; }
-  .labour-input:focus { border-bottom: 1px solid #C8A84B; }
-  .ratio-good { color: #1A7A4A; }
-  .ratio-warn { color: #B07D00; }
-  .ratio-bad  { color: #C0392B; }
-
-  /* ---- TAB NAV ---- */
-  .tab-nav { background: #1E222D; padding: 0 32px; display: flex; align-items: center; justify-content: space-between; }
-  .tab-nav-left { display: flex; }
-  .tab-btn { background: transparent; border: none; border-bottom: 3px solid transparent; color: #8A8F9C; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 12px 20px; cursor: pointer; font-family: inherit; }
-  .tab-btn:hover { color: #C8A84B; }
-  .tab-btn.active { color: #C8A84B; border-bottom-color: #C8A84B; }
-  .tab-nav-right { display: flex; gap: 8px; align-items: center; padding: 8px 0; }
-  .tab-panel { display: none; }
-  .tab-panel.active { display: block; }
-
-  /* ---- BOARD REPORT ---- */
-  .report-main { padding: 32px; max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
-  .report-cover { background: #fff; border-radius: 5px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); overflow: hidden; }
-  .report-cover-header { background: #12151C; padding: 24px 32px; border-bottom: 3px solid #C8A84B; }
-  .report-cover-title { font-size: 1.4rem; font-weight: 700; color: #C8A84B; letter-spacing: 0.04em; text-transform: uppercase; }
-  .report-cover-sub { font-size: 0.85rem; color: #8A8F9C; margin-top: 4px; }
-  .report-cover-meta { display: grid; grid-template-columns: repeat(4, 1fr); }
-  .report-cover-meta-item { padding: 14px 20px; border-right: 1px solid #E5E8EE; display: flex; flex-direction: column; gap: 3px; }
-  .report-cover-meta-item:last-child { border-right: none; }
-  .rcm-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8F9C; }
-  .rcm-input { border: none; outline: none; font-size: 0.9rem; color: #1A1D23; font-weight: 600; background: transparent; font-family: inherit; width: 100%; }
-  .rcm-input:focus { border-bottom: 1px solid #C8A84B; }
-  .mission-critical { background: #FEF9ED; border: 1px solid #C8A84B; border-radius: 5px; padding: 16px 20px; }
-  .mission-critical-title { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #B07D00; margin-bottom: 8px; }
-  .mission-textarea { border: none; outline: none; font-size: 0.85rem; color: #2B2F3A; background: transparent; font-family: inherit; width: 100%; min-height: 80px; resize: vertical; line-height: 1.7; }
-  .report-section { background: #fff; border-radius: 5px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); overflow: hidden; }
-  .report-section-header { background: #1E222D; color: #fff; padding: 10px 20px; display: flex; align-items: center; gap: 10px; }
-  .report-section-num { background: #C8A84B; color: #12151C; font-size: 0.7rem; font-weight: 700; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .report-section-title { font-size: 0.82rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; }
-  .narrative-block { padding: 16px 20px; border-bottom: 1px solid #F0F2F5; }
-  .narrative-block:last-child { border-bottom: none; }
-  .narrative-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8F9C; margin-bottom: 6px; }
-  .narrative-textarea { border: none; outline: none; font-size: 0.85rem; color: #2B2F3A; background: transparent; font-family: inherit; width: 100%; min-height: 70px; resize: vertical; line-height: 1.7; }
-  .narrative-textarea:focus { background: #FFFBEF; border-radius: 3px; padding: 4px; }
-  .report-table-wrap { padding: 0; overflow-x: auto; }
-  .report-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
-  .report-table thead th { background: #F7F8FA; color: #6B7080; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; padding: 8px 14px; text-align: right; border-bottom: 1px solid #E5E8EE; }
-  .report-table thead th:first-child { text-align: left; }
-  .report-table tbody td { padding: 9px 14px; text-align: right; border-bottom: 1px solid #F0F2F5; color: #2B2F3A; }
-  .report-table tbody td:first-child { text-align: left; font-weight: 600; color: #1A1D23; }
-  .report-table tbody tr:last-child td { border-bottom: none; }
-  .rt-total td { background: #1E222D; color: #fff; font-weight: 700; }
-  .rt-ebitda td { background: #2A2F3E; color: #C8A84B; font-weight: 700; }
-  .rt-input { background: transparent; border: none; text-align: right; font-size: 0.82rem; color: #2B2F3A; width: 100%; min-width: 70px; outline: none; font-family: inherit; }
-  .rt-input:focus { background: #FFFBEF; border-bottom: 1px solid #C8A84B; }
-  .rt-total .rt-input { color: #fff; }
-  .rt-ebitda .rt-input { color: #C8A84B; }
-  .labour-report-strip { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid #E5E8EE; }
-  .lrs-item { padding: 14px 20px; border-right: 1px solid #E5E8EE; display: flex; flex-direction: column; gap: 3px; }
-  .lrs-item:last-child { border-right: none; }
-  .lrs-label { font-size: 0.63rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8F9C; }
-  .lrs-value { font-size: 1.2rem; font-weight: 700; color: #1A1D23; }
-  .lrs-sub   { font-size: 0.68rem; color: #8A8F9C; }
-  .action-plan-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
-  .action-plan-table th { background: #F7F8FA; color: #6B7080; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 8px 12px; text-align: left; border: 1px solid #E5E8EE; }
-  .action-plan-table td { border: 1px solid #E5E8EE; padding: 0; vertical-align: top; }
-  .ap-input { border: none; outline: none; font-size: 0.82rem; color: #2B2F3A; background: transparent; font-family: inherit; width: 100%; padding: 8px 12px; min-height: 36px; resize: none; }
-  .ap-input:focus { background: #FFFBEF; }
-
-  /* ---- FOOTER ---- */
-  .footer { text-align: center; padding: 16px; font-size: 0.68rem; color: #B0B5C0; letter-spacing: 0.04em; }
-  .footer button { background: none; border: none; color: #B0B5C0; font-size: 0.68rem; cursor: pointer; text-decoration: underline; font-family: inherit; padding: 0; }
-
-  /* ---- PRINT ---- */
-  @media print {
-    @page { size: A4 portrait; margin: 15mm; }
-    body { background: #fff; font-size: 11px; }
-    .header, .card-header, .total-row td, .report-cover-header, .report-section-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .tab-nav, .print-btn, .add-row-btn, .rollover-banner, .unsaved-badge { display: none !important; }
-    #tab-dashboard { display: none !important; }
-    #tab-report { display: block !important; }
-    .report-main { padding: 0; max-width: 100%; }
-    .report-section, .report-cover, .mission-critical { box-shadow: none; page-break-inside: avoid; }
-    .cell-input, .kpi-input, .meta-input, .agenda-text, .action-input, .status-select,
-    .narrative-textarea, .mission-textarea, .rcm-input, .rt-input, .ap-input, .labour-input { background: transparent !important; }
-  }
+/* ---- PRINT ---- */
+@media print {
+  @page { size: A4 portrait; margin: 15mm; }
+  body { background: #fff; font-size: 11px; }
+  .header, .card-header, .total-row td, .rt-total td, .report-cover-header, .report-section-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .tab-nav, .print-btn, .add-row-btn, .rollover-banner, .unsaved-badge, .footer, .meeting-bar { display: none !important; }
+  #tab-sales, #tab-restaurant { display: none !important; }
+  #tab-report { display: block !important; }
+  .report-main { padding: 0; max-width: 100%; }
+  .report-section, .report-cover { box-shadow: none; page-break-inside: avoid; }
+  .cell-input, .kpi-input, .meta-input, .agenda-text, .action-input, .status-select,
+  .narrative-textarea, .rcm-input, .rt-input, .ap-input, .labour-input { background: transparent !important; }
+}
 </style>
 </head>
 <body>
 
-<!-- ============================================================
-  HEADER — change "Property Name" to your venue
-  ============================================================ -->
+<!-- HEADER — change "Property Name" to your venue -->
 <header class="header">
   <div class="header-left">
-    <div class="header-property">Prancing Pony</div>
+    <div class="header-property">Property Name</div>
     <div class="header-meta">
       <span class="header-sub">GM Dashboard</span>
       <select class="month-selector" id="month-selector" onchange="onMonthChange()"></select>
-      <span class="unsaved-badge" id="unsaved-badge">● Unsaved changes</span>
+      <span class="unsaved-badge" id="unsaved-badge">&#9679; Unsaved changes</span>
     </div>
   </div>
   <div class="header-right">
     <div class="live-date" id="liveDate"></div>
-    <button class="print-btn" onclick="window.print()">↓ Print</button>
+    <button class="print-btn" onclick="window.print()">&#8595; Print Report</button>
   </div>
 </header>
 
-<!-- TAB NAV + SYNC -->
+<!-- TAB NAV -->
 <div class="tab-nav">
   <div class="tab-nav-left">
-    <button class="tab-btn active" onclick="switchTab('dashboard')">Operations Dashboard</button>
-    <button class="tab-btn" onclick="switchTab('report')">Sales Report</button>
+    <button class="tab-btn active" id="tabbtn-sales" onclick="switchTab('sales')">Sales</button>
+    <button class="tab-btn" id="tabbtn-restaurant" onclick="switchTab('restaurant')">Restaurant</button>
+    <button class="tab-btn" id="tabbtn-report" onclick="switchTab('report')">Sales Report</button>
   </div>
   <div class="tab-nav-right">
-    <div class="sync-left" style="display:flex;align-items:center;gap:8px;">
+    <div style="display:flex;align-items:center;gap:8px;">
       <div class="sync-dot" id="sync-dot"></div>
       <span class="sync-msg" id="sync-msg">Ready</span>
     </div>
@@ -281,351 +242,273 @@
   </div>
 </div>
 
-<div class="tab-panel active" id="tab-dashboard">
+<!-- ============ TAB: SALES ============ -->
+<div class="tab-panel active" id="tab-sales">
 <div class="main">
 
-  <!-- Month rollover banner -->
   <div class="rollover-banner" id="rollover-banner">
-    <div class="rollover-banner-text">
-      <strong>New month detected.</strong> You're viewing <span id="rollover-prev-month"></span> data.
-      Start fresh for <span id="rollover-curr-month"></span> by clearing the figures below, or load from Sheets if you've already entered this month's data.
-    </div>
+    <div class="rollover-banner-text"><strong>New month detected.</strong> You're viewing <span id="rollover-prev-month"></span> data. Start fresh for <span id="rollover-curr-month"></span>, or load from Sheets if already entered.</div>
     <button class="rollover-btn" onclick="startNewMonth()">Start New Month</button>
     <button class="rollover-btn" onclick="loadFromSheets()">Load from Sheets</button>
     <button class="rollover-btn" style="background:#3A3F4E;color:#8A8F9C;" onclick="dismissRollover()">Dismiss</button>
   </div>
 
-  <!-- ========================================================
-    SECTION 1: RESTAURANT
-    ======================================================== -->
+  <!-- BREWERY PERFORMANCE -->
   <div class="card">
-    <div class="card-header">
-      <span class="card-title">Restaurant Performance</span>
-      <span class="card-badge">MTD</span>
-    </div>
-    <div class="card-body">
+    <div class="card-header"><span class="card-title">Brewery Performance</span><span class="card-badge">MTD</span></div>
+    <div>
       <table>
-        <thead>
-          <tr>
-            <th style="width:24%">Category</th>
-            <th>Monthly Budget</th>
-            <th>MTD Actual</th>
-            <th>SPLY</th>
-            <th>MTD Variance $</th>
-            <th>MTD Variance %</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="subsection-row"><td colspan="6">Food Sales</td></tr>
-          <tr>
-            <td>Food Revenue</td>
-            <td><input class="cell-input" type="number" id="r-food-budget" value="42000" oninput="calc('r-food');markUnsaved()" min="0"></td>
-            <td><input class="cell-input" type="number" id="r-food-actual" value="13800" oninput="calc('r-food');markUnsaved()" min="0"></td>
-            <td><input class="cell-input" type="number" id="r-food-sply" placeholder="SPLY" oninput="markUnsaved()"></td>
-            <td id="r-food-var-d">—</td>
-            <td id="r-food-var-p">—</td>
-          </tr>
-          <tr class="subsection-row"><td colspan="6">Beverage Sales</td></tr>
-          <tr>
-            <td>Beverage Revenue</td>
-            <td><input class="cell-input" type="number" id="r-bev-budget" value="18000" oninput="calc('r-bev');markUnsaved()" min="0"></td>
-            <td><input class="cell-input" type="number" id="r-bev-actual" value="6100" oninput="calc('r-bev');markUnsaved()" min="0"></td>
-            <td><input class="cell-input" type="number" id="r-bev-sply" placeholder="SPLY" oninput="markUnsaved()"></td>
-            <td id="r-bev-var-d">—</td>
-            <td id="r-bev-var-p">—</td>
-          </tr>
-          <tr class="subsection-row"><td colspan="6">Other Sales</td></tr>
-          <tr>
-            <td>Other Revenue</td>
-            <td><input class="cell-input" type="number" id="r-other-budget" placeholder="0" oninput="calc('r-other');markUnsaved()" min="0"></td>
-            <td><input class="cell-input" type="number" id="r-other-actual" placeholder="0" oninput="calc('r-other');markUnsaved()" min="0"></td>
-            <td><input class="cell-input" type="number" id="r-other-sply" placeholder="SPLY" oninput="markUnsaved()"></td>
-            <td id="r-other-var-d">—</td>
-            <td id="r-other-var-p">—</td>
-          </tr>
-          <tr class="total-row">
-            <td>Restaurant Total</td>
-            <td id="r-total-budget">—</td>
-            <td id="r-total-actual">—</td>
-            <td id="r-total-sply">—</td>
-            <td id="r-total-var-d">—</td>
-            <td id="r-total-var-p">—</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <!-- Labour Productivity — Restaurant -->
-      <div class="labour-strip">
-        <div class="labour-item">
-          <div class="labour-label">Wages MTD</div>
-          <div style="display:flex;align-items:baseline;gap:4px;"><span style="font-size:0.8rem;color:#8A8F9C;">$</span>
-            <input class="labour-input" type="number" id="r-wages" placeholder="0" oninput="calcLabour();markUnsaved()" style="width:100px">
-          </div>
-          <div class="labour-sub">Enter total wages incl. super</div>
-        </div>
-        <div class="labour-item">
-          <div class="labour-label">Revenue MTD</div>
-          <div class="labour-value" id="r-labour-rev">—</div>
-          <div class="labour-sub">Auto from actuals above</div>
-        </div>
-        <div class="labour-item">
-          <div class="labour-label">Productivity Ratio</div>
-          <div class="labour-value" id="r-labour-ratio">—</div>
-          <div class="labour-sub">Wages ÷ Revenue × 100</div>
-        </div>
-        <div class="labour-item">
-          <div class="labour-label">Target Ratio</div>
-          <div style="display:flex;align-items:baseline;gap:4px;">
-            <input class="labour-input" type="number" id="r-labour-target" value="30" style="width:60px" oninput="calcLabour();markUnsaved()">
-            <span style="font-size:0.8rem;color:#8A8F9C;">%</span>
-          </div>
-          <div class="labour-sub">Edit to set your target</div>
-        </div>
-      </div>
-
-      <!-- Recommended operational KPIs -->
-      <div class="kpi-strip">
-        <div class="kpi-item">
-          <div class="kpi-label">Avg Spend / Cover <span class="rec-note">★ Recommended</span></div>
-          <div><span style="font-size:0.8rem;color:#8A8F9C;margin-right:4px;">$</span>
-            <input class="kpi-input" id="kpi-spend" type="number" style="width:90px" readonly tabindex="-1">
-          </div>
-          <div class="kpi-sub">MTD actual ÷ covers entered below</div>
-        </div>
-        <div class="kpi-item">
-          <div class="kpi-label">Covers MTD <span class="rec-note">★ Recommended</span></div>
-          <div style="display:flex;align-items:baseline;gap:8px;">
-            <input class="kpi-input" id="kpi-covers" type="number" value="290" style="width:80px" oninput="calcKPIs();markUnsaved()" placeholder="0" min="0">
-          </div>
-          <div class="kpi-sub">Enter total covers served this month</div>
-          <div class="kpi-note" id="util-note"></div>
-        </div>
-        <div class="kpi-item">
-          <div class="kpi-label">Avg Table Turns / Day <span class="rec-note">★ Recommended</span></div>
-          <div><input class="kpi-input" id="kpi-turns" type="number" value="1.4" step="0.1" style="width:70px" oninput="markUnsaved()"></div>
-          <div class="kpi-sub">Enter manually — turns per trading day</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ========================================================
-    SECTION 2: BREWERY
-    ======================================================== -->
-  <div class="card">
-    <div class="card-header">
-      <span class="card-title">Brewery Performance</span>
-      <span class="card-badge">MTD</span>
-    </div>
-    <div class="card-body">
-      <table>
-        <thead>
-          <tr>
-            <th style="width:24%">Category</th>
-            <th>Monthly Budget</th>
-            <th>MTD Actual</th>
-            <th>SPLY</th>
-            <th>MTD Variance $</th>
-            <th>MTD Variance %</th>
-          </tr>
-        </thead>
+        <thead><tr><th style="width:24%">Category</th><th>Monthly Budget</th><th>MTD Actual</th><th>SPLY</th><th>MTD Variance $</th><th>MTD Variance %</th></tr></thead>
         <tbody>
           <tr class="subsection-row"><td colspan="6">Keg Sales</td></tr>
           <tr>
             <td>Keg Revenue</td>
-            <td><input class="cell-input" type="number" id="b-keg-budget" value="38000" oninput="calc('b-keg');markUnsaved()" min="0"></td>
-            <td><input class="cell-input" type="number" id="b-keg-actual" value="11200" oninput="calc('b-keg');markUnsaved()" min="0"></td>
-            <td><input class="cell-input" type="number" id="b-keg-sply" placeholder="SPLY" oninput="markUnsaved()"></td>
-            <td id="b-keg-var-d">—</td>
-            <td id="b-keg-var-p">—</td>
+            <td><input class="cell-input" type="number" id="b-keg-budget" placeholder="0" oninput="calc('b-keg');markUnsaved()" min="0"></td>
+            <td><input class="cell-input" type="number" id="b-keg-actual" placeholder="0" oninput="calc('b-keg');markUnsaved()" min="0"></td>
+            <td><input class="cell-input" type="number" id="b-keg-sply" placeholder="SPLY" oninput="calc('b-keg');markUnsaved()"></td>
+            <td id="b-keg-var-d">&#8212;</td><td id="b-keg-var-p">&#8212;</td>
           </tr>
           <tr class="subsection-row"><td colspan="6">Pack Sales</td></tr>
           <tr>
             <td>Pack Revenue</td>
-            <td><input class="cell-input" type="number" id="b-pack-budget" value="22000" oninput="calc('b-pack');markUnsaved()" min="0"></td>
-            <td><input class="cell-input" type="number" id="b-pack-actual" value="7800" oninput="calc('b-pack');markUnsaved()" min="0"></td>
-            <td><input class="cell-input" type="number" id="b-pack-sply" placeholder="SPLY" oninput="markUnsaved()"></td>
-            <td id="b-pack-var-d">—</td>
-            <td id="b-pack-var-p">—</td>
+            <td><input class="cell-input" type="number" id="b-pack-budget" placeholder="0" oninput="calc('b-pack');markUnsaved()" min="0"></td>
+            <td><input class="cell-input" type="number" id="b-pack-actual" placeholder="0" oninput="calc('b-pack');markUnsaved()" min="0"></td>
+            <td><input class="cell-input" type="number" id="b-pack-sply" placeholder="SPLY" oninput="calc('b-pack');markUnsaved()"></td>
+            <td id="b-pack-var-d">&#8212;</td><td id="b-pack-var-p">&#8212;</td>
           </tr>
           <tr class="subsection-row"><td colspan="6">Other Sales</td></tr>
           <tr>
             <td>Other Revenue</td>
             <td><input class="cell-input" type="number" id="b-other-budget" placeholder="0" oninput="calc('b-other');markUnsaved()" min="0"></td>
             <td><input class="cell-input" type="number" id="b-other-actual" placeholder="0" oninput="calc('b-other');markUnsaved()" min="0"></td>
-            <td><input class="cell-input" type="number" id="b-other-sply" placeholder="SPLY" oninput="markUnsaved()"></td>
-            <td id="b-other-var-d">—</td>
-            <td id="b-other-var-p">—</td>
+            <td><input class="cell-input" type="number" id="b-other-sply" placeholder="SPLY" oninput="calc('b-other');markUnsaved()"></td>
+            <td id="b-other-var-d">&#8212;</td><td id="b-other-var-p">&#8212;</td>
           </tr>
           <tr class="total-row">
             <td>Brewery Total</td>
-            <td id="b-total-budget">—</td>
-            <td id="b-total-actual">—</td>
-            <td id="b-total-sply">—</td>
-            <td id="b-total-var-d">—</td>
-            <td id="b-total-var-p">—</td>
+            <td id="b-total-budget">&#8212;</td><td id="b-total-actual">&#8212;</td><td id="b-total-sply">&#8212;</td>
+            <td id="b-total-var-d">&#8212;</td><td id="b-total-var-p">&#8212;</td>
           </tr>
         </tbody>
       </table>
-      <!-- Labour Productivity — Brewery -->
+
       <div class="labour-strip">
         <div class="labour-item">
           <div class="labour-label">Wages MTD</div>
           <div style="display:flex;align-items:baseline;gap:4px;"><span style="font-size:0.8rem;color:#8A8F9C;">$</span>
-            <input class="labour-input" type="number" id="b-wages" placeholder="0" oninput="calcLabour();markUnsaved()" style="width:100px">
-          </div>
+            <input class="labour-input" type="number" id="b-wages" placeholder="0" oninput="calcLabour();markUnsaved()" style="width:100px"></div>
           <div class="labour-sub">Enter total wages incl. super</div>
         </div>
-        <div class="labour-item">
-          <div class="labour-label">Revenue MTD</div>
-          <div class="labour-value" id="b-labour-rev">—</div>
-          <div class="labour-sub">Auto from actuals above</div>
-        </div>
-        <div class="labour-item">
-          <div class="labour-label">Productivity Ratio</div>
-          <div class="labour-value" id="b-labour-ratio">—</div>
-          <div class="labour-sub">Wages ÷ Revenue × 100</div>
-        </div>
+        <div class="labour-item"><div class="labour-label">Revenue MTD</div><div class="labour-value" id="b-labour-rev">&#8212;</div><div class="labour-sub">Auto from actuals above</div></div>
+        <div class="labour-item"><div class="labour-label">Productivity Ratio</div><div class="labour-value" id="b-labour-ratio">&#8212;</div><div class="labour-sub">Wages &#247; Revenue &#215; 100</div></div>
         <div class="labour-item">
           <div class="labour-label">Target Ratio</div>
           <div style="display:flex;align-items:baseline;gap:4px;">
-            <input class="labour-input" type="number" id="b-labour-target" value="20" style="width:60px" oninput="calcLabour();markUnsaved()">
-            <span style="font-size:0.8rem;color:#8A8F9C;">%</span>
-          </div>
+            <input class="labour-input" type="number" id="b-labour-target" value="20" style="width:60px" oninput="calcLabour();markUnsaved()"><span style="font-size:0.8rem;color:#8A8F9C;">%</span></div>
           <div class="labour-sub">Edit to set your target</div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ========================================================
-    SECTION 3: EV / PV FORECAST
-    PV  = budget × (days elapsed ÷ days in month)
-    EV  = MTD actual
-    SPI = EV ÷ PV  (1.0 = on pace)
-    Projected = EV ÷ % elapsed  (run-rate to month end)
-    ======================================================== -->
+  <!-- BREWERY EV/PV -->
   <div class="card">
-    <div class="card-header">
-      <span class="card-title">Revenue Forecast — Earned vs Planned</span>
-      <span class="card-badge">Pace to Monthly Budget</span>
-    </div>
-    <div class="card-body">
-      <div class="ev-grid">
-        <div class="ev-inputs">
-          <div class="ev-inputs-title">Inputs</div>
-          <div>
-            <div style="font-size:0.68rem;color:#8A8F9C;margin-bottom:6px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;">Scope</div>
-            <div class="ev-scope-toggle">
-              <button class="ev-scope-btn active" id="ev-scope-restaurant" onclick="setEVScope('restaurant')">Restaurant</button>
-              <button class="ev-scope-btn"        id="ev-scope-brewery"    onclick="setEVScope('brewery')">Brewery</button>
-              <button class="ev-scope-btn"        id="ev-scope-combined"   onclick="setEVScope('combined')">Combined</button>
-            </div>
-          </div>
-          <div class="ev-input-row">
-            <span class="ev-input-label">Days elapsed this month</span>
-            <input class="ev-input-field" type="number" id="ev-days-elapsed" min="1" max="31" oninput="calcEV();markUnsaved()">
-            <span style="font-size:0.75rem;color:#8A8F9C;">days</span>
-          </div>
-          <div class="ev-input-row">
-            <span class="ev-input-label">Total days in month</span>
-            <input class="ev-input-field" type="number" id="ev-days-total" min="1" max="31" oninput="calcEV();markUnsaved()">
-            <span style="font-size:0.75rem;color:#8A8F9C;">days</span>
-          </div>
-          <div style="padding-top:10px;border-top:1px solid #F0F2F5;">
-            <button onclick="setEndOfMonth()" style="background:#1E222D;border:none;color:#C8A84B;font-size:0.68rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;padding:5px 12px;cursor:pointer;border-radius:3px;font-family:inherit;margin-bottom:8px;">Set End of Month</button>
-            <div style="font-size:0.68rem;color:#8A8F9C;line-height:1.7;margin-top:6px;">Days auto-fill from today — override manually or use button above for completed months.</div>
-          </div>
+    <div class="card-header"><span class="card-title">Brewery Forecast &#8212; Earned vs Planned</span><span class="card-badge">Pace to Budget</span></div>
+    <div class="ev-grid">
+      <div class="ev-inputs">
+        <div class="ev-inputs-title">Inputs</div>
+        <div class="ev-input-row"><span class="ev-input-label">Days elapsed this month</span>
+          <input class="ev-input-field" type="number" id="s-ev-days-elapsed" min="1" max="31" oninput="this.dataset.u='1';calcEVSales();markUnsaved()"><span style="font-size:0.75rem;color:#8A8F9C;">days</span></div>
+        <div class="ev-input-row"><span class="ev-input-label">Total days in month</span>
+          <input class="ev-input-field" type="number" id="s-ev-days-total" min="1" max="31" oninput="this.dataset.u='1';calcEVSales();markUnsaved()"><span style="font-size:0.75rem;color:#8A8F9C;">days</span></div>
+        <div style="padding-top:10px;border-top:1px solid #F0F2F5;">
+          <button class="eom-btn" onclick="setEndOfMonth('s')">Set End of Month</button>
+          <div style="font-size:0.68rem;color:#8A8F9C;line-height:1.7;margin-top:6px;">Days auto-fill from today &#8212; use the button for completed months.</div>
         </div>
-        <div class="ev-results">
-          <div class="ev-kpi">
-            <div class="ev-kpi-label">Planned Value (PV)</div>
-            <div class="ev-kpi-value" id="ev-pv">—</div>
-            <div class="ev-kpi-sub">What you should have earned by today</div>
-          </div>
-          <div class="ev-kpi">
-            <div class="ev-kpi-label">Earned Value (EV)</div>
-            <div class="ev-kpi-value" id="ev-ev">—</div>
-            <div class="ev-kpi-sub">MTD actual revenue</div>
-          </div>
-          <div class="ev-kpi">
-            <div class="ev-kpi-label">Performance Index (SPI)</div>
-            <div class="ev-kpi-value" id="ev-spi">—</div>
-            <div class="ev-kpi-sub" id="ev-spi-sub">EV ÷ PV · 1.0 = on pace</div>
-          </div>
-          <div class="ev-kpi">
-            <div class="ev-kpi-label">Projected Month-End Revenue</div>
-            <div class="ev-kpi-value" id="ev-proj">—</div>
-            <div class="ev-kpi-sub" id="ev-proj-sub">vs <span id="ev-budget-label">—</span></div>
-          </div>
-        </div>
+      </div>
+      <div class="ev-results">
+        <div class="ev-kpi"><div class="ev-kpi-label">Planned Value (PV)</div><div class="ev-kpi-value" id="s-ev-pv">&#8212;</div><div class="ev-kpi-sub">Should have earned by today</div></div>
+        <div class="ev-kpi"><div class="ev-kpi-label">Earned Value (EV)</div><div class="ev-kpi-value" id="s-ev-ev">&#8212;</div><div class="ev-kpi-sub">Brewery MTD actual</div></div>
+        <div class="ev-kpi"><div class="ev-kpi-label">Performance Index (SPI)</div><div class="ev-kpi-value" id="s-ev-spi">&#8212;</div><div class="ev-kpi-sub" id="s-ev-spi-sub">EV &#247; PV &#183; 1.0 = on pace</div></div>
+        <div class="ev-kpi"><div class="ev-kpi-label">Projected Month-End</div><div class="ev-kpi-value" id="s-ev-proj">&#8212;</div><div class="ev-kpi-sub" id="s-ev-proj-sub">vs budget</div></div>
       </div>
     </div>
   </div>
 
-  <!-- ========================================================
-    SECTION 4: MEETING AGENDA
-    ======================================================== -->
+  <!-- SALES MEETING -->
   <div class="card">
-    <div class="card-header">
-      <span class="card-title">Meeting Agenda</span>
-      <span class="card-badge">Weekly</span>
-    </div>
-    <div class="card-body">
+    <div class="card-header"><span class="card-title">Sales Meeting</span><span class="card-badge">Weekly</span></div>
+    <div>
       <div class="meeting-bar">
         <span class="meeting-bar-label">History:</span>
-        <select class="meeting-select" id="meeting-history-select">
-          <option value="">&#8212; Select a past meeting to review &#8212;</option>
-        </select>
-        <button class="meeting-bar-btn" onclick="loadPastMeeting()">&#8595; Load</button>
-        <button class="meeting-bar-btn new-mtg" onclick="newMeeting()">+ New Meeting</button>
-        <span class="meeting-viewing-badge" id="meeting-viewing-badge">Viewing past meeting &#8212; read only</span>
+        <select class="meeting-select" id="sales-meeting-select"><option value="">&#8212; Select a past meeting &#8212;</option></select>
+        <button class="meeting-bar-btn" onclick="loadPastMeeting('sales')">&#8595; Load</button>
+        <button class="meeting-bar-btn new-mtg" onclick="newMeeting('sales')">+ New Meeting</button>
+        <span class="meeting-viewing-badge" id="sales-viewing-badge">Viewing past meeting</span>
       </div>
       <div class="agenda-meta">
-        <div class="agenda-meta-item">
-          <span class="meta-label">Meeting Date</span>
-          <input class="meta-input" id="meeting-date" type="date" oninput="markUnsaved()">
-        </div>
-        <div class="agenda-meta-item">
-          <span class="meta-label">Time</span>
-          <input class="meta-input" id="meeting-time" type="time" value="09:00" oninput="markUnsaved()">
-        </div>
-        <div class="agenda-meta-item">
-          <span class="meta-label">Attendees</span>
-          <input class="meta-input" id="meeting-attendees" type="text" placeholder="e.g. GM, Head Chef, Head Brewer, Sales Manager" oninput="markUnsaved()">
-        </div>
+        <div class="agenda-meta-item"><span class="meta-label">Meeting Date</span><input class="meta-input" id="sales-meeting-date" type="date" oninput="markUnsaved()"></div>
+        <div class="agenda-meta-item"><span class="meta-label">Time</span><input class="meta-input" id="sales-meeting-time" type="time" value="09:00" oninput="markUnsaved()"></div>
+        <div class="agenda-meta-item"><span class="meta-label">Attendees</span><input class="meta-input" id="sales-meeting-attendees" type="text" placeholder="GM, Sales, Head Brewer" oninput="markUnsaved()"></div>
       </div>
-      <div class="agenda-items" id="agenda-items"></div>
+      <div class="agenda-items" id="sales-agenda-items"></div>
       <div class="action-section">
         <div class="action-title">Action Items</div>
         <table class="action-table">
-          <thead>
-            <tr>
-              <th style="width:42%">Action</th>
-              <th style="width:18%">Owner</th>
-              <th style="width:16%">Due Date</th>
-              <th style="width:14%">Status</th>
-            </tr>
-          </thead>
-          <tbody id="action-tbody"></tbody>
+          <thead><tr><th style="width:42%">Action</th><th style="width:18%">Owner</th><th style="width:16%">Due Date</th><th style="width:14%">Status</th></tr></thead>
+          <tbody id="sales-action-tbody"></tbody>
         </table>
-        <button class="add-row-btn" onclick="addActionRow()">+ Add Action Item</button>
+        <button class="add-row-btn" onclick="addActionRow('sales')">+ Add Action Item</button>
       </div>
     </div>
   </div>
 
-</div><!-- /main -->
-</div><!-- /tab-dashboard -->
+</div>
+</div>
 
-<!-- ============================================================
-   BOARD REPORT TAB
-   ============================================================ -->
+<!-- ============ TAB: RESTAURANT ============ -->
+<div class="tab-panel" id="tab-restaurant">
+<div class="main">
+
+  <!-- RESTAURANT PERFORMANCE -->
+  <div class="card">
+    <div class="card-header"><span class="card-title">Restaurant Performance</span><span class="card-badge">MTD</span></div>
+    <div>
+      <table>
+        <thead><tr><th style="width:24%">Category</th><th>Monthly Budget</th><th>MTD Actual</th><th>SPLY</th><th>MTD Variance $</th><th>MTD Variance %</th></tr></thead>
+        <tbody>
+          <tr class="subsection-row"><td colspan="6">Food Sales</td></tr>
+          <tr>
+            <td>Food Revenue</td>
+            <td><input class="cell-input" type="number" id="r-food-budget" placeholder="0" oninput="calc('r-food');markUnsaved()" min="0"></td>
+            <td><input class="cell-input" type="number" id="r-food-actual" placeholder="0" oninput="calc('r-food');markUnsaved()" min="0"></td>
+            <td><input class="cell-input" type="number" id="r-food-sply" placeholder="SPLY" oninput="calc('r-food');markUnsaved()"></td>
+            <td id="r-food-var-d">&#8212;</td><td id="r-food-var-p">&#8212;</td>
+          </tr>
+          <tr class="subsection-row"><td colspan="6">Beverage Sales</td></tr>
+          <tr>
+            <td>Beverage Revenue</td>
+            <td><input class="cell-input" type="number" id="r-bev-budget" placeholder="0" oninput="calc('r-bev');markUnsaved()" min="0"></td>
+            <td><input class="cell-input" type="number" id="r-bev-actual" placeholder="0" oninput="calc('r-bev');markUnsaved()" min="0"></td>
+            <td><input class="cell-input" type="number" id="r-bev-sply" placeholder="SPLY" oninput="calc('r-bev');markUnsaved()"></td>
+            <td id="r-bev-var-d">&#8212;</td><td id="r-bev-var-p">&#8212;</td>
+          </tr>
+          <tr class="subsection-row"><td colspan="6">Other Sales</td></tr>
+          <tr>
+            <td>Other Revenue</td>
+            <td><input class="cell-input" type="number" id="r-other-budget" placeholder="0" oninput="calc('r-other');markUnsaved()" min="0"></td>
+            <td><input class="cell-input" type="number" id="r-other-actual" placeholder="0" oninput="calc('r-other');markUnsaved()" min="0"></td>
+            <td><input class="cell-input" type="number" id="r-other-sply" placeholder="SPLY" oninput="calc('r-other');markUnsaved()"></td>
+            <td id="r-other-var-d">&#8212;</td><td id="r-other-var-p">&#8212;</td>
+          </tr>
+          <tr class="total-row">
+            <td>Restaurant Total</td>
+            <td id="r-total-budget">&#8212;</td><td id="r-total-actual">&#8212;</td><td id="r-total-sply">&#8212;</td>
+            <td id="r-total-var-d">&#8212;</td><td id="r-total-var-p">&#8212;</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="labour-strip">
+        <div class="labour-item">
+          <div class="labour-label">Wages MTD</div>
+          <div style="display:flex;align-items:baseline;gap:4px;"><span style="font-size:0.8rem;color:#8A8F9C;">$</span>
+            <input class="labour-input" type="number" id="r-wages" placeholder="0" oninput="calcLabour();markUnsaved()" style="width:100px"></div>
+          <div class="labour-sub">Enter total wages incl. super</div>
+        </div>
+        <div class="labour-item"><div class="labour-label">Revenue MTD</div><div class="labour-value" id="r-labour-rev">&#8212;</div><div class="labour-sub">Auto from actuals above</div></div>
+        <div class="labour-item"><div class="labour-label">Productivity Ratio</div><div class="labour-value" id="r-labour-ratio">&#8212;</div><div class="labour-sub">Wages &#247; Revenue &#215; 100</div></div>
+        <div class="labour-item">
+          <div class="labour-label">Target Ratio</div>
+          <div style="display:flex;align-items:baseline;gap:4px;">
+            <input class="labour-input" type="number" id="r-labour-target" value="30" style="width:60px" oninput="calcLabour();markUnsaved()"><span style="font-size:0.8rem;color:#8A8F9C;">%</span></div>
+          <div class="labour-sub">Edit to set your target</div>
+        </div>
+      </div>
+
+      <div class="kpi-strip">
+        <div class="kpi-item">
+          <div class="kpi-label">Avg Spend / Cover</div>
+          <div><span style="font-size:0.8rem;color:#8A8F9C;margin-right:4px;">$</span><input class="kpi-input" id="kpi-spend" type="number" style="width:90px" readonly tabindex="-1"></div>
+          <div class="kpi-sub">MTD actual &#247; covers</div>
+        </div>
+        <div class="kpi-item">
+          <div class="kpi-label">Covers MTD</div>
+          <input class="kpi-input" id="kpi-covers" type="number" placeholder="0" style="width:80px" oninput="calcKPIs();markUnsaved()" min="0">
+          <div class="kpi-sub">Total covers this month</div>
+          <div class="kpi-note" id="util-note"></div>
+        </div>
+        <div class="kpi-item">
+          <div class="kpi-label">Avg Table Turns / Day</div>
+          <input class="kpi-input" id="kpi-turns" type="number" placeholder="0" step="0.1" style="width:70px" oninput="markUnsaved()">
+          <div class="kpi-sub">Enter manually</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESTAURANT EV/PV -->
+  <div class="card">
+    <div class="card-header"><span class="card-title">Restaurant Forecast &#8212; Earned vs Planned</span><span class="card-badge">Pace to Budget</span></div>
+    <div class="ev-grid">
+      <div class="ev-inputs">
+        <div class="ev-inputs-title">Inputs</div>
+        <div class="ev-input-row"><span class="ev-input-label">Days elapsed this month</span>
+          <input class="ev-input-field" type="number" id="r-ev-days-elapsed" min="1" max="31" oninput="this.dataset.u='1';calcEVRest();markUnsaved()"><span style="font-size:0.75rem;color:#8A8F9C;">days</span></div>
+        <div class="ev-input-row"><span class="ev-input-label">Total days in month</span>
+          <input class="ev-input-field" type="number" id="r-ev-days-total" min="1" max="31" oninput="this.dataset.u='1';calcEVRest();markUnsaved()"><span style="font-size:0.75rem;color:#8A8F9C;">days</span></div>
+        <div style="padding-top:10px;border-top:1px solid #F0F2F5;">
+          <button class="eom-btn" onclick="setEndOfMonth('r')">Set End of Month</button>
+          <div style="font-size:0.68rem;color:#8A8F9C;line-height:1.7;margin-top:6px;">Days auto-fill from today &#8212; use the button for completed months.</div>
+        </div>
+      </div>
+      <div class="ev-results">
+        <div class="ev-kpi"><div class="ev-kpi-label">Planned Value (PV)</div><div class="ev-kpi-value" id="r-ev-pv">&#8212;</div><div class="ev-kpi-sub">Should have earned by today</div></div>
+        <div class="ev-kpi"><div class="ev-kpi-label">Earned Value (EV)</div><div class="ev-kpi-value" id="r-ev-ev">&#8212;</div><div class="ev-kpi-sub">Restaurant MTD actual</div></div>
+        <div class="ev-kpi"><div class="ev-kpi-label">Performance Index (SPI)</div><div class="ev-kpi-value" id="r-ev-spi">&#8212;</div><div class="ev-kpi-sub" id="r-ev-spi-sub">EV &#247; PV &#183; 1.0 = on pace</div></div>
+        <div class="ev-kpi"><div class="ev-kpi-label">Projected Month-End</div><div class="ev-kpi-value" id="r-ev-proj">&#8212;</div><div class="ev-kpi-sub" id="r-ev-proj-sub">vs budget</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESTAURANT MEETING -->
+  <div class="card">
+    <div class="card-header"><span class="card-title">Restaurant Meeting</span><span class="card-badge">Weekly</span></div>
+    <div>
+      <div class="meeting-bar">
+        <span class="meeting-bar-label">History:</span>
+        <select class="meeting-select" id="rest-meeting-select"><option value="">&#8212; Select a past meeting &#8212;</option></select>
+        <button class="meeting-bar-btn" onclick="loadPastMeeting('rest')">&#8595; Load</button>
+        <button class="meeting-bar-btn new-mtg" onclick="newMeeting('rest')">+ New Meeting</button>
+        <span class="meeting-viewing-badge" id="rest-viewing-badge">Viewing past meeting</span>
+      </div>
+      <div class="agenda-meta">
+        <div class="agenda-meta-item"><span class="meta-label">Meeting Date</span><input class="meta-input" id="rest-meeting-date" type="date" oninput="markUnsaved()"></div>
+        <div class="agenda-meta-item"><span class="meta-label">Time</span><input class="meta-input" id="rest-meeting-time" type="time" value="09:00" oninput="markUnsaved()"></div>
+        <div class="agenda-meta-item"><span class="meta-label">Attendees</span><input class="meta-input" id="rest-meeting-attendees" type="text" placeholder="GM, Head Chef, FOH Manager" oninput="markUnsaved()"></div>
+      </div>
+      <div class="agenda-items" id="rest-agenda-items"></div>
+      <div class="action-section">
+        <div class="action-title">Action Items</div>
+        <table class="action-table">
+          <thead><tr><th style="width:42%">Action</th><th style="width:18%">Owner</th><th style="width:16%">Due Date</th><th style="width:14%">Status</th></tr></thead>
+          <tbody id="rest-action-tbody"></tbody>
+        </table>
+        <button class="add-row-btn" onclick="addActionRow('rest')">+ Add Action Item</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ============ TAB: SALES REPORT ============ -->
 <div class="tab-panel" id="tab-report">
 <div class="report-main">
 
   <div class="report-cover">
     <div class="report-cover-header">
-      <div class="report-cover-title">Prancing Pony &#8212; Sales Report</div>
+      <div class="report-cover-title">Property Name &#8212; Sales Report</div>
       <div class="report-cover-sub">Confidential &#8212; Board use only</div>
     </div>
     <div class="report-cover-meta">
@@ -636,57 +519,44 @@
     </div>
   </div>
 
-  <!-- SECTION 1: REVENUE SUMMARY + CHANNEL BREAKDOWN -->
+  <!-- SECTION 1: REVENUE SUMMARY BY DEPARTMENT -->
   <div class="report-section">
-    <div class="report-section-header"><div class="report-section-num">1</div><span class="report-section-title">Revenue Summary &#8212; Brewery vs Budget, SPLY &amp; YTD</span></div>
-    <div class="report-section-body">
-
-      <!-- Top line summary pulled from dashboard -->
+    <div class="report-section-header"><div class="report-section-num">1</div><span class="report-section-title">Revenue Summary &#8212; By Department vs Budget, SPLY &amp; YTD</span></div>
+    <div>
       <div class="report-table-wrap">
         <table class="report-table">
           <thead><tr><th style="width:20%">Revenue</th><th>Month Actual</th><th>Month Budget</th><th>SPLY</th><th>vs Budget $</th><th>vs Budget %</th><th>YTD Actual</th><th>YTD Budget</th></tr></thead>
           <tbody>
-            <tr><td>Brewery Total</td><td id="sr-brewery-actual">&#8212;</td><td id="sr-brewery-budget">&#8212;</td><td><input class="rt-input" type="number" id="sr-brewery-sply" placeholder="0" oninput="calcSummary();markUnsaved()"></td><td id="sr-brewery-var-d">&#8212;</td><td id="sr-brewery-var-p">&#8212;</td><td><input class="rt-input" type="number" id="sr-brewery-ytd" placeholder="0" oninput="markUnsaved()"></td><td><input class="rt-input" type="number" id="sr-brewery-ytd-budget" placeholder="0" oninput="markUnsaved()"></td></tr>
-
-
-
+            <tr><td>Brewery</td><td id="sr-brewery-actual">&#8212;</td><td id="sr-brewery-budget">&#8212;</td><td id="sr-brewery-sply">&#8212;</td><td id="sr-brewery-var-d">&#8212;</td><td id="sr-brewery-var-p">&#8212;</td><td><input class="rt-input" type="number" id="sr-brewery-ytd" placeholder="0" oninput="calcSummary();markUnsaved()"></td><td><input class="rt-input" type="number" id="sr-brewery-ytd-budget" placeholder="0" oninput="calcSummary();markUnsaved()"></td></tr>
+            <tr><td>Restaurant</td><td id="sr-rest-actual">&#8212;</td><td id="sr-rest-budget">&#8212;</td><td id="sr-rest-sply">&#8212;</td><td id="sr-rest-var-d">&#8212;</td><td id="sr-rest-var-p">&#8212;</td><td><input class="rt-input" type="number" id="sr-rest-ytd" placeholder="0" oninput="calcSummary();markUnsaved()"></td><td><input class="rt-input" type="number" id="sr-rest-ytd-budget" placeholder="0" oninput="calcSummary();markUnsaved()"></td></tr>
+            <tr class="rt-total"><td>Total</td><td id="sr-total-actual">&#8212;</td><td id="sr-total-budget">&#8212;</td><td id="sr-total-sply">&#8212;</td><td id="sr-total-var-d">&#8212;</td><td id="sr-total-var-p">&#8212;</td><td id="sr-total-ytd">&#8212;</td><td id="sr-total-ytd-budget">&#8212;</td></tr>
           </tbody>
         </table>
       </div>
 
-      <!-- Channel breakdown: Keg and Pack by distributor -->
       <div style="padding:12px 20px 4px;"><div style="font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#6B7080;margin-bottom:8px;">Channel Breakdown &#8212; Keg &amp; Pack Revenue MTD</div></div>
       <div class="report-table-wrap">
         <table class="report-table">
           <thead><tr><th style="width:20%">Channel</th><th>Keg Actual</th><th>Keg Budget</th><th>Keg vs Budget $</th><th>Keg vs Budget %</th><th>Pack Actual</th><th>Pack Budget</th><th>Pack vs Budget $</th><th>Pack vs Budget %</th></tr></thead>
-          <tbody>
-            <tr><td>Direct</td><td><input class="rt-input" type="number" id="ch-direct-keg-a" placeholder="0" oninput="calcChannel();markUnsaved()"></td><td><input class="rt-input" type="number" id="ch-direct-keg-b" placeholder="0" oninput="calcChannel();markUnsaved()"></td><td id="ch-direct-keg-vd">&#8212;</td><td id="ch-direct-keg-vp">&#8212;</td><td><input class="rt-input" type="number" id="ch-direct-pack-a" placeholder="0" oninput="calcChannel();markUnsaved()"></td><td><input class="rt-input" type="number" id="ch-direct-pack-b" placeholder="0" oninput="calcChannel();markUnsaved()"></td><td id="ch-direct-pack-vd">&#8212;</td><td id="ch-direct-pack-vp">&#8212;</td></tr>
-            <tr><td>ALM</td><td><input class="rt-input" type="number" id="ch-alm-keg-a" placeholder="0" oninput="calcChannel();markUnsaved()"></td><td><input class="rt-input" type="number" id="ch-alm-keg-b" placeholder="0" oninput="calcChannel();markUnsaved()"></td><td id="ch-alm-keg-vd">&#8212;</td><td id="ch-alm-keg-vp">&#8212;</td><td><input class="rt-input" type="number" id="ch-alm-pack-a" placeholder="0" oninput="calcChannel();markUnsaved()"></td><td><input class="rt-input" type="number" id="ch-alm-pack-b" placeholder="0" oninput="calcChannel();markUnsaved()"></td><td id="ch-alm-pack-vd">&#8212;</td><td id="ch-alm-pack-vp">&#8212;</td></tr>
-            <tr><td>Paramount</td><td><input class="rt-input" type="number" id="ch-paramount-keg-a" placeholder="0" oninput="calcChannel();markUnsaved()"></td><td><input class="rt-input" type="number" id="ch-paramount-keg-b" placeholder="0" oninput="calcChannel();markUnsaved()"></td><td id="ch-paramount-keg-vd">&#8212;</td><td id="ch-paramount-keg-vp">&#8212;</td><td><input class="rt-input" type="number" id="ch-paramount-pack-a" placeholder="0" oninput="calcChannel();markUnsaved()"></td><td><input class="rt-input" type="number" id="ch-paramount-pack-b" placeholder="0" oninput="calcChannel();markUnsaved()"></td><td id="ch-paramount-pack-vd">&#8212;</td><td id="ch-paramount-pack-vp">&#8212;</td></tr>
-            <tr><td>Coles</td><td><input class="rt-input" type="number" id="ch-coles-keg-a" placeholder="0" oninput="calcChannel();markUnsaved()"></td><td><input class="rt-input" type="number" id="ch-coles-keg-b" placeholder="0" oninput="calcChannel();markUnsaved()"></td><td id="ch-coles-keg-vd">&#8212;</td><td id="ch-coles-keg-vp">&#8212;</td><td><input class="rt-input" type="number" id="ch-coles-pack-a" placeholder="0" oninput="calcChannel();markUnsaved()"></td><td><input class="rt-input" type="number" id="ch-coles-pack-b" placeholder="0" oninput="calcChannel();markUnsaved()"></td><td id="ch-coles-pack-vd">&#8212;</td><td id="ch-coles-pack-vp">&#8212;</td></tr>
-            <tr><td>Endeavour</td><td><input class="rt-input" type="number" id="ch-endeavour-keg-a" placeholder="0" oninput="calcChannel();markUnsaved()"></td><td><input class="rt-input" type="number" id="ch-endeavour-keg-b" placeholder="0" oninput="calcChannel();markUnsaved()"></td><td id="ch-endeavour-keg-vd">&#8212;</td><td id="ch-endeavour-keg-vp">&#8212;</td><td><input class="rt-input" type="number" id="ch-endeavour-pack-a" placeholder="0" oninput="calcChannel();markUnsaved()"></td><td><input class="rt-input" type="number" id="ch-endeavour-pack-b" placeholder="0" oninput="calcChannel();markUnsaved()"></td><td id="ch-endeavour-pack-vd">&#8212;</td><td id="ch-endeavour-pack-vp">&#8212;</td></tr>
-            <tr class="rt-total"><td>Total</td><td id="ch-total-keg-a">&#8212;</td><td id="ch-total-keg-b">&#8212;</td><td id="ch-total-keg-vd">&#8212;</td><td id="ch-total-keg-vp">&#8212;</td><td id="ch-total-pack-a">&#8212;</td><td id="ch-total-pack-b">&#8212;</td><td id="ch-total-pack-vd">&#8212;</td><td id="ch-total-pack-vp">&#8212;</td></tr>
-          </tbody>
+          <tbody id="channel-tbody"></tbody>
         </table>
       </div>
 
-      <!-- Labour Productivity — Brewery (pulled from dashboard) -->
-      <div style="padding:4px 20px 0;">
-        <div style="font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#6B7080;margin-bottom:4px;margin-top:12px;">Labour Productivity &#8212; Brewery</div>
-      </div>
-      <div class="labour-report-strip" style="grid-template-columns:1fr 1fr 1fr;">
-        <div class="lrs-item"><div class="lrs-label">Brewery Wages MTD</div><div class="lrs-value" id="lrs-combined-wages">&#8212;</div><div class="lrs-sub">Total wages incl. super</div></div>
-        <div class="lrs-item"><div class="lrs-label">Brewery Revenue MTD</div><div class="lrs-value" id="lrs-brew-rev-report">&#8212;</div><div class="lrs-sub">Keg + Pack + Other actuals</div></div>
+      <div style="padding:4px 20px 0;"><div style="font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#6B7080;margin-bottom:4px;margin-top:12px;">Labour Productivity &#8212; Brewery</div></div>
+      <div class="labour-report-strip">
+        <div class="lrs-item"><div class="lrs-label">Brewery Wages MTD</div><div class="lrs-value" id="lrs-brew-wages">&#8212;</div><div class="lrs-sub">Total wages incl. super</div></div>
+        <div class="lrs-item"><div class="lrs-label">Brewery Revenue MTD</div><div class="lrs-value" id="lrs-brew-rev">&#8212;</div><div class="lrs-sub">Keg + Pack + Other actuals</div></div>
         <div class="lrs-item"><div class="lrs-label">Productivity Ratio</div><div class="lrs-value" id="lrs-brew-ratio">&#8212;</div><div class="lrs-sub">Wages &#247; Revenue (target: <span id="lrs-brew-target">20</span>%)</div></div>
       </div>
+
       <div class="narrative-block"><div class="narrative-label">Revenue Commentary</div><textarea class="narrative-textarea" id="n-trading-summary" rows="4" placeholder="Overall trading narrative, key drivers, market conditions..." oninput="markUnsaved()"></textarea></div>
     </div>
   </div>
 
-  <!-- SECTION 2: NEW BUSINESS & PIPELINE -->
+  <!-- SECTION 2: PIPELINE -->
   <div class="report-section">
     <div class="report-section-header"><div class="report-section-num">2</div><span class="report-section-title">New Business &amp; Pipeline</span></div>
-    <div class="report-section-body">
+    <div>
       <div style="padding:12px 20px 8px;">
         <table class="action-plan-table">
           <thead><tr><th style="width:5%">#</th><th style="width:25%">Opportunity</th><th style="width:12%">Value $</th><th style="width:15%">Stage</th><th style="width:15%">Channel</th><th style="width:13%">Owner</th><th style="width:15%">Expected Close</th></tr></thead>
@@ -698,10 +568,10 @@
     </div>
   </div>
 
-  <!-- SECTION 3: CHANNEL, DISTRIBUTION & MARKETING -->
+  <!-- SECTION 3: BREWERY, CHANNEL & COMMERCIAL -->
   <div class="report-section">
     <div class="report-section-header"><div class="report-section-num">3</div><span class="report-section-title">Brewery, Channel &amp; Commercial Update</span></div>
-    <div class="report-section-body">
+    <div>
       <div class="narrative-block"><div class="narrative-label">Channel &amp; Distribution</div><textarea class="narrative-textarea" id="n-brewery" rows="4" placeholder="ALM, Paramount, Direct, Coles, Endeavour — volume movements, new listings, ranging changes, delistings..." oninput="markUnsaved()"></textarea></div>
       <div class="narrative-block"><div class="narrative-label">Activations &amp; Promotional Calendar</div><textarea class="narrative-textarea" id="n-brewery-sales" rows="3" placeholder="Current activations, upcoming promos, ALM promo weeks, event pipeline, venue partnerships..." oninput="markUnsaved()"></textarea></div>
       <div class="narrative-block"><div class="narrative-label">Production &amp; Operations</div><textarea class="narrative-textarea" id="n-ops" rows="3" placeholder="Brew schedule, production volumes, quality, equipment, compliance..." oninput="markUnsaved()"></textarea></div>
@@ -712,7 +582,7 @@
   <!-- SECTION 4: 3-MONTH ACTION PLAN -->
   <div class="report-section">
     <div class="report-section-header"><div class="report-section-num">4</div><span class="report-section-title">3-Month Action Plan &#8212; Wholesale &amp; Sales</span></div>
-    <div class="report-section-body">
+    <div>
       <div style="padding:12px 20px 8px;">
         <table class="action-plan-table"><thead><tr><th style="width:5%">#</th><th style="width:28%">Action</th><th style="width:30%">Process / Detail</th><th style="width:18%">Timing</th><th style="width:19%">Responsibility</th></tr></thead>
         <tbody id="action-plan-tbody"></tbody></table>
@@ -722,17 +592,13 @@
   </div>
 
 </div>
-</div><!-- /tab-report -->
+</div>
 
 <div class="footer">
-  GM Operations Dashboard · Month to Date · <span id="footer-date"></span>
-  &nbsp;·&nbsp;
+  GM Operations Dashboard &nbsp;&#183;&nbsp; <span id="footer-date"></span> &nbsp;&#183;&nbsp;
   <button onclick="clearLocal()">Clear local cache</button>
 </div>
 
-<!-- ============================================================
-  JAVASCRIPT
-  ============================================================ -->
 <script>
 // ============================================================
 //  CONFIG
@@ -741,565 +607,244 @@ var CONFIG = {
   tolerancePct: 2.5,
   seatCapacity: 190,
   currency: '$',
-  boardPIN: '124800',  // Change this to update the Board Report PIN
+  boardPIN: '124800',
   SHEETS_URL: 'https://script.google.com/macros/s/AKfycbzKIiCnIm2mFDC-hUM1X0sbf_PWX8GJgZvy7Tu4K3C6BNOS0BbYd3fptgWel6iq4gRLyQ/exec'
 };
 
-// ============================================================
-//  STATE
-// ============================================================
-var evScope      = 'restaurant';
-var currentMonth = '';   // e.g. "2026-06"
+var currentMonth = '';
 var hasUnsaved   = false;
+var boardUnlocked = false;
 
 // ============================================================
-//  MONTH SELECTOR
-//  Builds a 12-month dropdown (current month + 11 prior).
-//  Switching months loads that month's data from Sheets.
+//  TABS + PIN
 // ============================================================
-function buildMonthSelector() {
-  var sel = document.getElementById('month-selector');
-  var now = new Date();
-  sel.innerHTML = '';
-  for (var i = 0; i < 12; i++) {
-    var d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-    var key   = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
-    var label = d.toLocaleDateString('en-AU', {month:'long', year:'numeric'});
-    var opt   = document.createElement('option');
-    opt.value = key;
-    opt.textContent = label;
-    sel.appendChild(opt);
+function switchTab(tab) {
+  if (tab === 'report' && !boardUnlocked) {
+    var pin = prompt('Enter PIN to access Sales Report:');
+    if (pin === null) return;
+    if (pin !== CONFIG.boardPIN) { alert('Incorrect PIN. Access denied.'); return; }
+    boardUnlocked = true;
   }
-  currentMonth = sel.value;
-}
-
-function onMonthChange() {
-  if (hasUnsaved) {
-    if (!confirm('You have unsaved changes. Switch month without saving?')) {
-      // Revert selector
-      document.getElementById('month-selector').value = currentMonth;
-      return;
-    }
-  }
-  currentMonth = document.getElementById('month-selector').value;
-  loadFromSheets();
-}
-
-// ============================================================
-//  MONTH ROLLOVER DETECTION
-//  If local cache is from a different month, prompt the user.
-// ============================================================
-function checkRollover(cachedMonth) {
-  if (!cachedMonth) return;
-  // Only compare YYYY-MM keys — ignore ISO timestamps or other formats
-  var keyMatch = cachedMonth.match(/^(\d{4}-\d{2})/);
-  if (!keyMatch) return;
-  var cachedKey = keyMatch[1];
-  var now = new Date();
-  var thisMonth = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
-  if (cachedKey !== thisMonth) {
-    document.getElementById('rollover-prev-month').textContent = monthLabel(cachedKey);
-    document.getElementById('rollover-curr-month').textContent = monthLabel(thisMonth);
-    document.getElementById('rollover-banner').classList.add('visible');
-  }
-}
-
-function monthLabel(key) {
-  var parts = key.split('-');
-  var d = new Date(parseInt(parts[0]), parseInt(parts[1])-1, 1);
-  return d.toLocaleDateString('en-AU', {month:'long', year:'numeric'});
-}
-
-function startNewMonth() {
-  clearFields();
-  dismissRollover();
-  markUnsaved();
-  setSyncStatus('', 'New month started — enter this month\'s figures then save');
-}
-
-function dismissRollover() {
-  document.getElementById('rollover-banner').classList.remove('visible');
-}
-
-// ============================================================
-//  UNSAVED CHANGES INDICATOR
-// ============================================================
-function markUnsaved() {
-  hasUnsaved = true;
-  document.getElementById('unsaved-badge').classList.add('visible');
-}
-
-function markSaved() {
-  hasUnsaved = false;
-  document.getElementById('unsaved-badge').classList.remove('visible');
-}
-
-// ============================================================
-//  SYNC STATUS
-// ============================================================
-function setSyncStatus(state, msg) {
-  var dot = document.getElementById('sync-dot');
-  var txt = document.getElementById('sync-msg');
-  dot.className = 'sync-dot' + (state ? ' ' + state : '');
-  txt.className = 'sync-msg'  + (state ? ' ' + state : '');
-  txt.textContent = msg;
-}
-
-function setSaveBtn(disabled) {
-  document.getElementById('save-btn').disabled = disabled;
-}
-
-// ============================================================
-//  GOOGLE SHEETS — SAVE
-//  Called only by the explicit Save button.
-//  Action items are appended as a dated snapshot (new rows).
-//  Financial fields overwrite the current month's row.
-// ============================================================
-function saveToSheets() {
-  if (!CONFIG.SHEETS_URL) {
-    setSyncStatus('error', 'SHEETS_URL not configured in CONFIG block');
-    return;
-  }
-
-  setSyncStatus('syncing', 'Saving to Sheets…');
-  setSaveBtn(true);
-
-  var payload = {
-    action:       'save',
-    monthKey:     currentMonth,
-    savedAt:      new Date().toISOString(),
-    evScope:      evScope,
-    fields:       collectFields(),
-    agenda:       collectAgenda(),
-    actions:      collectActions(),
-    weeklyMeeting: collectWeeklyMeeting(),
-    narrative:    collectNarrative(),
-    actionPlan:   (function(){ var a=[]; document.querySelectorAll('#action-plan-tbody tr').forEach(function(tr){ var f=tr.querySelectorAll('textarea'); a.push({action:f[0]?f[0].value:'',process:f[1]?f[1].value:'',timing:f[2]?f[2].value:'',responsibility:f[3]?f[3].value:''}); }); return a; })(),
-    pipeline:     (function(){ var a=[]; document.querySelectorAll('#pipeline-tbody tr').forEach(function(tr){ var f=tr.querySelectorAll('input,select'); a.push({opportunity:f[0]?f[0].value:'',value:f[1]?f[1].value:'',stage:f[2]?f[2].value:'Prospect',channel:f[3]?f[3].value:'',owner:f[4]?f[4].value:'',close:f[5]?f[5].value:''}); }); return a; })()
-  };
-
-  fetch(CONFIG.SHEETS_URL, { method: 'POST', body: JSON.stringify(payload) })
-    .then(function(r) { return r.json(); })
-    .then(function(res) {
-      setSaveBtn(false);
-      if (res.status === 'ok') {
-        setSyncStatus('ok', 'Saved to Sheets · ' + timeNow());
-        markSaved();
-        cacheLocal(payload);
-      } else {
-        setSyncStatus('error', 'Save failed: ' + (res.error || 'check Apps Script logs'));
-      }
-    })
-    .catch(function(err) {
-      setSaveBtn(false);
-      // CORS is the most common failure from GitHub Pages
-      setSyncStatus('error', 'Could not reach Sheets (CORS / network). Data cached locally. Try opening the Apps Script URL directly to re-authorise.');
-      cacheLocal(payload);
-    });
-}
-
-// ============================================================
-//  GOOGLE SHEETS — LOAD
-// ============================================================
-function loadFromSheets() {
-  if (!CONFIG.SHEETS_URL) {
-    setSyncStatus('warn', 'SHEETS_URL not configured — loading local cache only');
-    restoreLocal();
-    return;
-  }
-
-  setSyncStatus('syncing', 'Loading from Sheets…');
-
-  var url = CONFIG.SHEETS_URL + '?action=load&monthKey=' + currentMonth;
-
-  fetch(url)
-    .then(function(r) { return r.json(); })
-    .then(function(res) {
-      if (res.status === 'ok' && res.data) {
-        applyData(res.data);
-        setSyncStatus('ok', 'Loaded from Sheets · ' + timeNow());
-        markSaved();
-        cacheLocal(res.data);
-      } else {
-        // No data for this month yet — try local cache, otherwise keep defaults
-        setSyncStatus('warn', 'No Sheets data for ' + monthLabel(currentMonth) + ' — enter figures and save');
-        var restored = restoreLocal();
-        if (!restored) {
-          // Keep the HTML default values, just run calcs
-          ['r-food','r-bev','r-other','b-keg','b-pack','b-other'].forEach(calc);
-          calcEV(); calcKPIs(); calcLabour();
-          markSaved(); // not really saved, but suppresses the unsaved badge on fresh load
-        }
-      }
-    })
-    .catch(function() {
-      setSyncStatus('error', 'Could not reach Sheets (CORS / network) — loading local cache. To fix: open the Apps Script URL in your browser and re-authorise.');
-      var restored = restoreLocal();
-      if (!restored) {
-        ['r-food','r-bev','r-other','b-keg','b-pack','b-other'].forEach(calc);
-        calcEV(); calcKPIs(); calcLabour();
-      }
-    });
-}
-
-// ============================================================
-//  APPLY DATA
-// ============================================================
-function applyData(data) {
-  if (data.fields) {
-    Object.keys(data.fields).forEach(function(id) {
-      var el = document.getElementById(id);
-      if (el) el.value = data.fields[id];
-    });
-  }
-  if (data.evScope) { evScope = data.evScope; setEVScope(evScope); }
-
-  if (data.actions && data.actions.length) {
-    actionRows = data.actions;
-    document.getElementById('action-tbody').innerHTML = '';
-    actionRows.forEach(function(r) {
-      document.getElementById('action-tbody').appendChild(makeActionRow(r));
-    });
-  }
-
-  if (data.agenda && data.agenda.length) {
-    var inputs = document.querySelectorAll('#agenda-items .agenda-text');
-    data.agenda.forEach(function(val, i) { if (inputs[i]) inputs[i].value = val; });
-  }
-
-  if (data.actionPlan && data.actionPlan.length) {
-    actionPlanRows = data.actionPlan;
-    document.getElementById('action-plan-tbody').innerHTML='';
-    actionPlanRows.forEach(function(r,i){ document.getElementById('action-plan-tbody').appendChild(makeActionPlanRow(r,i+1)); });
-  }
-  if (data.pipeline && data.pipeline.length) {
-    pipelineRows = data.pipeline;
-    var ptbody = document.getElementById('pipeline-tbody');
-    if (ptbody) {
-      ptbody.innerHTML='';
-      pipelineRows.forEach(function(r,i){ ptbody.appendChild(makePipelineRow(r,i+1)); });
-    }
-  }
-  if (data.narrative) {
-    NARRATIVE_IDS.forEach(function(id){ var el=document.getElementById(id); if(el&&data.narrative[id]!==undefined) el.value=data.narrative[id]; });
-  }
-  ['r-food','r-bev','r-other','b-keg','b-pack','b-other'].forEach(calc);
-  calcEV(); calcKPIs(); calcLabour(); validateAll();
-}
-
-// ============================================================
-//  COLLECT HELPERS
-// ============================================================
-var SAVE_FIELDS = [
-  'r-food-budget','r-food-actual','r-food-sply',
-  'r-bev-budget', 'r-bev-actual', 'r-bev-sply',
-  'r-other-budget','r-other-actual','r-other-sply',
-  'b-keg-budget', 'b-keg-actual', 'b-keg-sply',
-  'b-pack-budget','b-pack-actual','b-pack-sply',
-  'b-other-budget','b-other-actual','b-other-sply',
-  'r-wages','r-labour-target','b-wages','b-labour-target',
-  'kpi-covers','kpi-turns',
-  'ev-days-elapsed','ev-days-total',
-  'meeting-date','meeting-time','meeting-attendees'
-];
-
-function collectFields() {
-  var f = {};
-  SAVE_FIELDS.forEach(function(id) { var el=document.getElementById(id); if(el) f[id]=el.value; });
-  return f;
-}
-
-function collectAgenda() {
-  var a = [];
-  document.querySelectorAll('#agenda-items .agenda-text').forEach(function(inp) { a.push(inp.value); });
-  return a;
-}
-
-function collectActions() {
-  var a = [];
-  document.querySelectorAll('#action-tbody tr').forEach(function(tr) {
-    var f = tr.querySelectorAll('input,select');
-    a.push({ action:f[0]?f[0].value:'', owner:f[1]?f[1].value:'', due:f[2]?f[2].value:'', status:f[3]?f[3].value:'Open' });
+  ['sales','restaurant','report'].forEach(function(t){
+    document.getElementById('tabbtn-'+t).classList.toggle('active', t===tab);
+    document.getElementById('tab-'+t).classList.toggle('active', t===tab);
   });
-  return a;
+  if (tab==='report') calcSummary();
 }
 
 // ============================================================
-//  LOCAL CACHE — offline fallback only, not primary storage
+//  VARIANCE + TOTALS
 // ============================================================
-var CACHE_KEY = 'gm_dash_v3';
+function val(id){ var el=document.getElementById(id); return el?parseFloat(el.value)||0:0; }
+function fa(n){ return CONFIG.currency+Math.abs(n).toLocaleString('en-AU',{minimumFractionDigits:0,maximumFractionDigits:0}); }
+function setText(id,t){ var el=document.getElementById(id); if(el) el.textContent=t; }
+function formatCurrency(n){ return (n<0?'-':n>0?'+':'')+CONFIG.currency+Math.abs(n).toLocaleString('en-AU',{minimumFractionDigits:0,maximumFractionDigits:0}); }
+function formatPct(n){ return (n>0?'+':'')+n.toFixed(1)+'%'; }
+function vc(pct){ return Math.abs(pct)<=CONFIG.tolerancePct?'var-neutral':pct>=0?'var-positive':'var-negative'; }
+function setVC(id,text,pct){ var el=document.getElementById(id); if(!el) return; el.textContent=text; el.className=vc(pct); }
+function timeNow(){ return new Date().toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'}); }
 
-function cacheLocal(data) {
-  try { localStorage.setItem(CACHE_KEY, JSON.stringify(data)); } catch(e) {}
-}
-
-function restoreLocal() {
-  var raw; try { raw = localStorage.getItem(CACHE_KEY); } catch(e) {}
-  if (!raw) {
-    ['r-food','r-bev','b-keg','b-pack'].forEach(calc);
-    calcEV(); calcKPIs();
-    setSyncStatus('', 'No saved data found — enter figures and save');
-    return false;
-  }
-  var data; try { data = JSON.parse(raw); } catch(e) { return false; }
-  checkRollover(data.monthKey || data.savedAt);
-  applyData(data);
-  setSyncStatus('warn', 'Loaded from local cache — save to Sheets when online');
-  return true;
-}
-
-function clearLocal() {
-  if (!confirm('Clear local cache and reset to defaults?')) return;
-  try { localStorage.removeItem(CACHE_KEY); } catch(e) {}
-  location.reload();
-}
-
-function clearFields() {
-  SAVE_FIELDS.forEach(function(id) {
-    var el = document.getElementById(id);
-    if (el && el.type === 'number') el.value = '';
-  });
-  ['r-food','r-bev','b-keg','b-pack'].forEach(calc);
-  calcEV(); calcKPIs();
-}
-
-// ============================================================
-//  INPUT VALIDATION
-//  Flags actuals that exceed 3× budget (likely entry error)
-//  and negative values.
-// ============================================================
-var VALIDATE_PAIRS = [
-  ['r-food-budget','r-food-actual'],['r-bev-budget','r-bev-actual'],['r-other-budget','r-other-actual'],
-  ['b-keg-budget','b-keg-actual'],['b-pack-budget','b-pack-actual'],['b-other-budget','b-other-actual']
-];
-
-function validateAll() {
-  VALIDATE_PAIRS.forEach(function(pair) {
-    var bEl = document.getElementById(pair[0]);
-    var aEl = document.getElementById(pair[1]);
-    var b = parseFloat(bEl.value) || 0;
-    var a = parseFloat(aEl.value) || 0;
-    // Flag negative values
-    bEl.classList.toggle('invalid', b < 0);
-    aEl.classList.toggle('invalid', a < 0 || (b > 0 && a > b * 3));
-  });
-}
-
-// ============================================================
-//  VARIANCE CALC
-// ============================================================
 function calc(prefix) {
-  var b = parseFloat(document.getElementById(prefix+'-budget').value) || 0;
-  var a = parseFloat(document.getElementById(prefix+'-actual').value) || 0;
-  var vd = a - b, vp = b !== 0 ? (vd/b)*100 : 0;
+  var b=val(prefix+'-budget'), a=val(prefix+'-actual');
+  var vd=a-b, vp=b?(vd/b)*100:0;
   setVC(prefix+'-var-d', formatCurrency(vd), vp);
   setVC(prefix+'-var-p', formatPct(vp), vp);
   updateRestTotal(); updateBrewTotal();
-  validateAll();
-}
-
-function setVC(id, text, pct) {
-  var el = document.getElementById(id);
-  el.textContent = text;
-  el.className = vc(pct);
 }
 
 function updateRestTotal() {
-  var bF=val('r-food-budget'),aF=val('r-food-actual'),bB=val('r-bev-budget'),aB=val('r-bev-actual'),bO=val('r-other-budget'),aO=val('r-other-actual');
-  var tB=bF+bB+bO, tA=aF+aB+aO, vd=tA-tB, vp=tB?((vd/tB)*100):0;
-  var sF=val('r-food-sply'),sB=val('r-bev-sply'),sO=val('r-other-sply');
-  setText('r-total-budget',fa(tB)); setText('r-total-actual',fa(tA)); setText('r-total-sply',fa(sF+sB+sO));
-  setVC('r-total-var-d', formatCurrency(vd), vp);
-  setVC('r-total-var-p', formatPct(vp), vp);
-  calcKPIs(tA); calcEV(); calcLabour();
+  var tB=val('r-food-budget')+val('r-bev-budget')+val('r-other-budget');
+  var tA=val('r-food-actual')+val('r-bev-actual')+val('r-other-actual');
+  var tS=val('r-food-sply')+val('r-bev-sply')+val('r-other-sply');
+  var vd=tA-tB, vp=tB?(vd/tB)*100:0;
+  setText('r-total-budget',fa(tB)); setText('r-total-actual',fa(tA)); setText('r-total-sply',fa(tS));
+  setVC('r-total-var-d',formatCurrency(vd),vp); setVC('r-total-var-p',formatPct(vp),vp);
+  calcKPIs(); calcEVRest(); calcLabour();
 }
-
 function updateBrewTotal() {
-  var bK=val('b-keg-budget'),aK=val('b-keg-actual'),bP=val('b-pack-budget'),aP=val('b-pack-actual'),bO=val('b-other-budget'),aO=val('b-other-actual');
-  var tB=bK+bP+bO, tA=aK+aP+aO, vd=tA-tB, vp=tB?((vd/tB)*100):0;
-  var sK=val('b-keg-sply'),sP=val('b-pack-sply'),sO=val('b-other-sply');
-  setText('b-total-budget',fa(tB)); setText('b-total-actual',fa(tA)); setText('b-total-sply',fa(sK+sP+sO));
-  setVC('b-total-var-d', formatCurrency(vd), vp);
-  setVC('b-total-var-p', formatPct(vp), vp);
-  calcEV(); calcLabour();
+  var tB=val('b-keg-budget')+val('b-pack-budget')+val('b-other-budget');
+  var tA=val('b-keg-actual')+val('b-pack-actual')+val('b-other-actual');
+  var tS=val('b-keg-sply')+val('b-pack-sply')+val('b-other-sply');
+  var vd=tA-tB, vp=tB?(vd/tB)*100:0;
+  setText('b-total-budget',fa(tB)); setText('b-total-actual',fa(tA)); setText('b-total-sply',fa(tS));
+  setVC('b-total-var-d',formatCurrency(vd),vp); setVC('b-total-var-p',formatPct(vp),vp);
+  calcEVSales(); calcLabour();
 }
 
 // ============================================================
-//  KPIs — seat utilisation uses days open, not total capacity
-// ============================================================
-function calcKPIs(totalActual) {
-  var covers  = val('kpi-covers');
-  var elapsed = val('ev-days-elapsed');
-  var rev = totalActual !== undefined ? totalActual : val('r-food-actual') + val('r-bev-actual');
-
-  // Avg spend per cover
-  document.getElementById('kpi-spend').value = covers > 0 ? (rev / covers).toFixed(2) : '';
-
-  // Seat utilisation: covers ÷ (capacity × days open) — more meaningful than vs static total
-  var noteEl = document.getElementById('util-note');
-  if (covers > 0 && elapsed > 0) {
-    var util = (covers / (CONFIG.seatCapacity * elapsed)) * 100;
-    noteEl.textContent = util.toFixed(1) + '% utilisation vs ' + CONFIG.seatCapacity + ' seats × ' + elapsed + ' days';
-  } else {
-    noteEl.textContent = '';
-  }
-}
-
-// ============================================================
-//  EV / PV
-// ============================================================
-function setEVScope(s) {
-  evScope = s;
-  ['restaurant','brewery','combined'].forEach(function(x) {
-    document.getElementById('ev-scope-'+x).classList.toggle('active', x===s);
-  });
-  calcEV();
-}
-
-function getEVNums() {
-  var rB = val('r-food-budget')+val('r-bev-budget')+val('r-other-budget');
-  var rA = val('r-food-actual')+val('r-bev-actual')+val('r-other-actual');
-  var bB = val('b-keg-budget')+val('b-pack-budget')+val('b-other-budget');
-  var bA = val('b-keg-actual')+val('b-pack-actual')+val('b-other-actual');
-  if (evScope==='restaurant') return {budget:rB,actual:rA};
-  if (evScope==='brewery')    return {budget:bB,actual:bA};
-  return {budget:rB+bB, actual:rA+bA};
-}
-
-function setEndOfMonth() {
-  // Sets days elapsed = total days so PV = full budget (for reviewing completed months)
-  var total = val('ev-days-total') || new Date(new Date().getFullYear(), new Date().getMonth()+1, 0).getDate();
-  var elEl  = document.getElementById('ev-days-elapsed');
-  var totEl = document.getElementById('ev-days-total');
-  elEl.value  = total;
-  totEl.value = total;
-  elEl.dataset.u  = '1';
-  totEl.dataset.u = '1';
-  calcEV();
-  markUnsaved();
-}
-
-function calcEV() {
-  var elapsed = val('ev-days-elapsed'), total = val('ev-days-total') || 1;
-  var nums = getEVNums();
-  var pct  = Math.min(elapsed/total, 1);
-  var pv   = nums.budget * pct;
-  var ev   = nums.actual;
-  var spi  = pv > 0  ? ev/pv  : null;
-  var proj = pct > 0 ? ev/pct : null;
-
-  document.getElementById('ev-pv').textContent = fa(pv);
-  document.getElementById('ev-ev').textContent = fa(ev);
-
-  var spiEl=document.getElementById('ev-spi'), spiSub=document.getElementById('ev-spi-sub');
-  if (spi !== null) {
-    spiEl.textContent = spi.toFixed(2);
-    var sp = (spi-1)*100;
-    spiEl.className = 'ev-kpi-value '+vc(sp);
-    spiSub.textContent = spi>=1 ? 'Ahead of pace — tracking above budget'
-      : Math.abs(sp)<=CONFIG.tolerancePct ? 'On track — within tolerance band'
-      : 'Behind pace — intervention may be needed';
-  } else {
-    spiEl.textContent='—'; spiEl.className='ev-kpi-value';
-    spiSub.textContent='Enter days elapsed to calculate';
-  }
-
-  var projEl=document.getElementById('ev-proj'), projSub=document.getElementById('ev-proj-sub');
-  if (proj !== null) {
-    projEl.textContent = fa(proj);
-    var pv2=proj-nums.budget, pp=nums.budget>0?(pv2/nums.budget)*100:0;
-    projEl.className = 'ev-kpi-value '+vc(pp);
-    projSub.innerHTML = '<span class="'+vc(pp)+'">'+(pv2>=0?'+':'')+formatCurrency(pv2)+
-      ' ('+(pp>=0?'+':'')+pp.toFixed(1)+'%)</span> vs <span id="ev-budget-label">'+fa(nums.budget)+' budget</span>';
-  } else {
-    projEl.textContent='—'; projEl.className='ev-kpi-value';
-    document.getElementById('ev-proj-sub').innerHTML = 'vs <span id="ev-budget-label">'+fa(nums.budget)+' budget</span>';
-  }
-}
-
-// ============================================================
-//  TAB SWITCHING
-//  Board Report tab is PIN protected.
-//  PIN is set in CONFIG.boardPIN below.
-// ============================================================
-var boardUnlocked = false;
-
-function switchTab(tab) {
-  if (tab === 'report' && !boardUnlocked) {
-    var pin = prompt('Enter PIN to access Board Report:');
-    if (pin === null) return; // user cancelled
-    if (pin !== CONFIG.boardPIN) {
-      alert('Incorrect PIN. Access denied.');
-      return;
-    }
-    boardUnlocked = true;
-  }
-  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
-  document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
-  document.querySelector('[onclick="switchTab(\''+tab+'\')"]').classList.add('active');
-  document.getElementById('tab-'+tab).classList.add('active');
-  if (tab==='report') syncReportFromDashboard();
-}
-
-// ============================================================
-//  BOARD REPORT SYNC
-// ============================================================
-function syncReportFromDashboard() {
-  var rB=val('r-food-budget')+val('r-bev-budget')+val('r-other-budget');
-  var rA=val('r-food-actual')+val('r-bev-actual')+val('r-other-actual');
-  var bB=val('b-keg-budget')+val('b-pack-budget')+val('b-other-budget');
-  var bA=val('b-keg-actual')+val('b-pack-actual')+val('b-other-actual');
-  var tB=rB+bB, tA=rA+bA;
-  setText('sr-brewery-actual',fa(bA)); setText('sr-brewery-budget',fa(bB));
-  setText('sr-rest-actual',fa(rA));    setText('sr-rest-budget',fa(rB));
-  setText('sr-total-actual',fa(tA));   setText('sr-total-budget',fa(tB));
-  var bVD=bA-bB,bVP=bB?(bVD/bB)*100:0; setVC2('sr-brewery-var-d',formatCurrency(bVD),bVP); setVC2('sr-brewery-var-p',formatPct(bVP),bVP);
-  var rVD=rA-rB,rVP=rB?(rVD/rB)*100:0; setVC2('sr-rest-var-d',formatCurrency(rVD),rVP); setVC2('sr-rest-var-p',formatPct(rVP),rVP);
-  var tVD=tA-tB,tVP=tB?(tVD/tB)*100:0; setVC2('sr-total-var-d',formatCurrency(tVD),tVP); setVC2('sr-total-var-p',formatPct(tVP),tVP);
-  setText('sr-total-sply',fa(val('sr-brewery-sply')+val('sr-rest-sply')));
-  setText('sr-total-ytd',fa(val('sr-brewery-ytd')+val('sr-rest-ytd')));
-  setText('sr-total-ytd-budget',fa(val('sr-brewery-ytd-budget')+val('sr-rest-ytd-budget')));
-  var eA=val('sr-ebitda-actual'),eB=val('sr-ebitda-budget'),eVD=eA-eB,eVP=eB?(eVD/eB)*100:0;
-  setVC2('sr-ebitda-var-d',formatCurrency(eVD),eVP); setVC2('sr-ebitda-var-p',formatPct(eVP),eVP);
-  var nA=val('sr-net-actual'),nB=val('sr-net-budget'),nVD=nA-nB,nVP=nB?(nVD/nB)*100:0;
-  setVC2('sr-net-var-d',formatCurrency(nVD),nVP); setVC2('sr-net-var-p',formatPct(nVP),nVP);
-  syncLabourReport();
-  calcChannel();
-}
-function calcSummary(){ syncReportFromDashboard(); }
-function setVC2(id,text,pct){ setVC(id,text,pct); }
-
-function syncLabourReport() {
-  var rW=val('r-wages'),rR=val('r-food-actual')+val('r-bev-actual')+val('r-other-actual'),rT=val('r-labour-target');
-  var bW=val('b-wages'),bR=val('b-keg-actual')+val('b-pack-actual')+val('b-other-actual'),bT=val('b-labour-target');
-  var rRatio=rR>0?(rW/rR)*100:null, bRatio=bR>0?(bW/bR)*100:null;
-  var tW=rW+bW,tR=rR+bR,tRatio=tR>0?(tW/tR)*100:null;
-  setText('lrs-rest-ratio',rRatio!==null?rRatio.toFixed(1)+'%':'—');
-  setText('lrs-brew-ratio',bRatio!==null?bRatio.toFixed(1)+'%':'—');
-  setText('lrs-combined-wages',fa(bW));
-  setText('lrs-combined-ratio',tRatio!==null?tRatio.toFixed(1)+'%':'—');
-  setText('lrs-brew-rev-report',fa(bR));
-  setText('lrs-rest-target',rT); setText('lrs-brew-target',bT);
-  colourRatio('lrs-rest-ratio',rRatio,rT); colourRatio('lrs-brew-ratio',bRatio,bT); colourRatio('lrs-combined-ratio',tRatio,(rT+bT)/2);
-}
-function colourRatio(id,ratio,target){
-  var el=document.getElementById(id); if(!el||ratio===null) return;
-  el.className='lrs-value '+(ratio<=target?'ratio-good':ratio<=target*1.1?'ratio-warn':'ratio-bad');
-}
-
-// ============================================================
-//  LABOUR PRODUCTIVITY
+//  LABOUR
 // ============================================================
 function calcLabour() {
-  var rW=val('r-wages'),rR=val('r-food-actual')+val('r-bev-actual')+val('r-other-actual'),rT=val('r-labour-target');
-  var bW=val('b-wages'),bR=val('b-keg-actual')+val('b-pack-actual')+val('b-other-actual'),bT=val('b-labour-target');
+  var rW=val('r-wages'), rR=val('r-food-actual')+val('r-bev-actual')+val('r-other-actual'), rT=val('r-labour-target');
+  var bW=val('b-wages'), bR=val('b-keg-actual')+val('b-pack-actual')+val('b-other-actual'), bT=val('b-labour-target');
   var rRatio=rR>0?(rW/rR)*100:null, bRatio=bR>0?(bW/bR)*100:null;
   setText('r-labour-rev',fa(rR)); setText('b-labour-rev',fa(bR));
   var rEl=document.getElementById('r-labour-ratio');
-  if(rEl){ rEl.textContent=rRatio!==null?rRatio.toFixed(1)+'%':'—'; rEl.className='labour-value '+(rRatio===null?'':rRatio<=rT?'ratio-good':rRatio<=rT*1.1?'ratio-warn':'ratio-bad'); }
+  if(rEl){ rEl.textContent=rRatio!==null?rRatio.toFixed(1)+'%':'\u2014'; rEl.className='labour-value '+(rRatio===null?'':rRatio<=rT?'ratio-good':rRatio<=rT*1.1?'ratio-warn':'ratio-bad'); }
   var bEl=document.getElementById('b-labour-ratio');
-  if(bEl){ bEl.textContent=bRatio!==null?bRatio.toFixed(1)+'%':'—'; bEl.className='labour-value '+(bRatio===null?'':bRatio<=bT?'ratio-good':bRatio<=bT*1.1?'ratio-warn':'ratio-bad'); }
-  syncLabourReport();
+  if(bEl){ bEl.textContent=bRatio!==null?bRatio.toFixed(1)+'%':'\u2014'; bEl.className='labour-value '+(bRatio===null?'':bRatio<=bT?'ratio-good':bRatio<=bT*1.1?'ratio-warn':'ratio-bad'); }
+  // Report strip
+  setText('lrs-brew-wages',fa(bW));
+  setText('lrs-brew-rev',fa(bR));
+  setText('lrs-brew-target',bT);
+  var lEl=document.getElementById('lrs-brew-ratio');
+  if(lEl){ lEl.textContent=bRatio!==null?bRatio.toFixed(1)+'%':'\u2014'; lEl.className='lrs-value '+(bRatio===null?'':bRatio<=bT?'ratio-good':bRatio<=bT*1.1?'ratio-warn':'ratio-bad'); }
+}
+
+// ============================================================
+//  KPIs
+// ============================================================
+function calcKPIs() {
+  var covers=val('kpi-covers'), elapsed=val('r-ev-days-elapsed');
+  var rev=val('r-food-actual')+val('r-bev-actual')+val('r-other-actual');
+  document.getElementById('kpi-spend').value = covers>0?(rev/covers).toFixed(2):'';
+  var noteEl=document.getElementById('util-note');
+  if (covers>0&&elapsed>0) noteEl.textContent=(covers/(CONFIG.seatCapacity*elapsed)*100).toFixed(1)+'% utilisation vs '+CONFIG.seatCapacity+' seats \u00d7 '+elapsed+' days';
+  else noteEl.textContent='';
+}
+
+// ============================================================
+//  EV/PV — per department
+// ============================================================
+function setEndOfMonth(dept) {
+  var total = val(dept+'-ev-days-total') || new Date(new Date().getFullYear(), new Date().getMonth()+1, 0).getDate();
+  var elEl=document.getElementById(dept+'-ev-days-elapsed'), totEl=document.getElementById(dept+'-ev-days-total');
+  elEl.value=total; totEl.value=total; elEl.dataset.u='1'; totEl.dataset.u='1';
+  if(dept==='s') calcEVSales(); else calcEVRest();
+  markUnsaved();
+}
+
+function calcEVGeneric(dept, budget, actual) {
+  var elapsed=val(dept+'-ev-days-elapsed'), total=val(dept+'-ev-days-total')||1;
+  var pct=Math.min(elapsed/total,1);
+  var pv=budget*pct, ev=actual;
+  var spi=pv>0?ev/pv:null, proj=pct>0?ev/pct:null;
+  setText(dept+'-ev-pv',fa(pv)); setText(dept+'-ev-ev',fa(ev));
+  var spiEl=document.getElementById(dept+'-ev-spi'), spiSub=document.getElementById(dept+'-ev-spi-sub');
+  if(spi!==null){
+    spiEl.textContent=spi.toFixed(2); var sp=(spi-1)*100;
+    spiEl.className='ev-kpi-value '+vc(sp);
+    spiSub.textContent=spi>=1?'Ahead of pace':Math.abs(sp)<=CONFIG.tolerancePct?'On track':'Behind pace \u2014 action needed';
+  } else { spiEl.textContent='\u2014'; spiEl.className='ev-kpi-value'; spiSub.textContent='Enter days elapsed'; }
+  var projEl=document.getElementById(dept+'-ev-proj'), projSub=document.getElementById(dept+'-ev-proj-sub');
+  if(proj!==null){
+    projEl.textContent=fa(proj);
+    var pv2=proj-budget, pp=budget>0?(pv2/budget)*100:0;
+    projEl.className='ev-kpi-value '+vc(pp);
+    projSub.innerHTML='<span class="'+vc(pp)+'">'+(pv2>=0?'+':'')+formatCurrency(pv2)+' ('+(pp>=0?'+':'')+pp.toFixed(1)+'%)</span> vs '+fa(budget)+' budget';
+  } else { projEl.textContent='\u2014'; projEl.className='ev-kpi-value'; projSub.textContent='vs '+fa(budget)+' budget'; }
+}
+function calcEVSales() {
+  calcEVGeneric('s', val('b-keg-budget')+val('b-pack-budget')+val('b-other-budget'),
+                     val('b-keg-actual')+val('b-pack-actual')+val('b-other-actual'));
+}
+function calcEVRest() {
+  calcEVGeneric('r', val('r-food-budget')+val('r-bev-budget')+val('r-other-budget'),
+                     val('r-food-actual')+val('r-bev-actual')+val('r-other-actual'));
+  calcKPIs();
+}
+
+// ============================================================
+//  SALES REPORT SYNC
+// ============================================================
+var CHANNELS = ['direct','alm','paramount','coles','endeavour'];
+var CHANNEL_LABELS = {direct:'Direct',alm:'ALM',paramount:'Paramount',coles:'Coles',endeavour:'Endeavour'};
+
+function buildChannelTable() {
+  var tbody=document.getElementById('channel-tbody');
+  var html='';
+  CHANNELS.forEach(function(ch){
+    html+='<tr><td>'+CHANNEL_LABELS[ch]+'</td>'+
+      '<td><input class="rt-input" type="number" id="ch-'+ch+'-keg-a" placeholder="0" oninput="calcChannel();markUnsaved()"></td>'+
+      '<td><input class="rt-input" type="number" id="ch-'+ch+'-keg-b" placeholder="0" oninput="calcChannel();markUnsaved()"></td>'+
+      '<td id="ch-'+ch+'-keg-vd">\u2014</td><td id="ch-'+ch+'-keg-vp">\u2014</td>'+
+      '<td><input class="rt-input" type="number" id="ch-'+ch+'-pack-a" placeholder="0" oninput="calcChannel();markUnsaved()"></td>'+
+      '<td><input class="rt-input" type="number" id="ch-'+ch+'-pack-b" placeholder="0" oninput="calcChannel();markUnsaved()"></td>'+
+      '<td id="ch-'+ch+'-pack-vd">\u2014</td><td id="ch-'+ch+'-pack-vp">\u2014</td></tr>';
+  });
+  html+='<tr class="rt-total"><td>Total</td><td id="ch-total-keg-a">\u2014</td><td id="ch-total-keg-b">\u2014</td><td id="ch-total-keg-vd">\u2014</td><td id="ch-total-keg-vp">\u2014</td><td id="ch-total-pack-a">\u2014</td><td id="ch-total-pack-b">\u2014</td><td id="ch-total-pack-vd">\u2014</td><td id="ch-total-pack-vp">\u2014</td></tr>';
+  tbody.innerHTML=html;
+}
+
+function calcChannel() {
+  var tKA=0,tKB=0,tPA=0,tPB=0;
+  CHANNELS.forEach(function(ch){
+    var kA=val('ch-'+ch+'-keg-a'), kB=val('ch-'+ch+'-keg-b');
+    var pA=val('ch-'+ch+'-pack-a'), pB=val('ch-'+ch+'-pack-b');
+    var kVD=kA-kB,kVP=kB?(kVD/kB)*100:0, pVD=pA-pB,pVP=pB?(pVD/pB)*100:0;
+    setVC('ch-'+ch+'-keg-vd',formatCurrency(kVD),kVP); setVC('ch-'+ch+'-keg-vp',formatPct(kVP),kVP);
+    setVC('ch-'+ch+'-pack-vd',formatCurrency(pVD),pVP); setVC('ch-'+ch+'-pack-vp',formatPct(pVP),pVP);
+    tKA+=kA;tKB+=kB;tPA+=pA;tPB+=pB;
+  });
+  var tkVD=tKA-tKB,tkVP=tKB?(tkVD/tKB)*100:0, tpVD=tPA-tPB,tpVP=tPB?(tpVD/tPB)*100:0;
+  setText('ch-total-keg-a',fa(tKA)); setText('ch-total-keg-b',fa(tKB));
+  setText('ch-total-pack-a',fa(tPA)); setText('ch-total-pack-b',fa(tPB));
+  setVC('ch-total-keg-vd',formatCurrency(tkVD),tkVP); setVC('ch-total-keg-vp',formatPct(tkVP),tkVP);
+  setVC('ch-total-pack-vd',formatCurrency(tpVD),tpVP); setVC('ch-total-pack-vp',formatPct(tpVP),tpVP);
+}
+
+function calcSummary() {
+  // Brewery fed from Sales tab
+  var bB=val('b-keg-budget')+val('b-pack-budget')+val('b-other-budget');
+  var bA=val('b-keg-actual')+val('b-pack-actual')+val('b-other-actual');
+  var bS=val('b-keg-sply')+val('b-pack-sply')+val('b-other-sply');
+  // Restaurant fed from Restaurant tab
+  var rB=val('r-food-budget')+val('r-bev-budget')+val('r-other-budget');
+  var rA=val('r-food-actual')+val('r-bev-actual')+val('r-other-actual');
+  var rS=val('r-food-sply')+val('r-bev-sply')+val('r-other-sply');
+  var tB=bB+rB, tA=bA+rA, tS=bS+rS;
+
+  setText('sr-brewery-actual',fa(bA)); setText('sr-brewery-budget',fa(bB)); setText('sr-brewery-sply',fa(bS));
+  setText('sr-rest-actual',fa(rA)); setText('sr-rest-budget',fa(rB)); setText('sr-rest-sply',fa(rS));
+  setText('sr-total-actual',fa(tA)); setText('sr-total-budget',fa(tB)); setText('sr-total-sply',fa(tS));
+
+  var bVD=bA-bB,bVP=bB?(bVD/bB)*100:0; setVC('sr-brewery-var-d',formatCurrency(bVD),bVP); setVC('sr-brewery-var-p',formatPct(bVP),bVP);
+  var rVD=rA-rB,rVP=rB?(rVD/rB)*100:0; setVC('sr-rest-var-d',formatCurrency(rVD),rVP); setVC('sr-rest-var-p',formatPct(rVP),rVP);
+  var tVD=tA-tB,tVP=tB?(tVD/tB)*100:0; setVC('sr-total-var-d',formatCurrency(tVD),tVP); setVC('sr-total-var-p',formatPct(tVP),tVP);
+
+  setText('sr-total-ytd',fa(val('sr-brewery-ytd')+val('sr-rest-ytd')));
+  setText('sr-total-ytd-budget',fa(val('sr-brewery-ytd-budget')+val('sr-rest-ytd-budget')));
+
+  calcChannel(); calcLabour();
+}
+
+// ============================================================
+//  PIPELINE
+// ============================================================
+var PIPELINE_STAGES=['Prospect','Qualified','Proposal','Negotiation','Won','Lost'];
+var pipelineRows=[
+  {opportunity:'',value:'',stage:'Prospect',channel:'',owner:'',close:''},
+  {opportunity:'',value:'',stage:'Prospect',channel:'',owner:'',close:''}
+];
+function buildPipelineTable(){
+  var tbody=document.getElementById('pipeline-tbody');
+  tbody.innerHTML='';
+  pipelineRows.forEach(function(r,i){ tbody.appendChild(makePipelineRow(r,i+1)); });
+}
+function makePipelineRow(r,num){
+  var tr=document.createElement('tr');
+  var opts=PIPELINE_STAGES.map(function(s){ return '<option'+(s===r.stage?' selected':'')+'>'+s+'</option>'; }).join('');
+  tr.innerHTML='<td style="text-align:center;color:#8A8F9C;font-size:0.78rem;padding:8px;">'+num+'</td>'+
+    '<td><input class="action-input" type="text" value="'+(r.opportunity||'')+'" placeholder="Account / opportunity..." oninput="markUnsaved()"></td>'+
+    '<td><input class="action-input" type="number" value="'+(r.value||'')+'" placeholder="0" oninput="markUnsaved()"></td>'+
+    '<td><select class="status-select" onchange="markUnsaved()">'+opts+'</select></td>'+
+    '<td><input class="action-input" type="text" value="'+(r.channel||'')+'" placeholder="e.g. ALM, Direct" oninput="markUnsaved()"></td>'+
+    '<td><input class="action-input" type="text" value="'+(r.owner||'')+'" placeholder="Name" oninput="markUnsaved()"></td>'+
+    '<td><input class="action-input" type="date" value="'+(r.close||'')+'" oninput="markUnsaved()"></td>';
+  return tr;
+}
+function addPipelineRow(){
+  pipelineRows.push({opportunity:'',value:'',stage:'Prospect',channel:'',owner:'',close:''});
+  document.getElementById('pipeline-tbody').appendChild(makePipelineRow(pipelineRows[pipelineRows.length-1],document.getElementById('pipeline-tbody').rows.length+1));
+  markUnsaved();
+}
+function collectPipeline(){
+  var a=[];
+  document.querySelectorAll('#pipeline-tbody tr').forEach(function(tr){
+    var f=tr.querySelectorAll('input,select');
+    a.push({opportunity:f[0]?f[0].value:'',value:f[1]?f[1].value:'',stage:f[2]?f[2].value:'Prospect',channel:f[3]?f[3].value:'',owner:f[4]?f[4].value:'',close:f[5]?f[5].value:''});
+  });
+  return a;
 }
 
 // ============================================================
@@ -1313,6 +858,7 @@ var actionPlanRows=[
 ];
 function buildActionPlanTable(){
   var tbody=document.getElementById('action-plan-tbody');
+  tbody.innerHTML='';
   actionPlanRows.forEach(function(r,i){ tbody.appendChild(makeActionPlanRow(r,i+1)); });
 }
 function makeActionPlanRow(r,num){
@@ -1325,321 +871,360 @@ function makeActionPlanRow(r,num){
   return tr;
 }
 function addActionPlanRow(){
-  var tbody=document.getElementById('action-plan-tbody');
   actionPlanRows.push({action:'',process:'',timing:'',responsibility:''});
-  tbody.appendChild(makeActionPlanRow(actionPlanRows[actionPlanRows.length-1],tbody.rows.length+1));
+  document.getElementById('action-plan-tbody').appendChild(makeActionPlanRow(actionPlanRows[actionPlanRows.length-1],document.getElementById('action-plan-tbody').rows.length+1));
   markUnsaved();
 }
-
-// ============================================================
-//  NARRATIVE COLLECT / APPLY
-// ============================================================
-var NARRATIVE_IDS=['mission-critical-text','report-month-label','report-date','report-author','report-next-board',
-  'n-trading-summary','n-restaurant','n-restaurant-actions','n-brewery','n-brewery-sales','n-brewery-actions',
-  'n-hr','n-ops','n-cashflow','n-outlook',
-  'sr-brewery-sply','sr-rest-sply','sr-brewery-ytd','sr-rest-ytd','sr-brewery-ytd-budget','sr-rest-ytd-budget',
-  'sr-ebitda-actual','sr-ebitda-budget','sr-ebitda-sply','sr-ebitda-ytd','sr-ebitda-ytd-budget',
-  'sr-net-actual','sr-net-budget','sr-net-sply','sr-net-ytd','sr-net-ytd-budget',
-  'n-pipeline',
-  'ch-direct-keg-a','ch-direct-keg-b','ch-direct-pack-a','ch-direct-pack-b',
-  'ch-alm-keg-a','ch-alm-keg-b','ch-alm-pack-a','ch-alm-pack-b',
-  'ch-paramount-keg-a','ch-paramount-keg-b','ch-paramount-pack-a','ch-paramount-pack-b',
-  'ch-coles-keg-a','ch-coles-keg-b','ch-coles-pack-a','ch-coles-pack-b',
-  'ch-endeavour-keg-a','ch-endeavour-keg-b','ch-endeavour-pack-a','ch-endeavour-pack-b'];
-function collectNarrative(){
-  var n={}; NARRATIVE_IDS.forEach(function(id){ var el=document.getElementById(id); if(el) n[id]=el.value; }); return n;
-}
-
-// ============================================================
-//  CHANNEL BREAKDOWN CALC
-// ============================================================
-var CHANNELS = ['direct','alm','paramount','coles','endeavour'];
-
-function calcChannel() {
-  var totalKegA=0, totalKegB=0, totalPackA=0, totalPackB=0;
-  CHANNELS.forEach(function(ch) {
-    var kA=val('ch-'+ch+'-keg-a'),  kB=val('ch-'+ch+'-keg-b');
-    var pA=val('ch-'+ch+'-pack-a'), pB=val('ch-'+ch+'-pack-b');
-    var kVD=kA-kB, kVP=kB?(kVD/kB)*100:0;
-    var pVD=pA-pB, pVP=pB?(pVD/pB)*100:0;
-    setVC2('ch-'+ch+'-keg-vd',  formatCurrency(kVD), kVP);
-    setVC2('ch-'+ch+'-keg-vp',  formatPct(kVP), kVP);
-    setVC2('ch-'+ch+'-pack-vd', formatCurrency(pVD), pVP);
-    setVC2('ch-'+ch+'-pack-vp', formatPct(pVP), pVP);
-    totalKegA+=kA; totalKegB+=kB; totalPackA+=pA; totalPackB+=pB;
+function collectActionPlan(){
+  var a=[];
+  document.querySelectorAll('#action-plan-tbody tr').forEach(function(tr){
+    var f=tr.querySelectorAll('textarea');
+    a.push({action:f[0]?f[0].value:'',process:f[1]?f[1].value:'',timing:f[2]?f[2].value:'',responsibility:f[3]?f[3].value:''});
   });
-  var tkVD=totalKegA-totalKegB,   tkVP=totalKegB?(tkVD/totalKegB)*100:0;
-  var tpVD=totalPackA-totalPackB, tpVP=totalPackB?(tpVD/totalPackB)*100:0;
-  setText('ch-total-keg-a',  fa(totalKegA));
-  setText('ch-total-keg-b',  fa(totalKegB));
-  setText('ch-total-pack-a', fa(totalPackA));
-  setText('ch-total-pack-b', fa(totalPackB));
-  setVC2('ch-total-keg-vd',  formatCurrency(tkVD), tkVP);
-  setVC2('ch-total-keg-vp',  formatPct(tkVP), tkVP);
-  setVC2('ch-total-pack-vd', formatCurrency(tpVD), tpVP);
-  setVC2('ch-total-pack-vp', formatPct(tpVP), tpVP);
+  return a;
 }
 
 // ============================================================
-//  PIPELINE TABLE
+//  MEETINGS — per department ('sales' | 'rest')
 // ============================================================
-var PIPELINE_STAGES = ['Prospect','Qualified','Proposal','Negotiation','Won','Lost'];
-var pipelineRows = [
-  {opportunity:'',value:'',stage:'Prospect',channel:'',owner:'',close:''},
-  {opportunity:'',value:'',stage:'Prospect',channel:'',owner:'',close:''}
-];
+var AGENDA_DEFAULTS = {
+  sales: [
+    'Review of previous meeting actions',
+    'Keg & pack MTD sales review',
+    'Channel performance — ALM / Paramount / Direct',
+    'Pipeline & new business update',
+    'Activations & promo calendar',
+    'Issues raised',
+    'Action items for next meeting'
+  ],
+  rest: [
+    'Review of previous meeting actions',
+    'Food & beverage MTD performance review',
+    'Covers, spend per head & table turns',
+    'Roster & labour productivity',
+    'Service & guest feedback',
+    'Issues raised',
+    'Action items for next meeting'
+  ]
+};
+var STATUS_OPTIONS=['Open','In Progress','Complete','Deferred'];
+var meetings = { sales: [], rest: [] };
 
-function buildPipelineTable() {
-  var tbody = document.getElementById('pipeline-tbody');
-  if (!tbody) return;
-  pipelineRows.forEach(function(r,i){ tbody.appendChild(makePipelineRow(r,i+1)); });
-}
-
-function makePipelineRow(r,num) {
-  var tr = document.createElement('tr');
-  var stageOpts = PIPELINE_STAGES.map(function(s){
-    return '<option'+(s===r.stage?' selected':'')+'>'+s+'</option>';
-  }).join('');
-  tr.innerHTML = '<td style="text-align:center;color:#8A8F9C;font-size:0.78rem;padding:8px;">'+num+'</td>'+
-    '<td><input class="action-input" type="text" value="'+(r.opportunity||'')+'" placeholder="Account / opportunity..." oninput="markUnsaved()"></td>'+
-    '<td><input class="action-input" type="number" value="'+(r.value||'')+'" placeholder="0" oninput="markUnsaved()"></td>'+
-    '<td><select class="status-select" onchange="markUnsaved()">'+stageOpts+'</select></td>'+
-    '<td><input class="action-input" type="text" value="'+(r.channel||'')+'" placeholder="e.g. ALM, Direct" oninput="markUnsaved()"></td>'+
-    '<td><input class="action-input" type="text" value="'+(r.owner||'')+'" placeholder="Name" oninput="markUnsaved()"></td>'+
-    '<td><input class="action-input" type="date" value="'+(r.close||'')+'" oninput="markUnsaved()"></td>';
-  return tr;
-}
-
-function addPipelineRow() {
-  var tbody = document.getElementById('pipeline-tbody');
-  if (!tbody) return;
-  pipelineRows.push({opportunity:'',value:'',stage:'Prospect',channel:'',owner:'',close:''});
-  tbody.appendChild(makePipelineRow(pipelineRows[pipelineRows.length-1], tbody.rows.length+1));
-  markUnsaved();
-}
-
-// ============================================================
-//  FORMAT / HELPERS
-// ============================================================
-function setText(id,t){ var el=document.getElementById(id); if(el) el.textContent=t; }
-function val(id) { return parseFloat(document.getElementById(id).value) || 0; }
-function fa(n)   { return CONFIG.currency + Math.abs(n).toLocaleString('en-AU',{minimumFractionDigits:0,maximumFractionDigits:0}); }
-function formatCurrency(n) { return (n<0?'-':n>0?'+':'')+CONFIG.currency+Math.abs(n).toLocaleString('en-AU',{minimumFractionDigits:0,maximumFractionDigits:0}); }
-function formatPct(n) { return (n>0?'+':'')+n.toFixed(1)+'%'; }
-function vc(pct) { return Math.abs(pct)<=CONFIG.tolerancePct?'var-neutral':pct>=0?'var-positive':'var-negative'; }
-function timeNow() { return new Date().toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'}); }
-
-// ============================================================
-//  AGENDA
-// ============================================================
-var AGENDA_ITEMS = [
-  'Review of previous meeting actions',
-  'Restaurant food & beverage MTD performance review',
-  'Brewery keg & pack MTD sales review',
-  'Variance & pace-to-budget discussion',
-  'Operational updates',
-  'New business / issues raised',
-  'Action items for next meeting'
-];
-
-function buildAgenda() {
-  var c = document.getElementById('agenda-items');
-  AGENDA_ITEMS.forEach(function(item,i) {
-    var d = document.createElement('div');
-    d.className = 'agenda-item';
-    d.innerHTML = '<div class="agenda-num">'+(i+1)+'</div>'+
-      '<input class="agenda-text" type="text" value="'+item+'" placeholder="Agenda item..." oninput="markUnsaved()">';
+function buildAgenda(dept){
+  var c=document.getElementById(dept+'-agenda-items');
+  c.innerHTML='';
+  AGENDA_DEFAULTS[dept].forEach(function(item,i){
+    var d=document.createElement('div'); d.className='agenda-item';
+    d.innerHTML='<div class="agenda-num">'+(i+1)+'</div><input class="agenda-text" type="text" value="'+item+'" oninput="markUnsaved()">';
     c.appendChild(d);
   });
 }
-
-// ============================================================
-//  ACTION ITEMS
-// ============================================================
-var actionRows = [
-  {action:'Review restaurant food cost MTD variance', owner:'Head Chef',     due:'', status:'Open'},
-  {action:'Follow up keg sales pace with distributor',owner:'Sales Manager', due:'', status:'Open'},
-  {action:'', owner:'', due:'', status:'Open'}
-];
-var STATUS_OPTIONS = ['Open','In Progress','Complete','Deferred'];
-
-function buildActionTable() {
-  var tbody = document.getElementById('action-tbody');
-  actionRows.forEach(function(r) { tbody.appendChild(makeActionRow(r)); });
-}
-
-function makeActionRow(r) {
-  var tr = document.createElement('tr');
-  var opts = STATUS_OPTIONS.map(function(s) {
-    return '<option'+(s===r.status?' selected':'')+'>'+s+'</option>';
-  }).join('');
-  tr.innerHTML =
-    '<td><input class="action-input" type="text" value="'+(r.action||'')+'" placeholder="Describe the action..." oninput="markUnsaved()"></td>'+
+function makeActionRow(r){
+  var tr=document.createElement('tr');
+  var opts=STATUS_OPTIONS.map(function(s){ return '<option'+(s===r.status?' selected':'')+'>'+s+'</option>'; }).join('');
+  tr.innerHTML='<td><input class="action-input" type="text" value="'+(r.action||'')+'" placeholder="Describe the action..." oninput="markUnsaved()"></td>'+
     '<td><input class="action-input" type="text" value="'+(r.owner||'')+'" placeholder="Name" oninput="markUnsaved()"></td>'+
     '<td><input class="action-input" type="date" value="'+(r.due||'')+'" oninput="markUnsaved()"></td>'+
     '<td><select class="status-select" onchange="markUnsaved()">'+opts+'</select></td>';
   return tr;
 }
-
-function addActionRow() {
-  actionRows.push({action:'',owner:'',due:'',status:'Open'});
-  document.getElementById('action-tbody').appendChild(makeActionRow(actionRows[actionRows.length-1]));
+function buildActionTable(dept){
+  var tbody=document.getElementById(dept+'-action-tbody');
+  tbody.innerHTML='';
+  [{action:'',owner:'',due:'',status:'Open'}].forEach(function(r){ tbody.appendChild(makeActionRow(r)); });
+}
+function addActionRow(dept){
+  document.getElementById(dept+'-action-tbody').appendChild(makeActionRow({action:'',owner:'',due:'',status:'Open'}));
   markUnsaved();
 }
-
-// ============================================================
-//  DATE / CLOCK
-// ============================================================
-function updateDate() {
-  var now  = new Date();
-  var opts = {weekday:'long',year:'numeric',month:'long',day:'numeric'};
-  document.getElementById('liveDate').innerHTML =
-    now.toLocaleDateString('en-AU',opts)+'<br>'+
-    now.toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'});
-  document.getElementById('footer-date').textContent = now.toLocaleDateString('en-AU',opts);
-
-  // Auto-fill meeting date if empty
-  var iso = now.toISOString().split('T')[0];
-  var md = document.getElementById('meeting-date');
-  if (!md.value) md.value = iso;
-
-  // Auto-fill EV days from calendar (don't override user edits)
-  var elEl  = document.getElementById('ev-days-elapsed');
-  var totEl = document.getElementById('ev-days-total');
-  if (!elEl.dataset.u)  elEl.value  = now.getDate();
-  if (!totEl.dataset.u) totEl.value = new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
+function collectActions(dept){
+  var a=[];
+  document.querySelectorAll('#'+dept+'-action-tbody tr').forEach(function(tr){
+    var f=tr.querySelectorAll('input,select');
+    a.push({action:f[0]?f[0].value:'',owner:f[1]?f[1].value:'',due:f[2]?f[2].value:'',status:f[3]?f[3].value:'Open'});
+  });
+  return a;
 }
-
-// ============================================================
-//  WEEKLY MEETINGS
-// ============================================================
-var weeklyMeetings = [];
-var viewingPast    = false;
-
-function buildMeetingDropdown() {
-  var sel = document.getElementById('meeting-history-select');
-  sel.innerHTML = '<option value="">&#8212; Select a past meeting to review &#8212;</option>';
-  weeklyMeetings.forEach(function(m) {
-    var opt = document.createElement('option');
-    opt.value = m.meetingKey;
-    var d = m.date ? new Date(m.date+'T00:00:00').toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short',year:'numeric'}) : m.meetingKey;
-    opt.textContent = d + (m.attendees ? ' — ' + m.attendees.split(',')[0].trim() : '');
+function collectAgenda(dept){
+  var a=[];
+  document.querySelectorAll('#'+dept+'-agenda-items .agenda-text').forEach(function(el){ a.push(el.value); });
+  return a;
+}
+function collectMeeting(dept){
+  var date=document.getElementById(dept+'-meeting-date').value || new Date().toISOString().split('T')[0];
+  return {
+    department: dept,
+    meetingKey: dept+'|'+date,
+    date:       date,
+    time:       document.getElementById(dept+'-meeting-time').value,
+    attendees:  document.getElementById(dept+'-meeting-attendees').value,
+    agenda:     collectAgenda(dept),
+    actions:    collectActions(dept)
+  };
+}
+function buildMeetingDropdown(dept){
+  var sel=document.getElementById(dept+'-meeting-select');
+  sel.innerHTML='<option value="">\u2014 Select a past meeting \u2014</option>';
+  meetings[dept].forEach(function(m){
+    var opt=document.createElement('option');
+    opt.value=m.meetingKey;
+    var d=m.date?new Date(m.date+'T00:00:00').toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short',year:'numeric'}):m.meetingKey;
+    opt.textContent=d+(m.attendees?' \u2014 '+m.attendees.split(',')[0].trim():'');
     sel.appendChild(opt);
   });
 }
-
-function loadPastMeeting() {
-  var sel = document.getElementById('meeting-history-select');
-  var key = sel.value;
-  if (!key) { alert('Select a meeting from the dropdown first.'); return; }
-  var meeting = null;
-  for (var i=0;i<weeklyMeetings.length;i++) { if(weeklyMeetings[i].meetingKey===key){meeting=weeklyMeetings[i];break;} }
-  if (!meeting) { setSyncStatus('error','Meeting not found — try loading from Sheets first'); return; }
-  document.getElementById('meeting-date').value      = meeting.date||'';
-  document.getElementById('meeting-time').value      = meeting.time||'';
-  document.getElementById('meeting-attendees').value = meeting.attendees||'';
-  if (meeting.agenda && meeting.agenda.length) {
-    var inputs = document.querySelectorAll('#agenda-items .agenda-text');
+function loadPastMeeting(dept){
+  var key=document.getElementById(dept+'-meeting-select').value;
+  if(!key){ alert('Select a meeting from the dropdown first.'); return; }
+  var meeting=null;
+  for(var i=0;i<meetings[dept].length;i++){ if(meetings[dept][i].meetingKey===key){ meeting=meetings[dept][i]; break; } }
+  if(!meeting){ setSyncStatus('error','Meeting not found \u2014 try Load first'); return; }
+  document.getElementById(dept+'-meeting-date').value=meeting.date||'';
+  document.getElementById(dept+'-meeting-time').value=meeting.time||'';
+  document.getElementById(dept+'-meeting-attendees').value=meeting.attendees||'';
+  if(meeting.agenda&&meeting.agenda.length){
+    var inputs=document.querySelectorAll('#'+dept+'-agenda-items .agenda-text');
     meeting.agenda.forEach(function(v,i){ if(inputs[i]) inputs[i].value=v; });
   }
-  if (meeting.actions && meeting.actions.length) {
-    document.getElementById('action-tbody').innerHTML='';
-    meeting.actions.forEach(function(r){ document.getElementById('action-tbody').appendChild(makeActionRow(r)); });
+  if(meeting.actions&&meeting.actions.length){
+    var tbody=document.getElementById(dept+'-action-tbody');
+    tbody.innerHTML='';
+    meeting.actions.forEach(function(r){ tbody.appendChild(makeActionRow(r)); });
   }
-  viewingPast = true;
-  document.getElementById('meeting-viewing-badge').classList.add('visible');
-  setSyncStatus('warn','Viewing meeting from '+(meeting.date||key)+' — click + New Meeting to start this week');
+  document.getElementById(dept+'-viewing-badge').classList.add('visible');
+  setSyncStatus('warn','Viewing '+dept+' meeting from '+(meeting.date||key));
 }
-
-function newMeeting() {
-  var now = new Date();
-  document.getElementById('meeting-date').value      = now.toISOString().split('T')[0];
-  document.getElementById('meeting-time').value      = '09:00';
-  document.getElementById('meeting-attendees').value = '';
-  var inputs = document.querySelectorAll('#agenda-items .agenda-text');
-  AGENDA_ITEMS.forEach(function(item,i){ if(inputs[i]) inputs[i].value=item; });
-  document.getElementById('action-tbody').innerHTML='';
-  actionRows = [{action:'',owner:'',due:'',status:'Open'}];
-  actionRows.forEach(function(r){ document.getElementById('action-tbody').appendChild(makeActionRow(r)); });
-  document.getElementById('meeting-history-select').value='';
-  viewingPast = false;
-  document.getElementById('meeting-viewing-badge').classList.remove('visible');
+function newMeeting(dept){
+  var now=new Date();
+  document.getElementById(dept+'-meeting-date').value=now.toISOString().split('T')[0];
+  document.getElementById(dept+'-meeting-time').value='09:00';
+  document.getElementById(dept+'-meeting-attendees').value='';
+  buildAgenda(dept); buildActionTable(dept);
+  document.getElementById(dept+'-meeting-select').value='';
+  document.getElementById(dept+'-viewing-badge').classList.remove('visible');
   markUnsaved();
-  setSyncStatus('','New meeting started — fill in agenda and actions then save');
+  setSyncStatus('','New '+dept+' meeting started \u2014 fill in and save');
 }
-
-function collectWeeklyMeeting() {
-  return {
-    meetingKey: document.getElementById('meeting-date').value || new Date().toISOString().split('T')[0],
-    date:       document.getElementById('meeting-date').value,
-    time:       document.getElementById('meeting-time').value,
-    attendees:  document.getElementById('meeting-attendees').value,
-    agenda:     collectAgenda(),
-    actions:    collectActions()
-  };
-}
-
-function loadWeeklyMeetingsFromSheets() {
-  if (!CONFIG.SHEETS_URL) return;
+function loadMeetingsFromSheets(){
+  if(!CONFIG.SHEETS_URL) return;
   fetch(CONFIG.SHEETS_URL+'?action=loadMeetings')
     .then(function(r){ return r.json(); })
     .then(function(res){
-      if (res.status==='ok' && res.meetings) { weeklyMeetings=res.meetings; buildMeetingDropdown(); }
+      if(res.status==='ok'&&res.meetings){
+        meetings.sales=res.meetings.filter(function(m){ return m.department==='sales'; });
+        meetings.rest =res.meetings.filter(function(m){ return m.department==='rest'; });
+        // Legacy meetings without department go to sales
+        var legacy=res.meetings.filter(function(m){ return !m.department; });
+        meetings.sales=meetings.sales.concat(legacy);
+        buildMeetingDropdown('sales'); buildMeetingDropdown('rest');
+      }
     })
     .catch(function(){});
 }
 
 // ============================================================
+//  MONTH SELECTOR / ROLLOVER
+// ============================================================
+function buildMonthSelector(){
+  var sel=document.getElementById('month-selector');
+  var now=new Date();
+  sel.innerHTML='';
+  for(var i=0;i<12;i++){
+    var d=new Date(now.getFullYear(),now.getMonth()-i,1);
+    var key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+    var opt=document.createElement('option');
+    opt.value=key; opt.textContent=d.toLocaleDateString('en-AU',{month:'long',year:'numeric'});
+    sel.appendChild(opt);
+  }
+  currentMonth=sel.value;
+}
+function onMonthChange(){
+  if(hasUnsaved&&!confirm('You have unsaved changes. Switch month without saving?')){
+    document.getElementById('month-selector').value=currentMonth; return;
+  }
+  currentMonth=document.getElementById('month-selector').value;
+  loadFromSheets();
+}
+function monthLabel(key){
+  var p=key.split('-'); return new Date(+p[0],+p[1]-1,1).toLocaleDateString('en-AU',{month:'long',year:'numeric'});
+}
+function checkRollover(cachedMonth){
+  if(!cachedMonth) return;
+  var m=String(cachedMonth).match(/^(\d{4}-\d{2})/);
+  if(!m) return;
+  var now=new Date();
+  var thisMonth=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+  if(m[1]!==thisMonth){
+    setText('rollover-prev-month',monthLabel(m[1]));
+    setText('rollover-curr-month',monthLabel(thisMonth));
+    document.getElementById('rollover-banner').classList.add('visible');
+  }
+}
+function startNewMonth(){ clearFields(); dismissRollover(); markUnsaved(); setSyncStatus('','New month \u2014 enter figures then save'); }
+function dismissRollover(){ document.getElementById('rollover-banner').classList.remove('visible'); }
+
+// ============================================================
+//  UNSAVED / SYNC
+// ============================================================
+var initialising=true;
+function markUnsaved(){ if(initialising) return; hasUnsaved=true; document.getElementById('unsaved-badge').classList.add('visible'); }
+function markSaved(){ hasUnsaved=false; document.getElementById('unsaved-badge').classList.remove('visible'); }
+function setSyncStatus(state,msg){
+  var dot=document.getElementById('sync-dot'), txt=document.getElementById('sync-msg');
+  dot.className='sync-dot'+(state?' '+state:''); txt.className='sync-msg'+(state?' '+state:''); txt.textContent=msg;
+}
+function setSaveBtn(d){ document.getElementById('save-btn').disabled=d; }
+
+// ============================================================
+//  SAVE / LOAD
+// ============================================================
+var SAVE_FIELDS=[
+  'r-food-budget','r-food-actual','r-food-sply',
+  'r-bev-budget','r-bev-actual','r-bev-sply',
+  'r-other-budget','r-other-actual','r-other-sply',
+  'b-keg-budget','b-keg-actual','b-keg-sply',
+  'b-pack-budget','b-pack-actual','b-pack-sply',
+  'b-other-budget','b-other-actual','b-other-sply',
+  'r-wages','r-labour-target','b-wages','b-labour-target',
+  'kpi-covers','kpi-turns',
+  's-ev-days-elapsed','s-ev-days-total','r-ev-days-elapsed','r-ev-days-total'
+];
+function collectFields(){
+  var f={}; SAVE_FIELDS.forEach(function(id){ var el=document.getElementById(id); if(el) f[id]=el.value; }); return f;
+}
+var NARRATIVE_IDS=['report-month-label','report-date','report-author','report-next-board',
+  'n-trading-summary','n-pipeline','n-brewery','n-brewery-sales','n-ops','n-brewery-actions',
+  'sr-brewery-ytd','sr-brewery-ytd-budget','sr-rest-ytd','sr-rest-ytd-budget'];
+function collectNarrative(){
+  var n={};
+  NARRATIVE_IDS.forEach(function(id){ var el=document.getElementById(id); if(el) n[id]=el.value; });
+  CHANNELS.forEach(function(ch){
+    ['keg-a','keg-b','pack-a','pack-b'].forEach(function(sfx){
+      var id='ch-'+ch+'-'+sfx; var el=document.getElementById(id); if(el) n[id]=el.value;
+    });
+  });
+  return n;
+}
+
+function saveToSheets(){
+  if(!CONFIG.SHEETS_URL){ setSyncStatus('error','SHEETS_URL not set'); return; }
+  setSyncStatus('syncing','Saving\u2026'); setSaveBtn(true);
+  var payload={
+    action:'save', monthKey:currentMonth, savedAt:new Date().toISOString(),
+    fields:collectFields(),
+    narrative:collectNarrative(),
+    actionPlan:collectActionPlan(),
+    pipeline:collectPipeline(),
+    weeklyMeetings:[collectMeeting('sales'), collectMeeting('rest')]
+  };
+  fetch(CONFIG.SHEETS_URL,{method:'POST',body:JSON.stringify(payload)})
+    .then(function(r){ return r.json(); })
+    .then(function(res){
+      setSaveBtn(false);
+      if(res.status==='ok'){ setSyncStatus('ok','Saved \u00b7 '+timeNow()); markSaved(); cacheLocal(payload); loadMeetingsFromSheets(); }
+      else setSyncStatus('error','Save failed: '+(res.error||'check Apps Script logs'));
+    })
+    .catch(function(){
+      setSaveBtn(false);
+      setSyncStatus('error','Could not reach Sheets \u2014 cached locally');
+      cacheLocal(payload);
+    });
+}
+
+function loadFromSheets(){
+  if(!CONFIG.SHEETS_URL){ setSyncStatus('warn','SHEETS_URL not set'); restoreLocal(); return; }
+  setSyncStatus('syncing','Loading\u2026');
+  fetch(CONFIG.SHEETS_URL+'?action=load&monthKey='+currentMonth)
+    .then(function(r){ return r.json(); })
+    .then(function(res){
+      if(res.status==='ok'&&res.data){
+        applyData(res.data);
+        setSyncStatus('ok','Loaded \u00b7 '+timeNow()); markSaved(); cacheLocal(res.data);
+      } else {
+        setSyncStatus('warn','No Sheets data for '+monthLabel(currentMonth)+' \u2014 enter figures and save');
+        recalcAll(); markSaved();
+      }
+    })
+    .catch(function(){
+      setSyncStatus('error','Could not reach Sheets \u2014 loading local cache');
+      var ok=restoreLocal();
+      if(!ok) recalcAll();
+    });
+}
+
+function applyData(data){
+  if(data.fields) Object.keys(data.fields).forEach(function(id){
+    var el=document.getElementById(id); if(el&&data.fields[id]!==undefined&&data.fields[id]!=='') el.value=data.fields[id];
+  });
+  if(data.narrative){
+    Object.keys(data.narrative).forEach(function(id){
+      var el=document.getElementById(id); if(el&&data.narrative[id]!==undefined) el.value=data.narrative[id];
+    });
+  }
+  if(data.actionPlan&&data.actionPlan.length){ actionPlanRows=data.actionPlan; buildActionPlanTable(); }
+  if(data.pipeline&&data.pipeline.length){ pipelineRows=data.pipeline; buildPipelineTable(); }
+  recalcAll();
+}
+function recalcAll(){
+  ['r-food','r-bev','r-other','b-keg','b-pack','b-other'].forEach(calc);
+  calcEVSales(); calcEVRest(); calcKPIs(); calcLabour(); calcChannel(); calcSummary();
+}
+
+// ============================================================
+//  LOCAL CACHE
+// ============================================================
+var CACHE_KEY='gm_dash_v5';
+function cacheLocal(data){ try{ localStorage.setItem(CACHE_KEY,JSON.stringify(data)); }catch(e){} }
+function restoreLocal(){
+  var raw; try{ raw=localStorage.getItem(CACHE_KEY); }catch(e){}
+  if(!raw){ setSyncStatus('','No saved data \u2014 enter figures and save'); return false; }
+  var data; try{ data=JSON.parse(raw); }catch(e){ return false; }
+  checkRollover(data.monthKey||data.savedAt);
+  applyData(data);
+  setSyncStatus('warn','Loaded from local cache \u2014 save to Sheets when online');
+  return true;
+}
+function clearLocal(){
+  if(!confirm('Clear local cache and reset to defaults?')) return;
+  try{ localStorage.removeItem(CACHE_KEY); }catch(e){}
+  location.reload();
+}
+function clearFields(){
+  SAVE_FIELDS.forEach(function(id){ var el=document.getElementById(id); if(el&&el.type==='number') el.value=''; });
+  recalcAll();
+}
+
+// ============================================================
+//  DATE / CLOCK
+// ============================================================
+function updateDate(){
+  var now=new Date(), opts={weekday:'long',year:'numeric',month:'long',day:'numeric'};
+  document.getElementById('liveDate').innerHTML=now.toLocaleDateString('en-AU',opts)+'<br>'+now.toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'});
+  setText('footer-date',now.toLocaleDateString('en-AU',opts));
+  var iso=now.toISOString().split('T')[0];
+  ['sales-meeting-date','rest-meeting-date','report-date'].forEach(function(id){
+    var el=document.getElementById(id); if(el&&!el.value) el.value=iso;
+  });
+  ['s','r'].forEach(function(dept){
+    var elEl=document.getElementById(dept+'-ev-days-elapsed'), totEl=document.getElementById(dept+'-ev-days-total');
+    if(elEl&&!elEl.dataset.u) elEl.value=now.getDate();
+    if(totEl&&!totEl.dataset.u) totEl.value=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
+  });
+}
+
+// ============================================================
 //  INIT
 // ============================================================
-(function init() {
-  // Suppress unsaved badge during initial setup
-  var initialising = true;
-
-  buildMonthSelector();
-  updateDate();
-  setInterval(updateDate, 60000);
-  buildAgenda();
-  buildActionTable();
-  buildActionPlanTable();
-  buildPipelineTable();
-
-  // EV day override flag
-  ['ev-days-elapsed','ev-days-total'].forEach(function(id) {
-    document.getElementById(id).addEventListener('input', function() { this.dataset.u='1'; });
-  });
-
-  // Board report SPLY/YTD fields trigger summary recalc
-  ['sr-brewery-sply','sr-rest-sply','sr-brewery-ytd','sr-rest-ytd',
-   'sr-brewery-ytd-budget','sr-rest-ytd-budget','sr-ebitda-actual','sr-ebitda-budget',
-   'sr-net-actual','sr-net-budget'].forEach(function(id){
-    var el=document.getElementById(id);
-    if(el) el.addEventListener('input',function(){ calcSummary(); markUnsaved(); });
-  });
-
-  // Update report date
-  var rd=document.getElementById('report-date'); if(rd&&!rd.value) rd.value=new Date().toISOString().split('T')[0];
-
-  // Load: try Sheets first, fall back to local cache
-  if (CONFIG.SHEETS_URL) {
-    loadFromSheets();
-    loadWeeklyMeetingsFromSheets();
-  } else {
-    var restored = restoreLocal();
-    if (!restored) {
-      ['r-food','r-bev','b-keg','b-pack'].forEach(calc);
-      calcEV(); calcKPIs();
-    }
-    setSyncStatus('warn', 'SHEETS_URL not set — data saves locally only');
-  }
-
-  // Allow markUnsaved to fire only after init completes
-  setTimeout(function() { initialising = false; }, 500);
-
-  // Override markUnsaved to respect the init flag
-  var _markUnsaved = markUnsaved;
-  markUnsaved = function() { if (!initialising) _markUnsaved(); };
+(function init(){
+  buildMonthSelector(); updateDate(); setInterval(updateDate,60000);
+  buildAgenda('sales'); buildAgenda('rest');
+  buildActionTable('sales'); buildActionTable('rest');
+  buildActionPlanTable(); buildPipelineTable(); buildChannelTable();
+  if(CONFIG.SHEETS_URL){ loadFromSheets(); loadMeetingsFromSheets(); }
+  else { var ok=restoreLocal(); if(!ok) recalcAll(); setSyncStatus('warn','SHEETS_URL not set'); }
+  setTimeout(function(){ initialising=false; },800);
 })();
 </script>
 </body>
 </html>
+
