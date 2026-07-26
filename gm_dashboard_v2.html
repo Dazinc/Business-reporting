@@ -572,7 +572,7 @@ tbody td:first-child { text-align: left; font-weight: 600; color: #1A1D23; }
   <div class="report-section">
     <div class="report-section-header"><div class="report-section-num">3</div><span class="report-section-title">Brewery, Channel &amp; Commercial Update</span></div>
     <div>
-      <div class="narrative-block"><div class="narrative-label">Channel &amp; Distribution</div><textarea class="narrative-textarea" id="n-brewery" rows="4" placeholder="ALM, Paramount, Direct, Coles, Endeavour — volume movements, new listings, ranging changes, delistings..." oninput="markUnsaved()"></textarea></div>
+      <div class="narrative-block"><div class="narrative-label">Channel &amp; Distribution</div><textarea class="narrative-textarea" id="n-brewery" rows="4" placeholder="ALM, Paramount, Independent, Coles, Endeavour — volume movements, new listings, ranging changes, delistings..." oninput="markUnsaved()"></textarea></div>
       <div class="narrative-block"><div class="narrative-label">Activations &amp; Promotional Calendar</div><textarea class="narrative-textarea" id="n-brewery-sales" rows="3" placeholder="Current activations, upcoming promos, ALM promo weeks, event pipeline, venue partnerships..." oninput="markUnsaved()"></textarea></div>
       <div class="narrative-block"><div class="narrative-label">Production &amp; Operations</div><textarea class="narrative-textarea" id="n-ops" rows="3" placeholder="Brew schedule, production volumes, quality, equipment, compliance..." oninput="markUnsaved()"></textarea></div>
       <div class="narrative-block"><div class="narrative-label">Key Actions</div><textarea class="narrative-textarea" id="n-brewery-actions" rows="3" placeholder="&#8226; Action 1&#10;&#8226; Action 2" oninput="markUnsaved()"></textarea></div>
@@ -747,8 +747,8 @@ function calcEVRest() {
 // ============================================================
 //  SALES REPORT SYNC
 // ============================================================
-var CHANNELS = ['direct','alm','paramount','coles','endeavour'];
-var CHANNEL_LABELS = {direct:'Direct',alm:'ALM',paramount:'Paramount',coles:'Coles',endeavour:'Endeavour'};
+var CHANNELS = ['independent','alm','paramount','coles','endeavour'];
+var CHANNEL_LABELS = {independent:'Independent',alm:'ALM',paramount:'Paramount',coles:'Coles',endeavour:'Endeavour'};
 
 function buildChannelTable() {
   var tbody=document.getElementById('channel-tbody');
@@ -828,7 +828,7 @@ function makePipelineRow(r,num){
     '<td><input class="action-input" type="text" value="'+(r.opportunity||'')+'" placeholder="Account / opportunity..." oninput="markUnsaved()"></td>'+
     '<td><input class="action-input" type="number" value="'+(r.value||'')+'" placeholder="0" oninput="markUnsaved()"></td>'+
     '<td><select class="status-select" onchange="markUnsaved()">'+opts+'</select></td>'+
-    '<td><input class="action-input" type="text" value="'+(r.channel||'')+'" placeholder="e.g. ALM, Direct" oninput="markUnsaved()"></td>'+
+    '<td><input class="action-input" type="text" value="'+(r.channel||'')+'" placeholder="e.g. ALM, Independent" oninput="markUnsaved()"></td>'+
     '<td><input class="action-input" type="text" value="'+(r.owner||'')+'" placeholder="Name" oninput="markUnsaved()"></td>'+
     '<td><input class="action-input" type="date" value="'+(r.close||'')+'" oninput="markUnsaved()"></td>';
   return tr;
@@ -891,7 +891,7 @@ var AGENDA_DEFAULTS = {
   sales: [
     'Review of previous meeting actions',
     'Keg & pack MTD sales review',
-    'Channel performance — ALM / Paramount / Direct',
+    'Channel performance — ALM / Paramount / Independent',
     'Pipeline & new business update',
     'Activations & promo calendar',
     'Issues raised',
@@ -1223,8 +1223,4 @@ function updateDate(){
   if(CONFIG.SHEETS_URL){ loadFromSheets(); loadMeetingsFromSheets(); }
   else { var ok=restoreLocal(); if(!ok) recalcAll(); setSyncStatus('warn','SHEETS_URL not set'); }
   setTimeout(function(){ initialising=false; },800);
-})();
-</script>
-</body>
-</html>
-
+})
