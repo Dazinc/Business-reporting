@@ -1223,4 +1223,7 @@ function updateDate(){
   if(CONFIG.SHEETS_URL){ loadFromSheets(); loadMeetingsFromSheets(); }
   else { var ok=restoreLocal(); if(!ok) recalcAll(); setSyncStatus('warn','SHEETS_URL not set'); }
   setTimeout(function(){ initialising=false; },800);
-})
+})();
+</script>
+</body>
+</html>
