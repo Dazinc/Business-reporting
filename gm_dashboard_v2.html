@@ -619,12 +619,6 @@ var boardUnlocked = false;
 //  TABS + PIN
 // ============================================================
 function switchTab(tab) {
-  if (tab === 'report' && !boardUnlocked) {
-    var pin = prompt('Enter PIN to access Sales Report:');
-    if (pin === null) return;
-    if (pin !== CONFIG.boardPIN) { alert('Incorrect PIN. Access denied.'); return; }
-    boardUnlocked = true;
-  }
   ['sales','restaurant','report'].forEach(function(t){
     document.getElementById('tabbtn-'+t).classList.toggle('active', t===tab);
     document.getElementById('tab-'+t).classList.toggle('active', t===tab);
