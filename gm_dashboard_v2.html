@@ -534,10 +534,10 @@ tbody td:first-child { text-align: left; font-weight: 600; color: #1A1D23; }
         </table>
       </div>
 
-      <div style="padding:12px 20px 4px;"><div style="font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#6B7080;margin-bottom:8px;">Channel Breakdown &#8212; Keg &amp; Pack Revenue MTD</div></div>
+      <div style="padding:12px 20px 4px;"><div style="font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#6B7080;margin-bottom:8px;">Channel Breakdown &#8212; Revenue MTD</div></div>
       <div class="report-table-wrap">
         <table class="report-table">
-          <thead><tr><th style="width:20%">Channel</th><th>Keg Actual</th><th>Keg Budget</th><th>Keg vs Budget $</th><th>Keg vs Budget %</th><th>Pack Actual</th><th>Pack Budget</th><th>Pack vs Budget $</th><th>Pack vs Budget %</th></tr></thead>
+          <thead><tr><th style="width:20%">Channel</th><th>Revenue Actual</th><th>Revenue Budget</th><th>Actual vs Budget $</th><th>Actual vs Budget %</th></tr></thead>
           <tbody id="channel-tbody"></tbody>
         </table>
       </div>
@@ -619,6 +619,12 @@ var boardUnlocked = false;
 //  TABS + PIN
 // ============================================================
 function switchTab(tab) {
+  if (tab === 'report' && !boardUnlocked) {
+    var pin = prompt('Enter PIN to access Sales Report:');
+    if (pin === null) return;
+    if (pin !== CONFIG.boardPIN) { alert('Incorrect PIN. Access denied.'); return; }
+    boardUnlocked = true;
+  }
   ['sales','restaurant','report'].forEach(function(t){
     document.getElementById('tabbtn-'+t).classList.toggle('active', t===tab);
     document.getElementById('tab-'+t).classList.toggle('active', t===tab);
@@ -749,32 +755,25 @@ function buildChannelTable() {
   var html='';
   CHANNELS.forEach(function(ch){
     html+='<tr><td>'+CHANNEL_LABELS[ch]+'</td>'+
-      '<td><input class="rt-input" type="number" id="ch-'+ch+'-keg-a" placeholder="0" oninput="calcChannel();markUnsaved()"></td>'+
-      '<td><input class="rt-input" type="number" id="ch-'+ch+'-keg-b" placeholder="0" oninput="calcChannel();markUnsaved()"></td>'+
-      '<td id="ch-'+ch+'-keg-vd">\u2014</td><td id="ch-'+ch+'-keg-vp">\u2014</td>'+
-      '<td><input class="rt-input" type="number" id="ch-'+ch+'-pack-a" placeholder="0" oninput="calcChannel();markUnsaved()"></td>'+
-      '<td><input class="rt-input" type="number" id="ch-'+ch+'-pack-b" placeholder="0" oninput="calcChannel();markUnsaved()"></td>'+
-      '<td id="ch-'+ch+'-pack-vd">\u2014</td><td id="ch-'+ch+'-pack-vp">\u2014</td></tr>';
+      '<td><input class="rt-input" type="number" id="ch-'+ch+'-actual" placeholder="0" oninput="calcChannel();markUnsaved()"></td>'+
+      '<td><input class="rt-input" type="number" id="ch-'+ch+'-budget" placeholder="0" oninput="calcChannel();markUnsaved()"></td>'+
+      '<td id="ch-'+ch+'-vd">\u2014</td><td id="ch-'+ch+'-vp">\u2014</td></tr>';
   });
-  html+='<tr class="rt-total"><td>Total</td><td id="ch-total-keg-a">\u2014</td><td id="ch-total-keg-b">\u2014</td><td id="ch-total-keg-vd">\u2014</td><td id="ch-total-keg-vp">\u2014</td><td id="ch-total-pack-a">\u2014</td><td id="ch-total-pack-b">\u2014</td><td id="ch-total-pack-vd">\u2014</td><td id="ch-total-pack-vp">\u2014</td></tr>';
+  html+='<tr class="rt-total"><td>Total</td><td id="ch-total-actual">\u2014</td><td id="ch-total-budget">\u2014</td><td id="ch-total-vd">\u2014</td><td id="ch-total-vp">\u2014</td></tr>';
   tbody.innerHTML=html;
 }
 
 function calcChannel() {
-  var tKA=0,tKB=0,tPA=0,tPB=0;
+  var tA=0,tB=0;
   CHANNELS.forEach(function(ch){
-    var kA=val('ch-'+ch+'-keg-a'), kB=val('ch-'+ch+'-keg-b');
-    var pA=val('ch-'+ch+'-pack-a'), pB=val('ch-'+ch+'-pack-b');
-    var kVD=kA-kB,kVP=kB?(kVD/kB)*100:0, pVD=pA-pB,pVP=pB?(pVD/pB)*100:0;
-    setVC('ch-'+ch+'-keg-vd',formatCurrency(kVD),kVP); setVC('ch-'+ch+'-keg-vp',formatPct(kVP),kVP);
-    setVC('ch-'+ch+'-pack-vd',formatCurrency(pVD),pVP); setVC('ch-'+ch+'-pack-vp',formatPct(pVP),pVP);
-    tKA+=kA;tKB+=kB;tPA+=pA;tPB+=pB;
+    var a=val('ch-'+ch+'-actual'), b=val('ch-'+ch+'-budget');
+    var vd=a-b, vp=b?(vd/b)*100:0;
+    setVC('ch-'+ch+'-vd',formatCurrency(vd),vp); setVC('ch-'+ch+'-vp',formatPct(vp),vp);
+    tA+=a;tB+=b;
   });
-  var tkVD=tKA-tKB,tkVP=tKB?(tkVD/tKB)*100:0, tpVD=tPA-tPB,tpVP=tPB?(tpVD/tPB)*100:0;
-  setText('ch-total-keg-a',fa(tKA)); setText('ch-total-keg-b',fa(tKB));
-  setText('ch-total-pack-a',fa(tPA)); setText('ch-total-pack-b',fa(tPB));
-  setVC('ch-total-keg-vd',formatCurrency(tkVD),tkVP); setVC('ch-total-keg-vp',formatPct(tkVP),tkVP);
-  setVC('ch-total-pack-vd',formatCurrency(tpVD),tpVP); setVC('ch-total-pack-vp',formatPct(tpVP),tpVP);
+  var tVD=tA-tB,tVP=tB?(tVD/tB)*100:0;
+  setText('ch-total-actual',fa(tA)); setText('ch-total-budget',fa(tB));
+  setVC('ch-total-vd',formatCurrency(tVD),tVP); setVC('ch-total-vp',formatPct(tVP),tVP);
 }
 
 function calcSummary() {
@@ -1093,7 +1092,7 @@ function collectNarrative(){
   var n={};
   NARRATIVE_IDS.forEach(function(id){ var el=document.getElementById(id); if(el) n[id]=el.value; });
   CHANNELS.forEach(function(ch){
-    ['keg-a','keg-b','pack-a','pack-b'].forEach(function(sfx){
+    ['actual','budget'].forEach(function(sfx){
       var id='ch-'+ch+'-'+sfx; var el=document.getElementById(id); if(el) n[id]=el.value;
     });
   });
