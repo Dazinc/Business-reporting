@@ -449,7 +449,7 @@ tbody td:first-child { text-align: left; font-weight: 600; color: #1A1D23; }
 
   <!-- RESTAURANT EV/PV -->
   <div class="card">
-    <div class="card-header"><span class="card-title">Restaurant Forecast &#8212; Earned vs Planned</span><span class="card-badge">Pace to Budget</span></div>
+    <div class="card-header"><span class="card-title">Restaurant Forecast &#8212; Earned vs Planned</span><span class="card-badge">Weighted Pace to Budget</span></div>
     <div class="ev-grid">
       <div class="ev-inputs">
         <div class="ev-inputs-title">Inputs</div>
@@ -463,7 +463,7 @@ tbody td:first-child { text-align: left; font-weight: 600; color: #1A1D23; }
         </div>
       </div>
       <div class="ev-results">
-        <div class="ev-kpi"><div class="ev-kpi-label">Planned Value (PV)</div><div class="ev-kpi-value" id="r-ev-pv">&#8212;</div><div class="ev-kpi-sub">Should have earned by today</div></div>
+        <div class="ev-kpi"><div class="ev-kpi-label">Planned Value (PV)</div><div class="ev-kpi-value" id="r-ev-pv">&#8212;</div><div class="ev-kpi-sub">Should have earned by today (weekday-weighted)</div></div>
         <div class="ev-kpi"><div class="ev-kpi-label">Earned Value (EV)</div><div class="ev-kpi-value" id="r-ev-ev">&#8212;</div><div class="ev-kpi-sub">Restaurant MTD actual</div></div>
         <div class="ev-kpi"><div class="ev-kpi-label">Performance Index (SPI)</div><div class="ev-kpi-value" id="r-ev-spi">&#8212;</div><div class="ev-kpi-sub" id="r-ev-spi-sub">EV &#247; PV &#183; 1.0 = on pace</div></div>
         <div class="ev-kpi"><div class="ev-kpi-label">Projected Month-End</div><div class="ev-kpi-value" id="r-ev-proj">&#8212;</div><div class="ev-kpi-sub" id="r-ev-proj-sub">vs budget</div></div>
@@ -708,11 +708,7 @@ function setEndOfMonth(dept) {
   markUnsaved();
 }
 
-function calcEVGeneric(dept, budget, actual) {
-  var elapsed=val(dept+'-ev-days-elapsed'), total=val(dept+'-ev-days-total')||1;
-  var pct=Math.min(elapsed/total,1);
-  var pv=budget*pct, ev=actual;
-  var spi=pv>0?ev/pv:null, proj=pct>0?ev/pct:null;
+function renderEV(dept, budget, pv, ev, spi, proj) {
   setText(dept+'-ev-pv',fa(pv)); setText(dept+'-ev-ev',fa(ev));
   var spiEl=document.getElementById(dept+'-ev-spi'), spiSub=document.getElementById(dept+'-ev-spi-sub');
   if(spi!==null){
@@ -728,13 +724,46 @@ function calcEVGeneric(dept, budget, actual) {
     projSub.innerHTML='<span class="'+vc(pp)+'">'+(pv2>=0?'+':'')+formatCurrency(pv2)+' ('+(pp>=0?'+':'')+pp.toFixed(1)+'%)</span> vs '+fa(budget)+' budget';
   } else { projEl.textContent='\u2014'; projEl.className='ev-kpi-value'; projSub.textContent='vs '+fa(budget)+' budget'; }
 }
+
+function calcEVGeneric(dept, budget, actual) {
+  var elapsed=val(dept+'-ev-days-elapsed'), total=val(dept+'-ev-days-total')||1;
+  var pct=Math.min(elapsed/total,1);
+  var pv=budget*pct, ev=actual;
+  var spi=pv>0?ev/pv:null, proj=pct>0?ev/pct:null;
+  renderEV(dept, budget, pv, ev, spi, proj);
+}
+
+// Restaurant weekday revenue pattern (avg $/day by weekday, from Darren's
+// observed trading pattern) \u2014 used to weight PV/Projection instead of
+// assuming revenue lands evenly across every day of the month.
+// Date.getDay(): 0=Sun,1=Mon,2=Tue,3=Wed,4=Thu,5=Fri,6=Sat
+var REST_WEEKDAY_WEIGHTS = {0:5000,1:1200,2:1200,3:7000,4:4000,5:7000,6:10000};
+
+function weekdayWeightSum(monthKey, fromDay, toDay, weights) {
+  var parts=monthKey.split('-'), y=+parts[0], m=+parts[1], sum=0;
+  for (var d=fromDay; d<=toDay; d++) { sum += weights[new Date(y,m-1,d).getDay()]; }
+  return sum;
+}
+
+function calcEVWeighted(dept, budget, actual, weights) {
+  var elapsed=val(dept+'-ev-days-elapsed'), total=val(dept+'-ev-days-total')||1;
+  var wElapsed = elapsed>0 ? weekdayWeightSum(currentMonth,1,Math.min(elapsed,total),weights) : 0;
+  var wTotal = weekdayWeightSum(currentMonth,1,total,weights) || 1;
+  var pct = wElapsed/wTotal;
+  var pv=budget*pct, ev=actual;
+  var spi=pv>0?ev/pv:null;
+  var proj = wElapsed>0 ? ev + (ev/wElapsed)*(wTotal-wElapsed) : null;
+  renderEV(dept, budget, pv, ev, spi, proj);
+}
+
 function calcEVSales() {
   calcEVGeneric('s', val('b-keg-budget')+val('b-pack-budget')+val('b-other-budget'),
                      val('b-keg-actual')+val('b-pack-actual')+val('b-other-actual'));
 }
 function calcEVRest() {
-  calcEVGeneric('r', val('r-food-budget')+val('r-bev-budget')+val('r-other-budget'),
-                     val('r-food-actual')+val('r-bev-actual')+val('r-other-actual'));
+  calcEVWeighted('r', val('r-food-budget')+val('r-bev-budget')+val('r-other-budget'),
+                     val('r-food-actual')+val('r-bev-actual')+val('r-other-actual'),
+                     REST_WEEKDAY_WEIGHTS);
   calcKPIs();
 }
 
