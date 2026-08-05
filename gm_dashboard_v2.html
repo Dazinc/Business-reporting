@@ -237,7 +237,7 @@ tbody td:first-child { text-align: left; font-weight: 600; color: #1A1D23; }
       <div class="sync-dot" id="sync-dot"></div>
       <span class="sync-msg" id="sync-msg">Ready</span>
     </div>
-    <span id="presence-badge" style="display:none;font-size:0.75rem;color:#8A8F9C;background:#F0F2F5;padding:4px 10px;border-radius:12px;white-space:nowrap;"></span>
+    <span id="presence-badge" onclick="setViewerName()" style="display:none;cursor:pointer;font-size:0.75rem;color:#8A8F9C;background:#F0F2F5;padding:4px 10px;border-radius:12px;white-space:nowrap;" title="Click to set your name"></span>
     <button class="sync-btn" onclick="loadFromSheets()">&#8595; Load</button>
     <button class="sync-btn primary" id="save-btn" onclick="saveToSheets()">&#8593; Save to Sheets</button>
   </div>
@@ -1179,12 +1179,19 @@ function loadFromSheets(){
 var PRESENCE_INTERVAL_MS=30000;
 var otherViewers=[];
 function getViewerName(){
+  // Non-blocking: never prompt automatically on load. Falls back to
+  // 'Someone' until the user clicks the badge to set a name themselves.
   var name; try{ name=localStorage.getItem('gm_dash_viewer_name'); }catch(e){}
-  if(!name){
-    name=prompt('Your name (shown to others viewing this dashboard):','')||'Someone';
-    try{ localStorage.setItem('gm_dash_viewer_name',name); }catch(e){}
-  }
-  return name;
+  return name||'Someone';
+}
+function setViewerName(){
+  var current=VIEWER_NAME==='Someone'?'':VIEWER_NAME;
+  var name=prompt('Your name (shown to others viewing this dashboard):',current);
+  if(name===null) return;
+  name=name.trim()||'Someone';
+  VIEWER_NAME=name;
+  try{ localStorage.setItem('gm_dash_viewer_name',name); }catch(e){}
+  sendHeartbeat(); refreshPresence();
 }
 function getSessionId(){
   var sid; try{ sid=sessionStorage.getItem('gm_dash_session_id'); }catch(e){}
@@ -1212,17 +1219,17 @@ function refreshPresence(){
       var badge=document.getElementById('presence-badge');
       if(!badge||res.status!=='ok') return;
       otherViewers=(res.viewers||[]).filter(function(v){ return v.sessionId!==SESSION_ID; });
-      if(otherViewers.length===0){ badge.style.display='none'; badge.textContent=''; }
+      if(otherViewers.length===0){ badge.textContent='You: '+VIEWER_NAME+' (click to set name)'; }
       else{
         var names=otherViewers.map(function(v){ return v.name; }).join(', ');
-        badge.textContent='\u25cf '+otherViewers.length+' viewing: '+names;
-        badge.style.display='inline-block';
+        badge.textContent='\u25cf '+otherViewers.length+' viewing: '+names+' \u00b7 You: '+VIEWER_NAME;
       }
+      badge.style.display='inline-block';
     })
     .catch(function(){});
 }
 function startPresence(){
-  sendHeartbeat(); refreshPresence();
+  setTimeout(function(){ sendHeartbeat(); refreshPresence(); },0);
   setInterval(function(){ sendHeartbeat(); refreshPresence(); },PRESENCE_INTERVAL_MS);
 }
 
