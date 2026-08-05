@@ -237,6 +237,7 @@ tbody td:first-child { text-align: left; font-weight: 600; color: #1A1D23; }
       <div class="sync-dot" id="sync-dot"></div>
       <span class="sync-msg" id="sync-msg">Ready</span>
     </div>
+    <span id="presence-badge" style="display:none;font-size:0.75rem;color:#8A8F9C;background:#F0F2F5;padding:4px 10px;border-radius:12px;white-space:nowrap;"></span>
     <button class="sync-btn" onclick="loadFromSheets()">&#8595; Load</button>
     <button class="sync-btn primary" id="save-btn" onclick="saveToSheets()">&#8593; Save to Sheets</button>
   </div>
@@ -1124,6 +1125,10 @@ function collectNarrative(){
 
 function saveToSheets(){
   if(!CONFIG.SHEETS_URL){ setSyncStatus('error','SHEETS_URL not set'); return; }
+  if(otherViewers.length){
+    var vnames=otherViewers.map(function(v){ return v.name; }).join(', ');
+    if(!confirm(vnames+' also has this dashboard open right now. Save anyway?')) return;
+  }
   setSyncStatus('syncing','Saving\u2026'); setSaveBtn(true);
   var payload={
     action:'save', monthKey:currentMonth, savedAt:new Date().toISOString(),
@@ -1166,6 +1171,59 @@ function loadFromSheets(){
       var ok=restoreLocal();
       if(!ok) recalcAll();
     });
+}
+
+// ============================================================
+//  PRESENCE \u2014 who else has this dashboard open
+// ============================================================
+var PRESENCE_INTERVAL_MS=30000;
+var otherViewers=[];
+function getViewerName(){
+  var name; try{ name=localStorage.getItem('gm_dash_viewer_name'); }catch(e){}
+  if(!name){
+    name=prompt('Your name (shown to others viewing this dashboard):','')||'Someone';
+    try{ localStorage.setItem('gm_dash_viewer_name',name); }catch(e){}
+  }
+  return name;
+}
+function getSessionId(){
+  var sid; try{ sid=sessionStorage.getItem('gm_dash_session_id'); }catch(e){}
+  if(!sid){
+    sid='v-'+Date.now()+'-'+Math.random().toString(36).slice(2,10);
+    try{ sessionStorage.setItem('gm_dash_session_id',sid); }catch(e){}
+  }
+  return sid;
+}
+var VIEWER_NAME=getViewerName();
+var SESSION_ID=getSessionId();
+function currentTabName(){
+  var el=document.querySelector('.tab-btn.active');
+  return el?el.id.replace('tabbtn-',''):'sales';
+}
+function sendHeartbeat(){
+  if(!CONFIG.SHEETS_URL) return;
+  fetch(CONFIG.SHEETS_URL,{method:'POST',body:JSON.stringify({action:'heartbeat',sessionId:SESSION_ID,name:VIEWER_NAME,tab:currentTabName()})}).catch(function(){});
+}
+function refreshPresence(){
+  if(!CONFIG.SHEETS_URL) return;
+  fetch(CONFIG.SHEETS_URL+'?action=presence')
+    .then(function(r){ return r.json(); })
+    .then(function(res){
+      var badge=document.getElementById('presence-badge');
+      if(!badge||res.status!=='ok') return;
+      otherViewers=(res.viewers||[]).filter(function(v){ return v.sessionId!==SESSION_ID; });
+      if(otherViewers.length===0){ badge.style.display='none'; badge.textContent=''; }
+      else{
+        var names=otherViewers.map(function(v){ return v.name; }).join(', ');
+        badge.textContent='\u25cf '+otherViewers.length+' viewing: '+names;
+        badge.style.display='inline-block';
+      }
+    })
+    .catch(function(){});
+}
+function startPresence(){
+  sendHeartbeat(); refreshPresence();
+  setInterval(function(){ sendHeartbeat(); refreshPresence(); },PRESENCE_INTERVAL_MS);
 }
 
 function applyData(data){
@@ -1236,7 +1294,7 @@ function updateDate(){
   buildAgenda('sales'); buildAgenda('rest');
   buildActionTable('sales'); buildActionTable('rest');
   buildActionPlanTable(); buildPipelineTable(); buildChannelTable();
-  if(CONFIG.SHEETS_URL){ loadFromSheets(); loadMeetingsFromSheets(); }
+  if(CONFIG.SHEETS_URL){ loadFromSheets(); loadMeetingsFromSheets(); startPresence(); }
   else { var ok=restoreLocal(); if(!ok) recalcAll(); setSyncStatus('warn','SHEETS_URL not set'); }
   setTimeout(function(){ initialising=false; },800);
 })();
