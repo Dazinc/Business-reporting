@@ -322,6 +322,13 @@ tbody td:first-child { text-align: left; font-weight: 600; color: #000000; }
           <input class="ev-input-field" type="number" id="s-ev-days-elapsed" min="1" max="31" oninput="this.dataset.u='1';calcEVSales();markUnsaved()"><span style="font-size:0.75rem;color:#8A8F9C;">days</span></div>
         <div class="ev-input-row"><span class="ev-input-label">Total days in month</span>
           <input class="ev-input-field" type="number" id="s-ev-days-total" min="1" max="31" oninput="this.dataset.u='1';calcEVSales();markUnsaved()"><span style="font-size:0.75rem;color:#8A8F9C;">days</span></div>
+        <div style="padding-top:10px;margin-top:10px;border-top:1px solid #F0F2F5;">
+          <div class="ev-input-row"><span class="ev-input-label">Likely month-end (base case)</span>
+            <input class="ev-input-field" type="number" id="s-ev-base-case" min="0" oninput="this.dataset.u='1';calcEVSales();markUnsaved()"><span style="font-size:0.75rem;color:#8A8F9C;">$</span></div>
+          <div class="ev-input-row"><span class="ev-input-label">Confidence in base case</span>
+            <input class="ev-input-field" type="number" id="s-ev-confidence" min="0" max="100" oninput="this.dataset.u='1';calcEVSales();markUnsaved()"><span style="font-size:0.75rem;color:#8A8F9C;">%</span></div>
+          <div style="font-size:0.68rem;color:#8A8F9C;line-height:1.7;margin-top:4px;">Wholesale revenue is order-driven, not a smooth daily run rate &#8212; a few early-month orders can blow a straight-line pace calc out unrealistically. Set your own judgement call here (pipeline knowledge, SPLY, etc.) and the projection will anchor to it instead.</div>
+        </div>
         <div style="padding-top:10px;border-top:1px solid #F0F2F5;">
           <button class="eom-btn" onclick="setEndOfMonth('s')">Set End of Month</button>
           <div style="font-size:0.68rem;color:#8A8F9C;line-height:1.7;margin-top:6px;">Days auto-fill from today &#8212; use the button for completed months.</div>
@@ -757,9 +764,45 @@ function calcEVWeighted(dept, budget, actual, weights) {
   renderEV(dept, budget, pv, ev, spi, proj);
 }
 
+// Brewery wholesale revenue is order-driven and lumpy (one big Coles/ALM
+// order can swing the whole month), so a naive elapsed-days linear
+// extrapolation is unreliable early in the month -- a handful of days'
+// actuals divided by pct-of-month-elapsed can blow out to an unrealistic
+// number. Projected Month-End instead anchors to a manually-set base case
+// (Darren's own judgement call, informed by the live order pipeline / SPLY)
+// and its confidence level, shown alongside the mechanical pace-only calc
+// for reference. It floors at whatever has actually been earned so far --
+// if EV overtakes the base case, the base case should be revised up.
 function calcEVSales() {
-  calcEVGeneric('s', val('b-keg-budget')+val('b-pack-budget')+val('b-other-budget'),
-                     val('b-keg-actual')+val('b-pack-actual')+val('b-other-actual'));
+  var budget = val('b-keg-budget')+val('b-pack-budget')+val('b-other-budget');
+  var actual = val('b-keg-actual')+val('b-pack-actual')+val('b-other-actual');
+  var elapsed=val('s-ev-days-elapsed'), total=val('s-ev-days-total')||1;
+  var pct=Math.min(elapsed/total,1);
+  var pv=budget*pct, ev=actual;
+  var spi=pv>0?ev/pv:null;
+  var paceProj=pct>0?ev/pct:null;
+  var baseCase=val('s-ev-base-case'), confidence=val('s-ev-confidence');
+  var proj = baseCase>0 ? Math.max(baseCase, ev) : paceProj;
+
+  setText('s-ev-pv',fa(pv)); setText('s-ev-ev',fa(ev));
+  var spiEl=document.getElementById('s-ev-spi'), spiSub=document.getElementById('s-ev-spi-sub');
+  if(spi!==null){
+    spiEl.textContent=spi.toFixed(2); var sp=(spi-1)*100;
+    spiEl.className='ev-kpi-value '+vc(sp);
+    spiSub.textContent=spi>=1?'Ahead of pace':Math.abs(sp)<=CONFIG.tolerancePct?'On track':'Behind pace — action needed';
+  } else { spiEl.textContent='—'; spiEl.className='ev-kpi-value'; spiSub.textContent='Enter days elapsed'; }
+
+  var projEl=document.getElementById('s-ev-proj'), projSub=document.getElementById('s-ev-proj-sub');
+  if(proj!==null){
+    projEl.textContent=fa(proj);
+    var pv2=proj-budget, pp=budget>0?(pv2/budget)*100:0;
+    projEl.className='ev-kpi-value '+vc(pp);
+    var subHtml='<span class="'+vc(pp)+'">'+(pv2>=0?'+':'')+formatCurrency(pv2)+' ('+(pp>=0?'+':'')+pp.toFixed(1)+'%)</span> vs '+fa(budget)+' budget';
+    if(baseCase>0){
+      subHtml += '<br><span style="color:#8A8F9C;">'+(confidence>0?confidence+'% confidence base case':'Base case')+(paceProj!==null?' · pace-only calc: '+fa(paceProj):'')+'</span>';
+    }
+    projSub.innerHTML=subHtml;
+  } else { projEl.textContent='—'; projEl.className='ev-kpi-value'; projSub.textContent='vs '+fa(budget)+' budget'; }
 }
 function calcEVRest() {
   calcEVWeighted('r', val('r-food-budget')+val('r-bev-budget')+val('r-other-budget'),
@@ -1104,7 +1147,8 @@ var SAVE_FIELDS=[
   'b-other-budget','b-other-actual','b-other-sply',
   'r-wages','r-labour-target','b-wages','b-labour-target',
   'kpi-covers','kpi-turns',
-  's-ev-days-elapsed','s-ev-days-total','r-ev-days-elapsed','r-ev-days-total'
+  's-ev-days-elapsed','s-ev-days-total','r-ev-days-elapsed','r-ev-days-total',
+  's-ev-base-case','s-ev-confidence'
 ];
 function collectFields(){
   var f={}; SAVE_FIELDS.forEach(function(id){ var el=document.getElementById(id); if(el) f[id]=el.value; }); return f;
