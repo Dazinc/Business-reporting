@@ -197,9 +197,10 @@ tbody td:first-child { text-align: left; font-weight: 600; color: #000000; }
   @page { size: A4 portrait; margin: 15mm; }
   body { background: #fff; font-size: 11px; }
   .header, .card-header, .total-row td, .rt-total td, .report-cover-header, .report-section-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .tab-nav, .print-btn, .add-row-btn, .rollover-banner, .unsaved-badge, .footer, .meeting-bar { display: none !important; }
-  #tab-sales, #tab-restaurant { display: none !important; }
-  #tab-report { display: block !important; }
+  .tab-nav, .print-btn, .add-row-btn, .rollover-banner, .unsaved-badge, .footer, .meeting-bar, .eom-btn { display: none !important; }
+  /* Print whichever tab is currently open on screen (Sales / Restaurant /
+     Sales Report) instead of always forcing the Sales Report tab -- the
+     .tab-panel / .tab-panel.active rules above already control this. */
   .report-main { padding: 0; max-width: 100%; }
   .report-section, .report-cover { box-shadow: none; page-break-inside: avoid; }
   .cell-input, .kpi-input, .meta-input, .agenda-text, .action-input, .status-select,
