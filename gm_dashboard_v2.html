@@ -66,9 +66,8 @@ tbody tr { border-bottom: 1px solid #F0F2F5; }
 tbody tr:last-child { border-bottom: none; }
 tbody td { padding: 10px 16px; text-align: right; vertical-align: middle; color: #1A1A1A; }
 tbody td:first-child { text-align: left; font-weight: 600; color: #000000; }
-.cell-input { background: transparent; border: none; text-align: right; font-size: 0.85rem; color: #1A1A1A; width: 100%; min-width: 70px; outline: none; font-family: inherit; }
-  tbody td:has(> input.cell-input), tbody td:has(> input.rt-input) { display: flex; align-items: center; justify-content: flex-end; gap: 2px; }
-  tbody td:has(> input.cell-input)::before, tbody td:has(> input.rt-input)::before { content: "$"; color: #8A8F9C; font-size: 0.78rem; flex-shrink: 0; }
+.cell-input { background: transparent; border: none; text-align: right; font-size: 0.85rem; color: #1A1A1A; width: calc(100% - 14px); min-width: 60px; outline: none; font-family: inherit; }
+    tbody td:has(> input.cell-input)::before, tbody td:has(> input.rt-input)::before { content: "$"; color: #8A8F9C; font-size: 0.78rem; flex-shrink: 0; }
 .cell-input:focus { background: #FFF3E8; border-bottom: 1px solid #FF6B00; }
 .subsection-row td { background: #F7F8FA; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #6B7080; padding: 6px 16px; border-top: 1px solid #E5E8EE; }
 .total-row td { background: #000000; color: #fff; font-weight: 700; padding: 10px 16px; }
@@ -177,7 +176,7 @@ tbody td:first-child { text-align: left; font-weight: 600; color: #000000; }
 .report-table tbody td:first-child { text-align: left; font-weight: 600; color: #000000; }
 .report-table tbody tr:last-child td { border-bottom: none; }
 .rt-total td { background: #000000; color: #fff; font-weight: 700; }
-.rt-input { background: transparent; border: none; text-align: right; font-size: 0.82rem; color: #1A1A1A; width: 100%; min-width: 70px; outline: none; font-family: inherit; }
+.rt-input { background: transparent; border: none; text-align: right; font-size: 0.82rem; color: #1A1A1A; width: calc(100% - 14px); min-width: 60px; outline: none; font-family: inherit; }
 .rt-input:focus { background: #FFF3E8; border-bottom: 1px solid #FF6B00; }
 .labour-report-strip { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid #E5E8EE; }
 .lrs-item { padding: 14px 20px; border-right: 1px solid #E5E8EE; display: flex; flex-direction: column; gap: 3px; }
