@@ -587,7 +587,6 @@ tbody td:first-child { text-align: left; font-weight: 600; color: #000000; }
     <div>
       <div class="narrative-block"><div class="narrative-label">Channel &amp; Distribution</div><textarea class="narrative-textarea" id="n-brewery" rows="4" placeholder="ALM, Paramount, Independent, Coles, Endeavour — volume movements, new listings, ranging changes, delistings..." oninput="markUnsaved()"></textarea></div>
       <div class="narrative-block"><div class="narrative-label">Activations &amp; Promotional Calendar</div><textarea class="narrative-textarea" id="n-brewery-sales" rows="3" placeholder="Current activations, upcoming promos, ALM promo weeks, event pipeline, venue partnerships..." oninput="markUnsaved()"></textarea></div>
-      <div class="narrative-block"><div class="narrative-label">Production &amp; Operations</div><textarea class="narrative-textarea" id="n-ops" rows="3" placeholder="Brew schedule, production volumes, quality, equipment, compliance..." oninput="markUnsaved()"></textarea></div>
       <div class="narrative-block"><div class="narrative-label">Key Actions</div><textarea class="narrative-textarea" id="n-brewery-actions" rows="3" placeholder="&#8226; Action 1&#10;&#8226; Action 2" oninput="markUnsaved()"></textarea></div>
     </div>
   </div>
@@ -1159,7 +1158,7 @@ function collectFields(){
   var f={}; SAVE_FIELDS.forEach(function(id){ var el=document.getElementById(id); if(el) f[id]=el.value; }); return f;
 }
 var NARRATIVE_IDS=['report-month-label','report-date','report-author','report-next-board',
-  'n-trading-summary','n-pipeline','n-brewery','n-brewery-sales','n-ops','n-brewery-actions',
+  'n-trading-summary','n-pipeline','n-brewery','n-brewery-sales','n-brewery-actions',
   'sr-brewery-ytd','sr-brewery-ytd-budget','sr-rest-ytd','sr-rest-ytd-budget'];
 function collectNarrative(){
   var n={};
