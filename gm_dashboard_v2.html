@@ -928,10 +928,12 @@ function buildActionPlanTable(){
 function makeActionPlanRow(r,num){
   var tr=document.createElement('tr');
   tr.innerHTML='<td style="text-align:center;color:#8A8F9C;font-size:0.78rem;padding:8px;">'+num+'</td>'+
-    '<td><textarea class="ap-input" rows="2" oninput="markUnsaved()">'+(r.action||'')+'</textarea></td>'+
-    '<td><textarea class="ap-input" rows="2" oninput="markUnsaved()">'+(r.process||'')+'</textarea></td>'+
-    '<td><textarea class="ap-input" rows="2" oninput="markUnsaved()">'+(r.timing||'')+'</textarea></td>'+
-    '<td><textarea class="ap-input" rows="2" oninput="markUnsaved()">'+(r.responsibility||'')+'</textarea></td>';
+    '<td><textarea class="ap-input" rows="2" oninput="markUnsaved()"></textarea></td>'+
+    '<td><textarea class="ap-input" rows="2" oninput="markUnsaved()"></textarea></td>'+
+    '<td><textarea class="ap-input" rows="2" oninput="markUnsaved()"></textarea></td>'+
+    '<td><textarea class="ap-input" rows="2" oninput="markUnsaved()"></textarea></td>';
+  var __ta=tr.querySelectorAll('textarea');
+  __ta[0].value=r.action||''; __ta[1].value=r.process||''; __ta[2].value=r.timing||''; __ta[3].value=r.responsibility||'';
   return tr;
 }
 function addActionPlanRow(){
