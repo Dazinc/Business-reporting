@@ -200,7 +200,7 @@ tbody td:first-child { text-align: left; font-weight: 600; color: #000000; }
   body { background: #fff; font-size: 11px; }
   .header, .card-header, .total-row td, .rt-total td, .report-cover-header, .report-section-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .tab-nav, .print-btn, .add-row-btn, .rollover-banner, .unsaved-badge, .footer, .meeting-bar, .eom-btn { display: none !important; }
-  /* Print whichever tab is currently open on screen (Sales / Restaurant /
+  /* Print whichever tab is currently open on screen (Sales /
      Sales Report) instead of always forcing the Sales Report tab -- the
      .tab-panel / .tab-panel.active rules above already control this. */
   .report-main { padding: 0; max-width: 100%; }
@@ -234,7 +234,6 @@ tbody td:first-child { text-align: left; font-weight: 600; color: #000000; }
 <div class="tab-nav">
   <div class="tab-nav-left">
     <button class="tab-btn active" id="tabbtn-sales" onclick="switchTab('sales')">Sales</button>
-    <button class="tab-btn" id="tabbtn-restaurant" onclick="switchTab('restaurant')">Restaurant</button>
     <button class="tab-btn" id="tabbtn-report" onclick="switchTab('report')">Sales Report</button>
   </div>
   <div class="tab-nav-right">
@@ -379,142 +378,6 @@ tbody td:first-child { text-align: left; font-weight: 600; color: #000000; }
 </div>
 </div>
 
-<!-- ============ TAB: RESTAURANT ============ -->
-<div class="tab-panel" id="tab-restaurant">
-<div class="main">
-
-  <!-- RESTAURANT PERFORMANCE -->
-  <div class="card">
-    <div class="card-header"><span class="card-title">Restaurant Performance</span><span class="card-badge">MTD</span></div>
-    <div>
-      <table>
-        <thead><tr><th style="width:24%">Category</th><th>Monthly Budget</th><th>MTD Actual</th><th>SPLY</th><th>MTD Variance $</th><th>MTD Variance %</th></tr></thead>
-        <tbody>
-          <tr class="subsection-row"><td colspan="6">Food Sales</td></tr>
-          <tr>
-            <td>Food Revenue</td>
-            <td><input class="cell-input" type="number" id="r-food-budget" placeholder="0" oninput="calc('r-food');markUnsaved()" min="0"></td>
-            <td><input class="cell-input" type="number" id="r-food-actual" placeholder="0" oninput="calc('r-food');markUnsaved()" min="0"></td>
-            <td><input class="cell-input" type="number" id="r-food-sply" placeholder="SPLY" oninput="calc('r-food');markUnsaved()"></td>
-            <td id="r-food-var-d">&#8212;</td><td id="r-food-var-p">&#8212;</td>
-          </tr>
-          <tr class="subsection-row"><td colspan="6">Beverage Sales</td></tr>
-          <tr>
-            <td>Beverage Revenue</td>
-            <td><input class="cell-input" type="number" id="r-bev-budget" placeholder="0" oninput="calc('r-bev');markUnsaved()" min="0"></td>
-            <td><input class="cell-input" type="number" id="r-bev-actual" placeholder="0" oninput="calc('r-bev');markUnsaved()" min="0"></td>
-            <td><input class="cell-input" type="number" id="r-bev-sply" placeholder="SPLY" oninput="calc('r-bev');markUnsaved()"></td>
-            <td id="r-bev-var-d">&#8212;</td><td id="r-bev-var-p">&#8212;</td>
-          </tr>
-          <tr class="subsection-row"><td colspan="6">Other Sales</td></tr>
-          <tr>
-            <td>Other Revenue</td>
-            <td><input class="cell-input" type="number" id="r-other-budget" placeholder="0" oninput="calc('r-other');markUnsaved()" min="0"></td>
-            <td><input class="cell-input" type="number" id="r-other-actual" placeholder="0" oninput="calc('r-other');markUnsaved()" min="0"></td>
-            <td><input class="cell-input" type="number" id="r-other-sply" placeholder="SPLY" oninput="calc('r-other');markUnsaved()"></td>
-            <td id="r-other-var-d">&#8212;</td><td id="r-other-var-p">&#8212;</td>
-          </tr>
-          <tr class="total-row">
-            <td>Restaurant Total</td>
-            <td id="r-total-budget">&#8212;</td><td id="r-total-actual">&#8212;</td><td id="r-total-sply">&#8212;</td>
-            <td id="r-total-var-d">&#8212;</td><td id="r-total-var-p">&#8212;</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <div class="labour-strip">
-        <div class="labour-item">
-          <div class="labour-label">Wages MTD</div>
-          <div style="display:flex;align-items:baseline;gap:4px;"><span style="font-size:0.8rem;color:#8A8F9C;">$</span>
-            <input class="labour-input" type="number" id="r-wages" placeholder="0" oninput="calcLabour();markUnsaved()" style="width:100px"></div>
-          <div class="labour-sub">Enter total wages incl. super</div>
-        </div>
-        <div class="labour-item"><div class="labour-label">Revenue MTD</div><div class="labour-value" id="r-labour-rev">&#8212;</div><div class="labour-sub">Auto from actuals above</div></div>
-        <div class="labour-item"><div class="labour-label">Productivity Ratio</div><div class="labour-value" id="r-labour-ratio">&#8212;</div><div class="labour-sub">Wages &#247; Revenue &#215; 100</div></div>
-        <div class="labour-item">
-          <div class="labour-label">Target Ratio</div>
-          <div style="display:flex;align-items:baseline;gap:4px;">
-            <input class="labour-input" type="number" id="r-labour-target" value="30" style="width:60px" oninput="calcLabour();markUnsaved()"><span style="font-size:0.8rem;color:#8A8F9C;">%</span></div>
-          <div class="labour-sub">Edit to set your target</div>
-        </div>
-      </div>
-
-      <div class="kpi-strip">
-        <div class="kpi-item">
-          <div class="kpi-label">Avg Spend / Cover</div>
-          <div><span style="font-size:0.8rem;color:#8A8F9C;margin-right:4px;">$</span><input class="kpi-input" id="kpi-spend" type="number" style="width:90px" readonly tabindex="-1"></div>
-          <div class="kpi-sub">MTD actual &#247; covers</div>
-        </div>
-        <div class="kpi-item">
-          <div class="kpi-label">Covers MTD</div>
-          <input class="kpi-input" id="kpi-covers" type="number" placeholder="0" style="width:80px" oninput="calcKPIs();markUnsaved()" min="0">
-          <div class="kpi-sub">Total covers this month</div>
-          <div class="kpi-note" id="util-note"></div>
-        </div>
-        <div class="kpi-item">
-          <div class="kpi-label">Avg Table Turns / Day</div>
-          <input class="kpi-input" id="kpi-turns" type="number" placeholder="0" step="0.1" style="width:70px" oninput="markUnsaved()">
-          <div class="kpi-sub">Enter manually</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- RESTAURANT EV/PV -->
-  <div class="card">
-    <div class="card-header"><span class="card-title">Restaurant Forecast &#8212; Earned vs Planned</span><span class="card-badge">Weighted Pace to Budget</span></div>
-    <div class="ev-grid">
-      <div class="ev-inputs">
-        <div class="ev-inputs-title">Inputs</div>
-        <div class="ev-input-row"><span class="ev-input-label">Days elapsed this month</span>
-          <input class="ev-input-field" type="number" id="r-ev-days-elapsed" min="1" max="31" oninput="this.dataset.u='1';calcEVRest();markUnsaved()"><span style="font-size:0.75rem;color:#8A8F9C;">days</span></div>
-        <div class="ev-input-row"><span class="ev-input-label">Total days in month</span>
-          <input class="ev-input-field" type="number" id="r-ev-days-total" min="1" max="31" oninput="this.dataset.u='1';calcEVRest();markUnsaved()"><span style="font-size:0.75rem;color:#8A8F9C;">days</span></div>
-        <div style="padding-top:10px;border-top:1px solid #F0F2F5;">
-          <button class="eom-btn" onclick="setEndOfMonth('r')">Set End of Month</button>
-          <div style="font-size:0.68rem;color:#8A8F9C;line-height:1.7;margin-top:6px;">Days auto-fill from today &#8212; use the button for completed months.</div>
-        </div>
-      </div>
-      <div class="ev-results">
-        <div class="ev-kpi"><div class="ev-kpi-label">Planned Value (PV)</div><div class="ev-kpi-value" id="r-ev-pv">&#8212;</div><div class="ev-kpi-sub">Should have earned by today (weekday-weighted)</div></div>
-        <div class="ev-kpi"><div class="ev-kpi-label">Earned Value (EV)</div><div class="ev-kpi-value" id="r-ev-ev">&#8212;</div><div class="ev-kpi-sub">Restaurant MTD actual</div></div>
-        <div class="ev-kpi"><div class="ev-kpi-label">Performance Index (SPI)</div><div class="ev-kpi-value" id="r-ev-spi">&#8212;</div><div class="ev-kpi-sub" id="r-ev-spi-sub">EV &#247; PV &#183; 1.0 = on pace</div></div>
-        <div class="ev-kpi"><div class="ev-kpi-label">Projected Month-End</div><div class="ev-kpi-value" id="r-ev-proj">&#8212;</div><div class="ev-kpi-sub" id="r-ev-proj-sub">vs budget</div></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- RESTAURANT MEETING -->
-  <div class="card">
-    <div class="card-header"><span class="card-title">Restaurant Meeting</span><span class="card-badge">Weekly</span></div>
-    <div>
-      <div class="meeting-bar">
-        <span class="meeting-bar-label">History:</span>
-        <select class="meeting-select" id="rest-meeting-select"><option value="">&#8212; Select a past meeting &#8212;</option></select>
-        <button class="meeting-bar-btn" onclick="loadPastMeeting('rest')">&#8595; Load</button>
-        <button class="meeting-bar-btn new-mtg" onclick="newMeeting('rest')">+ New Meeting</button>
-        <span class="meeting-viewing-badge" id="rest-viewing-badge">Viewing past meeting</span>
-      </div>
-      <div class="agenda-meta">
-        <div class="agenda-meta-item"><span class="meta-label">Meeting Date</span><input class="meta-input" id="rest-meeting-date" type="date" oninput="markUnsaved()"></div>
-        <div class="agenda-meta-item"><span class="meta-label">Time</span><input class="meta-input" id="rest-meeting-time" type="time" value="09:00" oninput="markUnsaved()"></div>
-        <div class="agenda-meta-item"><span class="meta-label">Attendees</span><input class="meta-input" id="rest-meeting-attendees" type="text" placeholder="GM, Head Chef, FOH Manager" oninput="markUnsaved()"></div>
-      </div>
-      <div class="agenda-items" id="rest-agenda-items"></div>
-      <div class="action-section">
-        <div class="action-title">Action Items</div>
-        <table class="action-table">
-          <thead><tr><th style="width:42%">Action</th><th style="width:18%">Owner</th><th style="width:16%">Due Date</th><th style="width:14%">Status</th></tr></thead>
-          <tbody id="rest-action-tbody"></tbody>
-        </table>
-        <button class="add-row-btn" onclick="addActionRow('rest')">+ Add Action Item</button>
-      </div>
-    </div>
-  </div>
-
-</div>
-</div>
-
 <!-- ============ TAB: SALES REPORT ============ -->
 <div class="tab-panel" id="tab-report">
 <div class="report-main">
@@ -541,8 +404,6 @@ tbody td:first-child { text-align: left; font-weight: 600; color: #000000; }
           <thead><tr><th style="width:20%">Revenue</th><th>Month Actual</th><th>Month Budget</th><th>SPLY</th><th>vs Budget $</th><th>vs Budget %</th><th>YTD Actual</th><th>YTD Budget</th></tr></thead>
           <tbody>
             <tr><td>Brewery</td><td id="sr-brewery-actual">&#8212;</td><td id="sr-brewery-budget">&#8212;</td><td id="sr-brewery-sply">&#8212;</td><td id="sr-brewery-var-d">&#8212;</td><td id="sr-brewery-var-p">&#8212;</td><td><input class="rt-input" type="number" id="sr-brewery-ytd" placeholder="0" oninput="calcSummary();markUnsaved()"></td><td><input class="rt-input" type="number" id="sr-brewery-ytd-budget" placeholder="0" oninput="calcSummary();markUnsaved()"></td></tr>
-            <tr><td>Restaurant</td><td id="sr-rest-actual">&#8212;</td><td id="sr-rest-budget">&#8212;</td><td id="sr-rest-sply">&#8212;</td><td id="sr-rest-var-d">&#8212;</td><td id="sr-rest-var-p">&#8212;</td><td><input class="rt-input" type="number" id="sr-rest-ytd" placeholder="0" oninput="calcSummary();markUnsaved()"></td><td><input class="rt-input" type="number" id="sr-rest-ytd-budget" placeholder="0" oninput="calcSummary();markUnsaved()"></td></tr>
-            <tr class="rt-total"><td>Total</td><td id="sr-total-actual">&#8212;</td><td id="sr-total-budget">&#8212;</td><td id="sr-total-sply">&#8212;</td><td id="sr-total-var-d">&#8212;</td><td id="sr-total-var-p">&#8212;</td><td id="sr-total-ytd">&#8212;</td><td id="sr-total-ytd-budget">&#8212;</td></tr>
           </tbody>
         </table>
       </div>
@@ -631,7 +492,7 @@ var boardUnlocked = false;
 //  TABS + PIN
 // ============================================================
 function switchTab(tab) {
-  ['sales','restaurant','report'].forEach(function(t){
+  ['sales','report'].forEach(function(t){
     document.getElementById('tabbtn-'+t).classList.toggle('active', t===tab);
     document.getElementById('tab-'+t).classList.toggle('active', t===tab);
   });
@@ -655,18 +516,9 @@ function calc(prefix) {
   var vd=a-b, vp=b?(vd/b)*100:0;
   setVC(prefix+'-var-d', formatCurrency(vd), vp);
   setVC(prefix+'-var-p', formatPct(vp), vp);
-  updateRestTotal(); updateBrewTotal();
+  updateBrewTotal();
 }
 
-function updateRestTotal() {
-  var tB=val('r-food-budget')+val('r-bev-budget')+val('r-other-budget');
-  var tA=val('r-food-actual')+val('r-bev-actual')+val('r-other-actual');
-  var tS=val('r-food-sply')+val('r-bev-sply')+val('r-other-sply');
-  var vd=tA-tB, vp=tB?(vd/tB)*100:0;
-  setText('r-total-budget',fa(tB)); setText('r-total-actual',fa(tA)); setText('r-total-sply',fa(tS));
-  setVC('r-total-var-d',formatCurrency(vd),vp); setVC('r-total-var-p',formatPct(vp),vp);
-  calcKPIs(); calcEVRest(); calcLabour();
-}
 function updateBrewTotal() {
   var tB=val('b-keg-budget')+val('b-pack-budget')+val('b-other-budget');
   var tA=val('b-keg-actual')+val('b-pack-actual')+val('b-other-actual');
@@ -681,12 +533,9 @@ function updateBrewTotal() {
 //  LABOUR
 // ============================================================
 function calcLabour() {
-  var rW=val('r-wages'), rR=val('r-food-actual')+val('r-bev-actual')+val('r-other-actual'), rT=val('r-labour-target');
   var bW=val('b-wages'), bR=val('b-keg-actual')+val('b-pack-actual')+val('b-other-actual'), bT=val('b-labour-target');
-  var rRatio=rR>0?(rW/rR)*100:null, bRatio=bR>0?(bW/bR)*100:null;
-  setText('r-labour-rev',fa(rR)); setText('b-labour-rev',fa(bR));
-  var rEl=document.getElementById('r-labour-ratio');
-  if(rEl){ rEl.textContent=rRatio!==null?rRatio.toFixed(1)+'%':'\u2014'; rEl.className='labour-value '+(rRatio===null?'':rRatio<=rT?'ratio-good':rRatio<=rT*1.1?'ratio-warn':'ratio-bad'); }
+  var bRatio=bR>0?(bW/bR)*100:null;
+  setText('b-labour-rev',fa(bR));
   var bEl=document.getElementById('b-labour-ratio');
   if(bEl){ bEl.textContent=bRatio!==null?bRatio.toFixed(1)+'%':'\u2014'; bEl.className='labour-value '+(bRatio===null?'':bRatio<=bT?'ratio-good':bRatio<=bT*1.1?'ratio-warn':'ratio-bad'); }
   // Report strip
@@ -698,25 +547,13 @@ function calcLabour() {
 }
 
 // ============================================================
-//  KPIs
-// ============================================================
-function calcKPIs() {
-  var covers=val('kpi-covers'), elapsed=val('r-ev-days-elapsed');
-  var rev=val('r-food-actual')+val('r-bev-actual')+val('r-other-actual');
-  document.getElementById('kpi-spend').value = covers>0?(rev/covers).toFixed(2):'';
-  var noteEl=document.getElementById('util-note');
-  if (covers>0&&elapsed>0) noteEl.textContent=(covers/(CONFIG.seatCapacity*elapsed)*100).toFixed(1)+'% utilisation vs '+CONFIG.seatCapacity+' seats \u00d7 '+elapsed+' days';
-  else noteEl.textContent='';
-}
-
-// ============================================================
 //  EV/PV — per department
 // ============================================================
 function setEndOfMonth(dept) {
   var total = val(dept+'-ev-days-total') || new Date(new Date().getFullYear(), new Date().getMonth()+1, 0).getDate();
   var elEl=document.getElementById(dept+'-ev-days-elapsed'), totEl=document.getElementById(dept+'-ev-days-total');
   elEl.value=total; totEl.value=total; elEl.dataset.u='1'; totEl.dataset.u='1';
-  if(dept==='s') calcEVSales(); else calcEVRest();
+  if(dept==='s') calcEVSales();
   markUnsaved();
 }
 
@@ -742,29 +579,6 @@ function calcEVGeneric(dept, budget, actual) {
   var pct=Math.min(elapsed/total,1);
   var pv=budget*pct, ev=actual;
   var spi=pv>0?ev/pv:null, proj=pct>0?ev/pct:null;
-  renderEV(dept, budget, pv, ev, spi, proj);
-}
-
-// Restaurant weekday revenue pattern (avg $/day by weekday, from Darren's
-// observed trading pattern) \u2014 used to weight PV/Projection instead of
-// assuming revenue lands evenly across every day of the month.
-// Date.getDay(): 0=Sun,1=Mon,2=Tue,3=Wed,4=Thu,5=Fri,6=Sat
-var REST_WEEKDAY_WEIGHTS = {0:5000,1:1200,2:1200,3:7000,4:4000,5:7000,6:10000};
-
-function weekdayWeightSum(monthKey, fromDay, toDay, weights) {
-  var parts=monthKey.split('-'), y=+parts[0], m=+parts[1], sum=0;
-  for (var d=fromDay; d<=toDay; d++) { sum += weights[new Date(y,m-1,d).getDay()]; }
-  return sum;
-}
-
-function calcEVWeighted(dept, budget, actual, weights) {
-  var elapsed=val(dept+'-ev-days-elapsed'), total=val(dept+'-ev-days-total')||1;
-  var wElapsed = elapsed>0 ? weekdayWeightSum(currentMonth,1,Math.min(elapsed,total),weights) : 0;
-  var wTotal = weekdayWeightSum(currentMonth,1,total,weights) || 1;
-  var pct = wElapsed/wTotal;
-  var pv=budget*pct, ev=actual;
-  var spi=pv>0?ev/pv:null;
-  var proj = wElapsed>0 ? ev + (ev/wElapsed)*(wTotal-wElapsed) : null;
   renderEV(dept, budget, pv, ev, spi, proj);
 }
 
@@ -808,13 +622,6 @@ function calcEVSales() {
     projSub.innerHTML=subHtml;
   } else { projEl.textContent='—'; projEl.className='ev-kpi-value'; projSub.textContent='vs '+fa(budget)+' budget'; }
 }
-function calcEVRest() {
-  calcEVWeighted('r', val('r-food-budget')+val('r-bev-budget')+val('r-other-budget'),
-                     val('r-food-actual')+val('r-bev-actual')+val('r-other-actual'),
-                     REST_WEEKDAY_WEIGHTS);
-  calcKPIs();
-}
-
 // ============================================================
 //  SALES REPORT SYNC
 // ============================================================
@@ -852,22 +659,10 @@ function calcSummary() {
   var bB=val('b-keg-budget')+val('b-pack-budget')+val('b-other-budget');
   var bA=val('b-keg-actual')+val('b-pack-actual')+val('b-other-actual');
   var bS=val('b-keg-sply')+val('b-pack-sply')+val('b-other-sply');
-  // Restaurant fed from Restaurant tab
-  var rB=val('r-food-budget')+val('r-bev-budget')+val('r-other-budget');
-  var rA=val('r-food-actual')+val('r-bev-actual')+val('r-other-actual');
-  var rS=val('r-food-sply')+val('r-bev-sply')+val('r-other-sply');
-  var tB=bB+rB, tA=bA+rA, tS=bS+rS;
 
   setText('sr-brewery-actual',fa(bA)); setText('sr-brewery-budget',fa(bB)); setText('sr-brewery-sply',fa(bS));
-  setText('sr-rest-actual',fa(rA)); setText('sr-rest-budget',fa(rB)); setText('sr-rest-sply',fa(rS));
-  setText('sr-total-actual',fa(tA)); setText('sr-total-budget',fa(tB)); setText('sr-total-sply',fa(tS));
 
-  var bVD=bA-bB,bVP=bB?(bVD/bB)*100:0; setVC('sr-brewery-var-d',formatCurrency(bVD),bVP); setVC('sr-brewery-var-p',formatPct(bVP),bVP);
-  var rVD=rA-rB,rVP=rB?(rVD/rB)*100:0; setVC('sr-rest-var-d',formatCurrency(rVD),rVP); setVC('sr-rest-var-p',formatPct(rVP),rVP);
-  var tVD=tA-tB,tVP=tB?(tVD/tB)*100:0; setVC('sr-total-var-d',formatCurrency(tVD),tVP); setVC('sr-total-var-p',formatPct(tVP),tVP);
-
-  setText('sr-total-ytd',fa(val('sr-brewery-ytd')+val('sr-rest-ytd')));
-  setText('sr-total-ytd-budget',fa(val('sr-brewery-ytd-budget')+val('sr-rest-ytd-budget')));
+  var bVD=bA-bB, bVP=bB?(bVD/bB)*100:0; setVC('sr-brewery-var-d',formatCurrency(bVD),bVP); setVC('sr-brewery-var-p',formatPct(bVP),bVP);
 
   calcChannel(); calcLabour();
 }
@@ -962,19 +757,10 @@ var AGENDA_DEFAULTS = {
     'Activations & promo calendar',
     'Issues raised',
     'Action items for next meeting'
-  ],
-  rest: [
-    'Review of previous meeting actions',
-    'Food & beverage MTD performance review',
-    'Covers, spend per head & table turns',
-    'Roster & labour productivity',
-    'Service & guest feedback',
-    'Issues raised',
-    'Action items for next meeting'
   ]
 };
 var STATUS_OPTIONS=['Open','In Progress','Complete','Deferred'];
-var meetings = { sales: [], rest: [] };
+var meetings = { sales: [] };
 
 function buildAgenda(dept){
   var c=document.getElementById(dept+'-agenda-items');
@@ -1078,11 +864,10 @@ function loadMeetingsFromSheets(){
     .then(function(res){
       if(res.status==='ok'&&res.meetings){
         meetings.sales=res.meetings.filter(function(m){ return m.department==='sales'; });
-        meetings.rest =res.meetings.filter(function(m){ return m.department==='rest'; });
         // Legacy meetings without department go to sales
         var legacy=res.meetings.filter(function(m){ return !m.department; });
         meetings.sales=meetings.sales.concat(legacy);
-        buildMeetingDropdown('sales'); buildMeetingDropdown('rest');
+        buildMeetingDropdown('sales');
       }
     })
     .catch(function(){});
@@ -1145,15 +930,11 @@ function setSaveBtn(d){ document.getElementById('save-btn').disabled=d; }
 //  SAVE / LOAD
 // ============================================================
 var SAVE_FIELDS=[
-  'r-food-budget','r-food-actual','r-food-sply',
-  'r-bev-budget','r-bev-actual','r-bev-sply',
-  'r-other-budget','r-other-actual','r-other-sply',
   'b-keg-budget','b-keg-actual','b-keg-sply',
   'b-pack-budget','b-pack-actual','b-pack-sply',
   'b-other-budget','b-other-actual','b-other-sply',
-  'r-wages','r-labour-target','b-wages','b-labour-target',
-  'kpi-covers','kpi-turns',
-  's-ev-days-elapsed','s-ev-days-total','r-ev-days-elapsed','r-ev-days-total',
+  'b-wages','b-labour-target',
+  's-ev-days-elapsed','s-ev-days-total',
   's-ev-base-case','s-ev-confidence'
 ];
 function collectFields(){
@@ -1161,7 +942,7 @@ function collectFields(){
 }
 var NARRATIVE_IDS=['report-month-label','report-date','report-author','report-next-board',
   'n-trading-summary','n-pipeline','n-brewery','n-brewery-sales','n-brewery-actions',
-  'sr-brewery-ytd','sr-brewery-ytd-budget','sr-rest-ytd','sr-rest-ytd-budget'];
+  'sr-brewery-ytd','sr-brewery-ytd-budget'];
 function collectNarrative(){
   var n={};
   NARRATIVE_IDS.forEach(function(id){ var el=document.getElementById(id); if(el) n[id]=el.value; });
@@ -1186,7 +967,7 @@ function saveToSheets(){
     narrative:collectNarrative(),
     actionPlan:collectActionPlan(),
     pipeline:collectPipeline(),
-    weeklyMeetings:[collectMeeting('sales'), collectMeeting('rest')]
+    weeklyMeetings:[collectMeeting('sales')]
   };
   fetch(CONFIG.SHEETS_URL,{method:'POST',body:JSON.stringify(payload)})
     .then(function(r){ return r.json(); })
@@ -1297,8 +1078,8 @@ function applyData(data){
   recalcAll();
 }
 function recalcAll(){
-  ['r-food','r-bev','r-other','b-keg','b-pack','b-other'].forEach(calc);
-  calcEVSales(); calcEVRest(); calcKPIs(); calcLabour(); calcChannel(); calcSummary();
+  ['b-keg','b-pack','b-other'].forEach(calc);
+  calcEVSales(); calcLabour(); calcChannel(); calcSummary();
 }
 
 // ============================================================
@@ -1348,8 +1129,8 @@ function updateDate(){
 // ============================================================
 (function init(){
   buildMonthSelector(); updateDate(); setInterval(updateDate,60000);
-  buildAgenda('sales'); buildAgenda('rest');
-  buildActionTable('sales'); buildActionTable('rest');
+  buildAgenda('sales');
+  buildActionTable('sales');
   buildActionPlanTable(); buildPipelineTable(); buildChannelTable();
   if(CONFIG.SHEETS_URL){ loadFromSheets(); loadMeetingsFromSheets(); startPresence(); }
   else { var ok=restoreLocal(); if(!ok) recalcAll(); setSyncStatus('warn','SHEETS_URL not set'); }
