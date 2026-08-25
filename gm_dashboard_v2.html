@@ -503,17 +503,8 @@ tbody td:first-child { text-align: left; font-weight: 600; color: #000000; }
       <div class="narrative-block"><div class="narrative-label">Pipeline Commentary</div><textarea class="narrative-textarea" id="pv-n-pipeline" rows="3" placeholder="Won this month, lost deals, notable movements in pipeline..." oninput="document.getElementById('n-pipeline').value=this.value;markUnsaved()"></textarea></div>
     </div>
   </div>
-
   <div class="report-section">
-    <div class="report-section-header"><div class="report-section-num">3</div><span class="report-section-title">Brewery, Channel &amp; Commercial Update</span></div>
-    <div>
-      <div class="narrative-block"><div class="narrative-label">Channel &amp; Distribution</div><textarea class="narrative-textarea" id="pv-n-brewery" rows="4" placeholder="ALM, Paramount, Independent, Coles, Endeavour &#8212; volume movements, new listings, ranging changes, delistings..." oninput="document.getElementById('n-brewery').value=this.value;markUnsaved()"></textarea></div>
-      <div class="narrative-block"><div class="narrative-label">Key Actions</div><textarea class="narrative-textarea" id="pv-n-brewery-actions" rows="3" placeholder="&#8226; Action 1&#10;&#8226; Action 2" oninput="document.getElementById('n-brewery-actions').value=this.value;markUnsaved()"></textarea></div>
-    </div>
-  </div>
-
-  <div class="report-section">
-    <div class="report-section-header"><div class="report-section-num">4</div><span class="report-section-title">3-Month Action Plan &#8212; Wholesale &amp; Sales</span></div>
+    <div class="report-section-header"><div class="report-section-num">3</div><span class="report-section-title">3-Month Action Plan &#8212; Wholesale &amp; Sales</span></div>
     <div>
       <div style="padding:12px 20px 8px;">
         <table class="action-plan-table"><thead><tr><th style="width:5%">#</th><th style="width:28%">Action</th><th style="width:30%">Process / Detail</th><th style="width:18%">Timing</th><th style="width:19%">Responsibility</th></tr></thead>
@@ -720,7 +711,7 @@ function refreshPresentation(){
   if (typeof collectPipeline === 'function') pipelineRows = collectPipeline();
   if (typeof collectActionPlan === 'function') actionPlanRows = collectActionPlan();
 
-  [['n-trading-summary','pv-n-trading-summary'],['n-pipeline','pv-n-pipeline'],['n-brewery','pv-n-brewery'],['n-brewery-actions','pv-n-brewery-actions']].forEach(function(pair){
+  [['n-trading-summary','pv-n-trading-summary'],['n-pipeline','pv-n-pipeline']].forEach(function(pair){
     var src=document.getElementById(pair[0]); var dst=document.getElementById(pair[1]);
     if(src&&dst&&document.activeElement!==dst) dst.value=src.value||'';
   });
