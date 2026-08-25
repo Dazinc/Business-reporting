@@ -495,19 +495,6 @@ tbody td:first-child { text-align: left; font-weight: 600; color: #000000; }
         </table>
       </div>
 
-      <div style="padding:12px 20px 4px;"><div style="font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#6B7080;margin-bottom:8px;">Channel Mix &#8212; MTD Actual vs FY27 Target</div></div>
-      <div class="report-table-wrap">
-        <table class="report-table">
-          <thead><tr><th style="width:20%">Channel</th><th>Actual Mix %</th><th>FY27 Target %</th><th>vs Target</th><th>vs Budget %</th></tr></thead>
-          <tbody id="pv-channel-tbody"></tbody>
-        </table>
-      </div>
-
-      <div style="padding:4px 20px 0;"><div style="font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#6B7080;margin-bottom:4px;margin-top:12px;">Labour Productivity &#8212; Brewery</div></div>
-      <div class="labour-report-strip">
-        <div class="lrs-item"><div class="lrs-label">Productivity Ratio</div><div class="lrs-value" id="pv-labour-ratio">&#8212;</div><div class="lrs-sub">Wages &#247; Revenue (target: <span id="pv-labour-target">20</span>%)</div></div>
-      </div>
-
       <div class="narrative-block"><div class="narrative-label">Revenue Commentary</div><div class="narrative-textarea" id="pv-n-trading-summary" style="white-space:pre-wrap;">&#8212;</div></div>
     </div>
   </div>
@@ -748,30 +735,6 @@ function refreshPresentation(){
 
   var ytdA=val('sr-brewery-ytd'), ytdB=val('sr-brewery-ytd-budget');
   if(ytdB){ var ytdPct=((ytdA-ytdB)/ytdB)*100; setVC('pv-brewery-ytd',formatPct(ytdPct),ytdPct); } else { setText('pv-brewery-ytd','\u2014'); }
-
-  var bW=val('b-wages'), bT=val('b-labour-target');
-  var bRatio=bA>0?(bW/bA)*100:null;
-  var lEl=document.getElementById('pv-labour-ratio');
-  if(lEl){ lEl.textContent=bRatio!==null?bRatio.toFixed(1)+'%':'\u2014'; lEl.className='lrs-value '+(bRatio===null?'':bRatio<=bT?'ratio-good':bRatio<=bT*1.1?'ratio-warn':'ratio-bad'); }
-  setText('pv-labour-target',bT);
-
-  var totalActual=0;
-  CHANNELS.forEach(function(ch){ totalActual+=val('ch-'+ch+'-actual'); });
-  var ctbody=document.getElementById('pv-channel-tbody');
-  if(ctbody){
-    var chtml='';
-    CHANNELS.forEach(function(ch){
-      var a=val('ch-'+ch+'-actual');
-      var mixPct=totalActual?(a/totalActual)*100:0;
-      var targetPct=(CONFIG.channelTargets[ch]||0)*100;
-      var deltaPp=mixPct-targetPct;
-      var chBudget=bB*(CONFIG.channelTargets[ch]||0);
-      var vsBudgetPct=chBudget?((a-chBudget)/chBudget)*100:0;
-      var deltaClass=Math.abs(deltaPp)<=CONFIG.tolerancePct?'var-neutral':deltaPp>=0?'var-positive':'var-negative';
-      chtml+='<tr><td>'+CHANNEL_LABELS[ch]+'</td><td>'+mixPct.toFixed(1)+'%</td><td>'+targetPct.toFixed(1)+'%</td><td class="'+deltaClass+'">'+(deltaPp>=0?'+':'')+deltaPp.toFixed(1)+'pp</td><td class="'+vc(vsBudgetPct)+'">'+formatPct(vsBudgetPct)+'</td></tr>';
-    });
-    ctbody.innerHTML=chtml;
-  }
 
   [['n-trading-summary','pv-n-trading-summary'],['n-pipeline','pv-n-pipeline'],['n-brewery','pv-n-brewery'],['n-brewery-actions','pv-n-brewery-actions']].forEach(function(pair){
     var src=document.getElementById(pair[0]); var dst=document.getElementById(pair[1]);
