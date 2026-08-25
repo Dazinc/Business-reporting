@@ -486,14 +486,6 @@ tbody td:first-child { text-align: left; font-weight: 600; color: #000000; }
   <div class="report-section">
     <div class="report-section-header"><div class="report-section-num">1</div><span class="report-section-title">Revenue Performance</span></div>
     <div>
-      <div class="report-table-wrap">
-        <table class="report-table">
-          <thead><tr><th style="width:30%">Revenue</th><th>vs Budget %</th><th>vs SPLY %</th><th>YTD vs Budget %</th></tr></thead>
-          <tbody>
-            <tr><td>Brewery</td><td id="pv-brewery-budget">&#8212;</td><td id="pv-brewery-sply">&#8212;</td><td id="pv-brewery-ytd">&#8212;</td></tr>
-          </tbody>
-        </table>
-      </div>
 
       <div class="narrative-block"><div class="narrative-label">Revenue Commentary</div><div class="narrative-textarea" id="pv-n-trading-summary" style="white-space:pre-wrap;">&#8212;</div></div>
     </div>
@@ -725,16 +717,6 @@ function calcChannel() {
   setVC('ch-total-vd',formatCurrency(tVD),tVP); setVC('ch-total-vp',formatPct(tVP),tVP);
 }
 function refreshPresentation(){
-  var bA=val('b-keg-actual')+val('b-pack-actual')+val('b-other-actual');
-  var bB=val('b-keg-budget')+val('b-pack-budget')+val('b-other-budget');
-  var bS=val('b-keg-sply')+val('b-pack-sply')+val('b-other-sply');
-  var vsBudget=bB?((bA-bB)/bB)*100:0;
-  var vsSply=bS?((bA-bS)/bS)*100:0;
-  setVC('pv-brewery-budget',formatPct(vsBudget),vsBudget);
-  setVC('pv-brewery-sply',formatPct(vsSply),vsSply);
-
-  var ytdA=val('sr-brewery-ytd'), ytdB=val('sr-brewery-ytd-budget');
-  if(ytdB){ var ytdPct=((ytdA-ytdB)/ytdB)*100; setVC('pv-brewery-ytd',formatPct(ytdPct),ytdPct); } else { setText('pv-brewery-ytd','\u2014'); }
 
   [['n-trading-summary','pv-n-trading-summary'],['n-pipeline','pv-n-pipeline'],['n-brewery','pv-n-brewery'],['n-brewery-actions','pv-n-brewery-actions']].forEach(function(pair){
     var src=document.getElementById(pair[0]); var dst=document.getElementById(pair[1]);
