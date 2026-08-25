@@ -717,6 +717,8 @@ function calcChannel() {
   setVC('ch-total-vd',formatCurrency(tVD),tVP); setVC('ch-total-vp',formatPct(tVP),tVP);
 }
 function refreshPresentation(){
+  if (typeof collectPipeline === 'function') pipelineRows = collectPipeline();
+  if (typeof collectActionPlan === 'function') actionPlanRows = collectActionPlan();
 
   [['n-trading-summary','pv-n-trading-summary'],['n-pipeline','pv-n-pipeline'],['n-brewery','pv-n-brewery'],['n-brewery-actions','pv-n-brewery-actions']].forEach(function(pair){
     var src=document.getElementById(pair[0]); var dst=document.getElementById(pair[1]);
