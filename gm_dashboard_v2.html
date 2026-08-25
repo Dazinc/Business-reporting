@@ -476,10 +476,10 @@ tbody td:first-child { text-align: left; font-weight: 600; color: #000000; }
       <div class="report-cover-sub">Presentation view &#8212; no financial figures</div>
     </div>
     <div class="report-cover-meta">
-      <div class="report-cover-meta-item"><span class="rcm-label">Reporting Month</span><div class="rcm-input" id="pv-month-label">&#8212;</div></div>
-      <div class="report-cover-meta-item"><span class="rcm-label">Date Prepared</span><div class="rcm-input" id="pv-date">&#8212;</div></div>
-      <div class="report-cover-meta-item"><span class="rcm-label">Prepared By</span><div class="rcm-input" id="pv-author">&#8212;</div></div>
-      <div class="report-cover-meta-item"><span class="rcm-label">Next Board Meeting</span><div class="rcm-input" id="pv-next-board">&#8212;</div></div>
+      <div class="report-cover-meta-item"><span class="rcm-label">Reporting Month</span><input class="rcm-input" id="pv-month-label" type="text" oninput="document.getElementById('report-month-label').value=this.value;markUnsaved()"></div>
+      <div class="report-cover-meta-item"><span class="rcm-label">Date Prepared</span><input class="rcm-input" id="pv-date" type="date" oninput="document.getElementById('report-date').value=this.value;markUnsaved()"></div>
+      <div class="report-cover-meta-item"><span class="rcm-label">Prepared By</span><input class="rcm-input" id="pv-author" type="text" oninput="document.getElementById('report-author').value=this.value;markUnsaved()"></div>
+      <div class="report-cover-meta-item"><span class="rcm-label">Next Board Meeting</span><input class="rcm-input" id="pv-next-board" type="date" oninput="document.getElementById('report-next-board').value=this.value;markUnsaved()"></div>
     </div>
   </div>
 
@@ -487,7 +487,7 @@ tbody td:first-child { text-align: left; font-weight: 600; color: #000000; }
     <div class="report-section-header"><div class="report-section-num">1</div><span class="report-section-title">Revenue Performance</span></div>
     <div>
 
-      <div class="narrative-block"><div class="narrative-label">Revenue Commentary</div><div class="narrative-textarea" id="pv-n-trading-summary" style="white-space:pre-wrap;">&#8212;</div></div>
+      <div class="narrative-block"><div class="narrative-label">Revenue Commentary</div><textarea class="narrative-textarea" id="pv-n-trading-summary" rows="4" placeholder="Overall trading narrative, key drivers, market conditions..." oninput="document.getElementById('n-trading-summary').value=this.value;markUnsaved()"></textarea></div>
     </div>
   </div>
 
@@ -500,15 +500,15 @@ tbody td:first-child { text-align: left; font-weight: 600; color: #000000; }
           <tbody id="pv-pipeline-tbody"></tbody>
         </table>
       </div>
-      <div class="narrative-block"><div class="narrative-label">Pipeline Commentary</div><div class="narrative-textarea" id="pv-n-pipeline" style="white-space:pre-wrap;">&#8212;</div></div>
+      <div class="narrative-block"><div class="narrative-label">Pipeline Commentary</div><textarea class="narrative-textarea" id="pv-n-pipeline" rows="3" placeholder="Won this month, lost deals, notable movements in pipeline..." oninput="document.getElementById('n-pipeline').value=this.value;markUnsaved()"></textarea></div>
     </div>
   </div>
 
   <div class="report-section">
     <div class="report-section-header"><div class="report-section-num">3</div><span class="report-section-title">Brewery, Channel &amp; Commercial Update</span></div>
     <div>
-      <div class="narrative-block"><div class="narrative-label">Channel &amp; Distribution</div><div class="narrative-textarea" id="pv-n-brewery" style="white-space:pre-wrap;">&#8212;</div></div>
-      <div class="narrative-block"><div class="narrative-label">Key Actions</div><div class="narrative-textarea" id="pv-n-brewery-actions" style="white-space:pre-wrap;">&#8212;</div></div>
+      <div class="narrative-block"><div class="narrative-label">Channel &amp; Distribution</div><textarea class="narrative-textarea" id="pv-n-brewery" rows="4" placeholder="ALM, Paramount, Independent, Coles, Endeavour &#8212; volume movements, new listings, ranging changes, delistings..." oninput="document.getElementById('n-brewery').value=this.value;markUnsaved()"></textarea></div>
+      <div class="narrative-block"><div class="narrative-label">Key Actions</div><textarea class="narrative-textarea" id="pv-n-brewery-actions" rows="3" placeholder="&#8226; Action 1&#10;&#8226; Action 2" oninput="document.getElementById('n-brewery-actions').value=this.value;markUnsaved()"></textarea></div>
     </div>
   </div>
 
@@ -720,17 +720,21 @@ function refreshPresentation(){
 
   [['n-trading-summary','pv-n-trading-summary'],['n-pipeline','pv-n-pipeline'],['n-brewery','pv-n-brewery'],['n-brewery-actions','pv-n-brewery-actions']].forEach(function(pair){
     var src=document.getElementById(pair[0]); var dst=document.getElementById(pair[1]);
-    if(src&&dst) dst.textContent=src.value&&src.value.trim()?src.value:'\u2014';
+    if(src&&dst&&document.activeElement!==dst) dst.value=src.value||'';
   });
 
   var monthLbl=document.getElementById('report-month-label');
-  setText('pv-month-label', monthLbl&&monthLbl.value?monthLbl.value:monthLabel(currentMonth));
+  var pvMonth=document.getElementById('pv-month-label');
+  if(pvMonth&&document.activeElement!==pvMonth) pvMonth.value=monthLbl&&monthLbl.value?monthLbl.value:monthLabel(currentMonth);
   var dateEl=document.getElementById('report-date');
-  setText('pv-date', dateEl&&dateEl.value?dateEl.value:'\u2014');
+  var pvDate=document.getElementById('pv-date');
+  if(pvDate&&document.activeElement!==pvDate) pvDate.value=dateEl?dateEl.value:'';
   var authorEl=document.getElementById('report-author');
-  setText('pv-author', authorEl&&authorEl.value?authorEl.value:'\u2014');
+  var pvAuthor=document.getElementById('pv-author');
+  if(pvAuthor&&document.activeElement!==pvAuthor) pvAuthor.value=authorEl?authorEl.value:'';
   var nbEl=document.getElementById('report-next-board');
-  setText('pv-next-board', nbEl&&nbEl.value?nbEl.value:'\u2014');
+  var pvNb=document.getElementById('pv-next-board');
+  if(pvNb&&document.activeElement!==pvNb) pvNb.value=nbEl?nbEl.value:'';
 
   var pTbody=document.getElementById('pv-pipeline-tbody');
   if(pTbody){
