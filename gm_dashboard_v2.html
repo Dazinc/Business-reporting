@@ -235,6 +235,7 @@ tbody td:first-child { text-align: left; font-weight: 600; color: #000000; }
   <div class="tab-nav-left">
     <button class="tab-btn active" id="tabbtn-sales" onclick="switchTab('sales')">Sales</button>
     <button class="tab-btn" id="tabbtn-report" onclick="switchTab('report')">Sales Report</button>
+    <button class="tab-btn" id="tabbtn-presentation" onclick="switchTab('presentation')">Presentation</button>
   </div>
   <div class="tab-nav-right">
     <div style="display:flex;align-items:center;gap:8px;">
@@ -465,6 +466,85 @@ tbody td:first-child { text-align: left; font-weight: 600; color: #000000; }
 
 </div>
 </div>
+<!-- ============ TAB: PRESENTATION (no financials) ============ -->
+<div class="tab-panel" id="tab-presentation">
+<div class="report-main">
+
+  <div class="report-cover">
+    <div class="report-cover-header">
+      <div class="report-cover-title">Prancing Pony &#8212; Sales Report</div>
+      <div class="report-cover-sub">Presentation view &#8212; no financial figures</div>
+    </div>
+    <div class="report-cover-meta">
+      <div class="report-cover-meta-item"><span class="rcm-label">Reporting Month</span><div class="rcm-input" id="pv-month-label">&#8212;</div></div>
+      <div class="report-cover-meta-item"><span class="rcm-label">Date Prepared</span><div class="rcm-input" id="pv-date">&#8212;</div></div>
+      <div class="report-cover-meta-item"><span class="rcm-label">Prepared By</span><div class="rcm-input" id="pv-author">&#8212;</div></div>
+      <div class="report-cover-meta-item"><span class="rcm-label">Next Board Meeting</span><div class="rcm-input" id="pv-next-board">&#8212;</div></div>
+    </div>
+  </div>
+
+  <div class="report-section">
+    <div class="report-section-header"><div class="report-section-num">1</div><span class="report-section-title">Revenue Performance</span></div>
+    <div>
+      <div class="report-table-wrap">
+        <table class="report-table">
+          <thead><tr><th style="width:30%">Revenue</th><th>vs Budget %</th><th>vs SPLY %</th><th>YTD vs Budget %</th></tr></thead>
+          <tbody>
+            <tr><td>Brewery</td><td id="pv-brewery-budget">&#8212;</td><td id="pv-brewery-sply">&#8212;</td><td id="pv-brewery-ytd">&#8212;</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="padding:12px 20px 4px;"><div style="font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#6B7080;margin-bottom:8px;">Channel Mix &#8212; MTD Actual vs FY27 Target</div></div>
+      <div class="report-table-wrap">
+        <table class="report-table">
+          <thead><tr><th style="width:20%">Channel</th><th>Actual Mix %</th><th>FY27 Target %</th><th>vs Target</th><th>vs Budget %</th></tr></thead>
+          <tbody id="pv-channel-tbody"></tbody>
+        </table>
+      </div>
+
+      <div style="padding:4px 20px 0;"><div style="font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#6B7080;margin-bottom:4px;margin-top:12px;">Labour Productivity &#8212; Brewery</div></div>
+      <div class="labour-report-strip">
+        <div class="lrs-item"><div class="lrs-label">Productivity Ratio</div><div class="lrs-value" id="pv-labour-ratio">&#8212;</div><div class="lrs-sub">Wages &#247; Revenue (target: <span id="pv-labour-target">20</span>%)</div></div>
+      </div>
+
+      <div class="narrative-block"><div class="narrative-label">Revenue Commentary</div><div class="narrative-textarea" id="pv-n-trading-summary" style="white-space:pre-wrap;">&#8212;</div></div>
+    </div>
+  </div>
+
+  <div class="report-section">
+    <div class="report-section-header"><div class="report-section-num">2</div><span class="report-section-title">New Business &amp; Pipeline</span></div>
+    <div>
+      <div style="padding:12px 20px 8px;">
+        <table class="action-plan-table">
+          <thead><tr><th style="width:5%">#</th><th style="width:28%">Opportunity</th><th style="width:17%">Stage</th><th style="width:17%">Channel</th><th style="width:16%">Owner</th><th style="width:17%">Expected Close</th></tr></thead>
+          <tbody id="pv-pipeline-tbody"></tbody>
+        </table>
+      </div>
+      <div class="narrative-block"><div class="narrative-label">Pipeline Commentary</div><div class="narrative-textarea" id="pv-n-pipeline" style="white-space:pre-wrap;">&#8212;</div></div>
+    </div>
+  </div>
+
+  <div class="report-section">
+    <div class="report-section-header"><div class="report-section-num">3</div><span class="report-section-title">Brewery, Channel &amp; Commercial Update</span></div>
+    <div>
+      <div class="narrative-block"><div class="narrative-label">Channel &amp; Distribution</div><div class="narrative-textarea" id="pv-n-brewery" style="white-space:pre-wrap;">&#8212;</div></div>
+      <div class="narrative-block"><div class="narrative-label">Key Actions</div><div class="narrative-textarea" id="pv-n-brewery-actions" style="white-space:pre-wrap;">&#8212;</div></div>
+    </div>
+  </div>
+
+  <div class="report-section">
+    <div class="report-section-header"><div class="report-section-num">4</div><span class="report-section-title">3-Month Action Plan &#8212; Wholesale &amp; Sales</span></div>
+    <div>
+      <div style="padding:12px 20px 8px;">
+        <table class="action-plan-table"><thead><tr><th style="width:5%">#</th><th style="width:28%">Action</th><th style="width:30%">Process / Detail</th><th style="width:18%">Timing</th><th style="width:19%">Responsibility</th></tr></thead>
+        <tbody id="pv-action-plan-tbody"></tbody></table>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
 
 <div class="footer">
   GM Operations Dashboard &nbsp;&#183;&nbsp; <span id="footer-date"></span> &nbsp;&#183;&nbsp;
@@ -492,11 +572,12 @@ var boardUnlocked = false;
 //  TABS + PIN
 // ============================================================
 function switchTab(tab) {
-  ['sales','report'].forEach(function(t){
+  ['sales','report','presentation'].forEach(function(t){
     document.getElementById('tabbtn-'+t).classList.toggle('active', t===tab);
     document.getElementById('tab-'+t).classList.toggle('active', t===tab);
   });
-  if (tab==='report') calcSummary();
+  if (tab === 'report') calcSummary();
+  if (tab === 'presentation') refreshPresentation();
 }
 
 // ============================================================
@@ -656,6 +737,96 @@ function calcChannel() {
   setText('ch-total-actual',fa(tA)); setText('ch-total-budget',fa(tB));
   setVC('ch-total-vd',formatCurrency(tVD),tVP); setVC('ch-total-vp',formatPct(tVP),tVP);
 }
+function refreshPresentation(){
+  var bA=val('b-keg-actual')+val('b-pack-actual')+val('b-other-actual');
+  var bB=val('b-keg-budget')+val('b-pack-budget')+val('b-other-budget');
+  var bS=val('b-keg-sply')+val('b-pack-sply')+val('b-other-sply');
+  var vsBudget=bB?((bA-bB)/bB)*100:0;
+  var vsSply=bS?((bA-bS)/bS)*100:0;
+  setVC('pv-brewery-budget',formatPct(vsBudget),vsBudget);
+  setVC('pv-brewery-sply',formatPct(vsSply),vsSply);
+
+  var ytdA=val('sr-brewery-ytd'), ytdB=val('sr-brewery-ytd-budget');
+  if(ytdB){ var ytdPct=((ytdA-ytdB)/ytdB)*100; setVC('pv-brewery-ytd',formatPct(ytdPct),ytdPct); } else { setText('pv-brewery-ytd','\u2014'); }
+
+  var bW=val('b-wages'), bT=val('b-labour-target');
+  var bRatio=bA>0?(bW/bA)*100:null;
+  var lEl=document.getElementById('pv-labour-ratio');
+  if(lEl){ lEl.textContent=bRatio!==null?bRatio.toFixed(1)+'%':'\u2014'; lEl.className='lrs-value '+(bRatio===null?'':bRatio<=bT?'ratio-good':bRatio<=bT*1.1?'ratio-warn':'ratio-bad'); }
+  setText('pv-labour-target',bT);
+
+  var totalActual=0;
+  CHANNELS.forEach(function(ch){ totalActual+=val('ch-'+ch+'-actual'); });
+  var ctbody=document.getElementById('pv-channel-tbody');
+  if(ctbody){
+    var chtml='';
+    CHANNELS.forEach(function(ch){
+      var a=val('ch-'+ch+'-actual');
+      var mixPct=totalActual?(a/totalActual)*100:0;
+      var targetPct=(CONFIG.channelTargets[ch]||0)*100;
+      var deltaPp=mixPct-targetPct;
+      var chBudget=bB*(CONFIG.channelTargets[ch]||0);
+      var vsBudgetPct=chBudget?((a-chBudget)/chBudget)*100:0;
+      var deltaClass=Math.abs(deltaPp)<=CONFIG.tolerancePct?'var-neutral':deltaPp>=0?'var-positive':'var-negative';
+      chtml+='<tr><td>'+CHANNEL_LABELS[ch]+'</td><td>'+mixPct.toFixed(1)+'%</td><td>'+targetPct.toFixed(1)+'%</td><td class="'+deltaClass+'">'+(deltaPp>=0?'+':'')+deltaPp.toFixed(1)+'pp</td><td class="'+vc(vsBudgetPct)+'">'+formatPct(vsBudgetPct)+'</td></tr>';
+    });
+    ctbody.innerHTML=chtml;
+  }
+
+  [['n-trading-summary','pv-n-trading-summary'],['n-pipeline','pv-n-pipeline'],['n-brewery','pv-n-brewery'],['n-brewery-actions','pv-n-brewery-actions']].forEach(function(pair){
+    var src=document.getElementById(pair[0]); var dst=document.getElementById(pair[1]);
+    if(src&&dst) dst.textContent=src.value&&src.value.trim()?src.value:'\u2014';
+  });
+
+  var monthLbl=document.getElementById('report-month-label');
+  setText('pv-month-label', monthLbl&&monthLbl.value?monthLbl.value:monthLabel(currentMonth));
+  var dateEl=document.getElementById('report-date');
+  setText('pv-date', dateEl&&dateEl.value?dateEl.value:'\u2014');
+  var authorEl=document.getElementById('report-author');
+  setText('pv-author', authorEl&&authorEl.value?authorEl.value:'\u2014');
+  var nbEl=document.getElementById('report-next-board');
+  setText('pv-next-board', nbEl&&nbEl.value?nbEl.value:'\u2014');
+
+  var pTbody=document.getElementById('pv-pipeline-tbody');
+  if(pTbody){
+    pTbody.innerHTML='';
+    (pipelineRows||[]).forEach(function(r,i){
+      var tr=document.createElement('tr');
+      var numTd=document.createElement('td');
+      numTd.style.cssText='text-align:center;color:#8A8F9C;font-size:0.78rem;padding:8px;';
+      numTd.textContent=(i+1);
+      tr.appendChild(numTd);
+      [r.opportunity,r.stage,r.channel,r.owner,r.close].forEach(function(v){
+        var td=document.createElement('td');
+        td.style.padding='9px 14px';
+        td.textContent=v&&String(v).trim()?v:'\u2014';
+        tr.appendChild(td);
+      });
+      pTbody.appendChild(tr);
+    });
+  }
+
+  var aTbody=document.getElementById('pv-action-plan-tbody');
+  if(aTbody){
+    aTbody.innerHTML='';
+    (actionPlanRows||[]).forEach(function(r,i){
+      var tr=document.createElement('tr');
+      var numTd=document.createElement('td');
+      numTd.style.cssText='text-align:center;color:#8A8F9C;font-size:0.78rem;padding:8px;';
+      numTd.textContent=(i+1);
+      tr.appendChild(numTd);
+      [r.action,r.process,r.timing,r.responsibility].forEach(function(v){
+        var td=document.createElement('td');
+        td.style.padding='9px 14px';
+        td.style.whiteSpace='pre-wrap';
+        td.textContent=v&&String(v).trim()?v:'\u2014';
+        tr.appendChild(td);
+      });
+      aTbody.appendChild(tr);
+    });
+  }
+}
+
 
 function calcSummary() {
   // Brewery fed from Sales tab
@@ -1080,7 +1251,7 @@ function applyData(data){
 }
 function recalcAll(){
   ['b-keg','b-pack','b-other'].forEach(calc);
-  calcEVSales(); calcLabour(); calcChannel(); calcSummary();
+  calcEVSales(); calcLabour(); calcChannel(); calcSummary(); refreshPresentation();
 }
 
 // ============================================================
