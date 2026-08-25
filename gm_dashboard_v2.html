@@ -434,7 +434,7 @@ tbody td:first-child { text-align: left; font-weight: 600; color: #000000; }
     <div>
       <div style="padding:12px 20px 8px;">
         <table class="action-plan-table">
-          <thead><tr><th style="width:5%">#</th><th style="width:25%">Opportunity</th><th style="width:12%">Value $</th><th style="width:15%">Stage</th><th style="width:15%">Channel</th><th style="width:13%">Owner</th><th style="width:15%">Expected Close</th></tr></thead>
+          <thead><tr><th style="width:5%">#</th><th style="width:25%">Opportunity</th><th style="width:15%">Stage</th><th style="width:15%">Channel</th><th style="width:13%">Owner</th><th style="width:15%">Expected Close</th></tr></thead>
           <tbody id="pipeline-tbody"></tbody>
         </table>
         <button class="add-row-btn" onclick="addPipelineRow()">+ Add Opportunity</button>
@@ -810,7 +810,6 @@ function makePipelineRow(r,num){
   var opts=PIPELINE_STAGES.map(function(s){ return '<option'+(s===r.stage?' selected':'')+'>'+s+'</option>'; }).join('');
   tr.innerHTML='<td style="text-align:center;color:#8A8F9C;font-size:0.78rem;padding:8px;">'+num+'</td>'+
     '<td><input class="action-input" type="text" value="'+(r.opportunity||'')+'" placeholder="Account / opportunity..." oninput="markUnsaved()"></td>'+
-    '<td><input class="action-input" type="number" value="'+(r.value||'')+'" placeholder="0" oninput="markUnsaved()"></td>'+
     '<td><select class="status-select" onchange="markUnsaved()">'+opts+'</select></td>'+
     '<td><input class="action-input" type="text" value="'+(r.channel||'')+'" placeholder="e.g. ALM, Independent" oninput="markUnsaved()"></td>'+
     '<td><input class="action-input" type="text" value="'+(r.owner||'')+'" placeholder="Name" oninput="markUnsaved()"></td>'+
@@ -826,7 +825,7 @@ function collectPipeline(){
   var a=[];
   document.querySelectorAll('#pipeline-tbody tr').forEach(function(tr){
     var f=tr.querySelectorAll('input,select');
-    a.push({opportunity:f[0]?f[0].value:'',value:f[1]?f[1].value:'',stage:f[2]?f[2].value:'Prospect',channel:f[3]?f[3].value:'',owner:f[4]?f[4].value:'',close:f[5]?f[5].value:''});
+    a.push({opportunity:f[0]?f[0].value:'', stage:f[1]?f[1].value:'Prospect', channel:f[2]?f[2].value:'', owner:f[3]?f[3].value:'', close:f[4]?f[4].value:''});
   });
   return a;
 }
