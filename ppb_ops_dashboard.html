@@ -289,6 +289,7 @@ var CONFIG = {
 
 var STORAGE_KEY = 'ppb_ops_person_v1';
 var currentPerson = null;
+var currentToken = null;
 var peopleCache = [];
 var areasCache = [];
 var tasksCache = [];
@@ -306,7 +307,8 @@ function doLogin(){
     .then(function(data){
       if(data.status === 'ok'){
         currentPerson = data.person;
-        try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(currentPerson)); }catch(e){}
+        currentToken = data.token;
+        try{ localStorage.setItem(STORAGE_KEY, JSON.stringify({ person: currentPerson, token: currentToken })); }catch(e){}
         document.getElementById('password-input').value = '';
         enterApp();
       } else {
@@ -317,12 +319,25 @@ function doLogin(){
 }
 
 function doLogout(){
+  if(currentToken){
+    apiPost({ action:'logout', token: currentToken }).catch(function(){});
+  }
   currentPerson = null;
+  currentToken = null;
   try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
   document.getElementById('app-screen').style.display = 'none';
   document.getElementById('login-screen').style.display = 'flex';
   document.getElementById('email-input').value = '';
   document.getElementById('password-input').value = '';
+}
+
+function sessionExpired(){
+  currentPerson = null;
+  currentToken = null;
+  try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
+  document.getElementById('app-screen').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('login-error').textContent = 'Your session expired. Please sign in again.';
 }
 
 function enterApp(){
@@ -356,7 +371,7 @@ function saveChangePassword(){
   if(!oldPassword || !newPassword){ errEl.textContent = 'Fill in all fields.'; return; }
   if(newPassword.length < 6){ errEl.textContent = 'New password must be at least 6 characters.'; return; }
   if(newPassword !== confirm){ errEl.textContent = 'New passwords do not match.'; return; }
-  apiPost({ action:'changePassword', personId: currentPerson.id, oldPassword: oldPassword, newPassword: newPassword })
+  apiPost({ action:'changePassword', token: currentToken, personId: currentPerson.id, oldPassword: oldPassword, newPassword: newPassword })
     .then(function(data){
       if(data.status === 'ok'){
         closeModal('change-pw-modal');
@@ -372,7 +387,14 @@ function saveChangePassword(){
 (function tryRestore(){
   try{
     var raw = localStorage.getItem(STORAGE_KEY);
-    if(raw){ currentPerson = JSON.parse(raw); enterApp(); }
+    if(raw){
+      var saved = JSON.parse(raw);
+      if(saved && saved.person && saved.token){
+        currentPerson = saved.person;
+        currentToken = saved.token;
+        enterApp();
+      }
+    }
   }catch(e){}
 })();
 
@@ -397,14 +419,22 @@ function loadAll(){
     .catch(function(err){ setSync('Sync error: ' + err.message, true); });
 }
 
+function handleSessionCheck(data){
+  if(data && data.status === 'error' && /session/i.test(data.message || '')){
+    sessionExpired();
+  }
+  return data;
+}
+
 function apiGet(action, extraParams){
-  var url = CONFIG.SHEETS_URL + '?action=' + action + '&role=' + encodeURIComponent(currentPerson.role) + '&personId=' + encodeURIComponent(currentPerson.id);
+  var url = CONFIG.SHEETS_URL + '?action=' + action + '&token=' + encodeURIComponent(currentToken || '');
   if(extraParams) url += extraParams;
-  return fetch(url).then(function(r){ return r.json(); });
+  return fetch(url).then(function(r){ return r.json(); }).then(handleSessionCheck);
 }
 
 function apiPost(payload){
-  return fetch(CONFIG.SHEETS_URL, { method:'POST', body: JSON.stringify(payload) }).then(function(r){ return r.json(); });
+  if(payload.action !== 'login' && !payload.token){ payload.token = currentToken; }
+  return fetch(CONFIG.SHEETS_URL, { method:'POST', body: JSON.stringify(payload) }).then(function(r){ return r.json(); }).then(handleSessionCheck);
 }
 
 function loadPeople(){
