@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PPB Ops Dashboard</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 14px; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #F0F2F5; color: #1A1D23; min-height: 100vh; }
+
+/* ---- LOGIN ---- */
+.login-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #12151C; }
+.login-card { background: #fff; border-radius: 6px; padding: 40px 36px; width: 340px; box-shadow: 0 10px 40px rgba(0,0,0,0.35); text-align: center; }
+.login-title { font-size: 1.1rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #12151C; margin-bottom: 4px; }
+.login-sub { font-size: 0.75rem; color: #8A8F9C; letter-spacing: 0.04em; margin-bottom: 28px; }
+.login-pin { width: 100%; font-size: 1.4rem; letter-spacing: 0.3em; text-align: center; padding: 12px; border: 1px solid #E5E8EE; border-radius: 4px; outline: none; font-family: inherit; }
+.login-pin:focus { border-color: #C8A84B; }
+.login-btn { width: 100%; margin-top: 16px; background: #12151C; color: #C8A84B; border: none; padding: 12px; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border-radius: 4px; cursor: pointer; }
+.login-btn:hover { background: #1E222D; }
+.login-error { color: #C0392B; font-size: 0.75rem; margin-top: 12px; min-height: 16px; }
+.login-hint { color: #B0B5C0; font-size: 0.68rem; margin-top: 20px; line-height: 1.5; }
+
+/* ---- HEADER ---- */
+.header { background: #12151C; color: #fff; padding: 18px 32px; display: flex; align-items: center; justify-content: space-between; border-bottom: 3px solid #C8A84B; }
+.header-property { font-size: 1.25rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #C8A84B; }
+.header-right { display: flex; align-items: center; gap: 16px; }
+.header-person { text-align: right; line-height: 1.5; }
+.header-person-name { font-size: 0.82rem; font-weight: 700; color: #fff; }
+.header-person-role { font-size: 0.68rem; color: #8A8F9C; letter-spacing: 0.05em; text-transform: uppercase; }
+.logout-btn { background: transparent; border: 1px solid #3A3F4E; color: #8A8F9C; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 6px 14px; cursor: pointer; border-radius: 3px; font-family: inherit; }
+.logout-btn:hover { border-color: #C8A84B; color: #C8A84B; }
+
+/* ---- TAB NAV ---- */
+.tab-nav { background: #1E222D; padding: 0 32px; display: flex; }
+.tab-btn { background: transparent; border: none; border-bottom: 3px solid transparent; color: #8A8F9C; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 12px 20px; cursor: pointer; font-family: inherit; }
+.tab-btn:hover { color: #C8A84B; }
+.tab-btn.active { color: #C8A84B; border-bottom-color: #C8A84B; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ---- MAIN / CARDS ---- */
+.main { padding: 24px 32px; display: flex; flex-direction: column; gap: 20px; max-width: 1200px; margin: 0 auto; }
+.card { background: #fff; border-radius: 5px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); overflow: hidden; }
+.card-header { background: #1E222D; color: #fff; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.card-title { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+.card-body { padding: 18px 20px; }
+.add-btn { background: #C8A84B; color: #12151C; border: none; padding: 6px 14px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer; border-radius: 3px; font-family: inherit; }
+.add-btn:hover { background: #dab766; }
+
+/* ---- TABLES ---- */
+table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+thead th { background: #F7F8FA; color: #6B7080; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; padding: 9px 12px; text-align: left; border-bottom: 1px solid #E5E8EE; }
+tbody tr { border-bottom: 1px solid #F0F2F5; }
+tbody tr:last-child { border-bottom: none; }
+tbody td { padding: 10px 12px; vertical-align: middle; color: #2B2F3A; }
+.empty-row td { text-align: center; color: #B0B5C0; padding: 24px; font-size: 0.8rem; }
+.pill { display: inline-block; font-size: 0.64rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; padding: 3px 9px; border-radius: 10px; }
+.pill-notstarted { background: #F0F2F5; color: #6B7080; }
+.pill-inprogress { background: #FEF3D6; color: #9A7200; }
+.pill-blocked { background: #FBE3E0; color: #C0392B; }
+.pill-done { background: #DFF3E8; color: #1A7A4A; }
+.status-select { font-size: 0.75rem; padding: 3px 6px; border-radius: 3px; border: 1px solid #E5E8EE; font-family: inherit; background:#fff; }
+.var-positive { color: #1A7A4A; font-weight: 700; }
+.var-negative { color: #C0392B; font-weight: 700; }
+
+/* ---- FORM MODAL ---- */
+.modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(18,21,28,0.55); align-items: center; justify-content: center; z-index: 50; }
+.modal-backdrop.visible { display: flex; }
+.modal { background: #fff; border-radius: 6px; width: 420px; max-width: 92vw; max-height: 88vh; overflow-y: auto; }
+.modal-header { background: #1E222D; color: #fff; padding: 14px 20px; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; }
+.modal-close { background: transparent; border: none; color: #8A8F9C; font-size: 1.1rem; cursor: pointer; line-height: 1; }
+.modal-body { padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; }
+.field-label { font-size: 0.66rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #6B7080; display: block; margin-bottom: 5px; }
+.field-input, .field-select, .field-textarea { width: 100%; padding: 8px 10px; border: 1px solid #E5E8EE; border-radius: 4px; font-size: 0.85rem; font-family: inherit; outline: none; }
+.field-input:focus, .field-select:focus, .field-textarea:focus { border-color: #C8A84B; }
+.field-textarea { resize: vertical; min-height: 56px; }
+.modal-footer { padding: 14px 20px; border-top: 1px solid #F0F2F5; display: flex; justify-content: flex-end; gap: 10px; }
+.btn-secondary { background: #F0F2F5; color: #6B7080; border: none; padding: 8px 16px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; border-radius: 4px; cursor: pointer; font-family: inherit; }
+.btn-primary { background: #12151C; color: #C8A84B; border: none; padding: 8px 16px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; border-radius: 4px; cursor: pointer; font-family: inherit; }
+
+.sync-msg { font-size: 0.7rem; color: #8A8F9C; padding: 0 32px 10px; }
+.sync-msg.error { color: #C0392B; }
+
+.kpi-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap: 1px; background: #E5E8EE; border-top: 1px solid #E5E8EE; }
+.kpi-item { background: #fff; padding: 14px 18px; }
+.kpi-label { font-size: 0.64rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #6B7080; }
+.kpi-value { font-size: 1.15rem; font-weight: 700; color: #1A1D23; margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<div id="login-screen" class="login-wrap">
+  <div class="login-card">
+    <div class="login-title">Prancing Pony</div>
+    <div class="login-sub">Ops Dashboard &mdash; Enter your PIN</div>
+    <input id="pin-input" class="login-pin" type="password" inputmode="numeric" maxlength="6" placeholder="&bull;&bull;&bull;&bull;">
+    <button class="login-btn" onclick="doLogin()">Sign in</button>
+    <div id="login-error" class="login-error"></div>
+    <div class="login-hint">Ask your manager for your PIN if you don't have one yet.</div>
+  </div>
+</div>
+
+<div id="app-screen" style="display:none;">
+  <div class="header">
+    <div class="header-property">Prancing Pony &mdash; Ops</div>
+    <div class="header-right">
+      <div class="header-person">
+        <div id="header-person-name" class="header-person-name">&nbsp;</div>
+        <div id="header-person-role" class="header-person-role">&nbsp;</div>
+      </div>
+      <button class="logout-btn" onclick="doLogout()">Sign out</button>
+    </div>
+  </div>
+
+  <div class="tab-nav">
+    <button class="tab-btn active" data-tab="tasks" onclick="switchTab('tasks')">Tasks</button>
+    <button class="tab-btn" data-tab="revenue" onclick="switchTab('revenue')">Revenue</button>
+    <button class="tab-btn" data-tab="cogs" onclick="switchTab('cogs')">Costs</button>
+    <button class="tab-btn" data-tab="areas" onclick="switchTab('areas')">Areas</button>
+  </div>
+  <div id="sync-msg" class="sync-msg">&nbsp;</div>
+
+  <div class="main">
+
+    <!-- TASKS -->
+    <div id="panel-tasks" class="tab-panel active">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Tasks</div>
+          <button class="add-btn" onclick="openTaskModal()">+ New Task</button>
+        </div>
+        <div class="card-body" style="padding:0;">
+          <table>
+            <thead>
+              <tr><th>Task</th><th>Department</th><th>Assigned To</th><th>Due</th><th>Priority</th><th>Status</th></tr>
+            </thead>
+            <tbody id="tasks-tbody"><tr class="empty-row"><td colspan="6">Loading&hellip;</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- REVENUE -->
+    <div id="panel-revenue" class="tab-panel">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Revenue</div>
+          <button class="add-btn" onclick="openRevenueModal()">+ Add Entry</button>
+        </div>
+        <div class="card-body" style="padding:0;">
+          <table>
+            <thead>
+              <tr><th>Period</th><th>Department</th><th>Channel</th><th style="text-align:right">Actual</th><th style="text-align:right">Budget</th><th style="text-align:right">Variance</th></tr>
+            </thead>
+            <tbody id="revenue-tbody"><tr class="empty-row"><td colspan="6">Loading&hellip;</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- COGS -->
+    <div id="panel-cogs" class="tab-panel">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Costs</div>
+          <button class="add-btn" onclick="openCogsModal()">+ Add Entry</button>
+        </div>
+        <div class="card-body" style="padding:0;">
+          <table>
+            <thead>
+              <tr><th>Period</th><th>Department</th><th>Category</th><th style="text-align:right">Actual</th><th style="text-align:right">Budget</th><th style="text-align:right">Variance</th></tr>
+            </thead>
+            <tbody id="cogs-tbody"><tr class="empty-row"><td colspan="6">Loading&hellip;</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- AREAS -->
+    <div id="panel-areas" class="tab-panel">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Departments &amp; Areas</div></div>
+        <div class="card-body" style="padding:0;">
+          <table>
+            <thead><tr><th>Name</th><th>Type</th><th>Parent Department</th></tr></thead>
+            <tbody id="areas-tbody"><tr class="empty-row"><td colspan="3">Loading&hellip;</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TASK MODAL -->
+<div id="task-modal" class="modal-backdrop">
+  <div class="modal">
+    <div class="modal-header"><span>New Task</span><button class="modal-close" onclick="closeModal('task-modal')">&times;</button></div>
+    <div class="modal-body">
+      <div><label class="field-label">Title</label><input id="t-title" class="field-input" type="text"></div>
+      <div><label class="field-label">Description</label><textarea id="t-desc" class="field-textarea"></textarea></div>
+      <div><label class="field-label">Department</label><select id="t-dept" class="field-select"></select></div>
+      <div><label class="field-label">Physical Area (optional)</label><input id="t-area" class="field-input" type="text"></div>
+      <div><label class="field-label">Assigned To</label><select id="t-assignee" class="field-select"></select></div>
+      <div><label class="field-label">Priority</label>
+        <select id="t-priority" class="field-select">
+          <option>Low</option><option selected>Medium</option><option>High</option>
+        </select>
+      </div>
+      <div><label class="field-label">Due Date</label><input id="t-due" class="field-input" type="date"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('task-modal')">Cancel</button>
+      <button class="btn-primary" onclick="saveTask()">Save Task</button>
+    </div>
+  </div>
+</div>
+
+<!-- REVENUE MODAL -->
+<div id="revenue-modal" class="modal-backdrop">
+  <div class="modal">
+    <div class="modal-header"><span>New Revenue Entry</span><button class="modal-close" onclick="closeModal('revenue-modal')">&times;</button></div>
+    <div class="modal-body">
+      <div><label class="field-label">Period (e.g. 2026-08)</label><input id="r-period" class="field-input" type="text" placeholder="YYYY-MM"></div>
+      <div><label class="field-label">Department</label><select id="r-dept" class="field-select"></select></div>
+      <div><label class="field-label">Channel</label><input id="r-channel" class="field-input" type="text"></div>
+      <div><label class="field-label">Actual $</label><input id="r-actual" class="field-input" type="number" step="0.01"></div>
+      <div><label class="field-label">Budget $</label><input id="r-budget" class="field-input" type="number" step="0.01"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('revenue-modal')">Cancel</button>
+      <button class="btn-primary" onclick="saveRevenue()">Save Entry</button>
+    </div>
+  </div>
+</div>
+
+<!-- COGS MODAL -->
+<div id="cogs-modal" class="modal-backdrop">
+  <div class="modal">
+    <div class="modal-header"><span>New Cost Entry</span><button class="modal-close" onclick="closeModal('cogs-modal')">&times;</button></div>
+    <div class="modal-body">
+      <div><label class="field-label">Period (e.g. 2026-08)</label><input id="c-period" class="field-input" type="text" placeholder="YYYY-MM"></div>
+      <div><label class="field-label">Department</label><select id="c-dept" class="field-select"></select></div>
+      <div><label class="field-label">Category</label><input id="c-category" class="field-input" type="text" placeholder="e.g. Ingredients, Freight, Ad spend"></div>
+      <div><label class="field-label">Actual $</label><input id="c-actual" class="field-input" type="number" step="0.01"></div>
+      <div><label class="field-label">Budget $</label><input id="c-budget" class="field-input" type="number" step="0.01"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('cogs-modal')">Cancel</button>
+      <button class="btn-primary" onclick="saveCogs()">Save Entry</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var CONFIG = {
+  SHEETS_URL: 'https://script.google.com/macros/s/AKfycbwB31a8o04o3NMqGMHNTBj55N9_SBpEwMcXzu-Vd0HVFyz4_rZDLwgGxfx3UyuRs-Nd/exec'
+};
+
+var STORAGE_KEY = 'ppb_ops_person_v1';
+var currentPerson = null;
+var peopleCache = [];
+var areasCache = [];
+var tasksCache = [];
+var revenueCache = [];
+var cogsCache = [];
+
+// ---------- AUTH ----------
+function doLogin(){
+  var pin = document.getElementById('pin-input').value.trim();
+  var errEl = document.getElementById('login-error');
+  errEl.textContent = '';
+  if(!pin){ errEl.textContent = 'Enter your PIN.'; return; }
+  fetch(CONFIG.SHEETS_URL + '?action=login&pin=' + encodeURIComponent(pin))
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if(data.status === 'ok'){
+        currentPerson = data.person;
+        try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(currentPerson)); }catch(e){}
+        enterApp();
+      } else {
+        errEl.textContent = data.message || 'Incorrect PIN.';
+      }
+    })
+    .catch(function(){ errEl.textContent = 'Could not reach the server. Check your connection.'; });
+}
+
+function doLogout(){
+  currentPerson = null;
+  try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
+  document.getElementById('app-screen').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('pin-input').value = '';
+}
+
+function enterApp(){
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app-screen').style.display = 'block';
+  document.getElementById('header-person-name').textContent = currentPerson.name;
+  document.getElementById('header-person-role').textContent = currentPerson.role + ' · ' + currentPerson.department;
+  loadAll();
+}
+
+document.getElementById('pin-input').addEventListener('keydown', function(e){
+  if(e.key === 'Enter') doLogin();
+});
+
+// try restoring session
+(function tryRestore(){
+  try{
+    var raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){ currentPerson = JSON.parse(raw); enterApp(); }
+  }catch(e){}
+})();
+
+// ---------- TABS ----------
+function switchTab(tab){
+  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.toggle('active', b.dataset.tab === tab); });
+  document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+  document.getElementById('panel-' + tab).classList.add('active');
+}
+
+// ---------- DATA LOADING ----------
+function setSync(msg, isError){
+  var el = document.getElementById('sync-msg');
+  el.textContent = msg;
+  el.classList.toggle('error', !!isError);
+}
+
+function loadAll(){
+  setSync('Syncing…');
+  Promise.all([loadPeople(), loadAreas(), loadTasks(), loadRevenue(), loadCogs()])
+    .then(function(){ setSync('Up to date · ' + new Date().toLocaleTimeString()); })
+    .catch(function(err){ setSync('Sync error: ' + err.message, true); });
+}
+
+function apiGet(action, extraParams){
+  var url = CONFIG.SHEETS_URL + '?action=' + action + '&role=' + encodeURIComponent(currentPerson.role) + '&personId=' + encodeURIComponent(currentPerson.id);
+  if(extraParams) url += extraParams;
+  return fetch(url).then(function(r){ return r.json(); });
+}
+
+function apiPost(payload){
+  return fetch(CONFIG.SHEETS_URL, { method:'POST', body: JSON.stringify(payload) }).then(function(r){ return r.json(); });
+}
+
+function loadPeople(){
+  return apiGet('listPeople').then(function(d){
+    peopleCache = d.people || [];
+    fillSelect('t-assignee', peopleCache.map(function(p){ return {value:p.id, label:p.name + ' (' + p.role + ')'}; }));
+  });
+}
+
+function loadAreas(){
+  return apiGet('listAreas').then(function(d){
+    areasCache = d.areas || [];
+    var depts = areasCache.filter(function(a){ return a.type === 'department'; }).map(function(a){ return {value:a.name, label:a.name}; });
+    fillSelect('t-dept', depts);
+    fillSelect('r-dept', depts);
+    fillSelect('c-dept', depts);
+    renderAreas();
+  });
+}
+
+function loadTasks(){
+  return apiGet('listTasks').then(function(d){ tasksCache = d.tasks || []; renderTasks(); });
+}
+function loadRevenue(){
+  return apiGet('listRevenue').then(function(d){ revenueCache = d.revenue || []; renderRevenue(); });
+}
+function loadCogs(){
+  return apiGet('listCOGS').then(function(d){ cogsCache = d.cogs || []; renderCogs(); });
+}
+
+function fillSelect(id, options){
+  var sel = document.getElementById(id);
+  if(!sel) return;
+  sel.innerHTML = '';
+  options.forEach(function(o){
+    var opt = document.createElement('option');
+    opt.value = o.value; opt.textContent = o.label;
+    sel.appendChild(opt);
+  });
+}
+
+// ---------- RENDER: TASKS ----------
+function statusPillClass(status){
+  var s = (status || '').toLowerCase().replace(/\s/g,'');
+  if(s === 'inprogress') return 'pill-inprogress';
+  if(s === 'blocked') return 'pill-blocked';
+  if(s === 'done') return 'pill-done';
+  return 'pill-notstarted';
+}
+
+function renderTasks(){
+  var tbody = document.getElementById('tasks-tbody');
+  tbody.innerHTML = '';
+  if(!tasksCache.length){
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="6">No tasks yet. Click + New Task to add one.</td></tr>';
+    return;
+  }
+  tasksCache.forEach(function(t){
+    var tr = document.createElement('tr');
+
+    var tdTitle = document.createElement('td');
+    tdTitle.textContent = t.title || '(untitled)';
+    tr.appendChild(tdTitle);
+
+    var tdDept = document.createElement('td');
+    tdDept.textContent = t.department || '—';
+    tr.appendChild(tdDept);
+
+    var tdAssignee = document.createElement('td');
+    var person = peopleCache.filter(function(p){ return p.id === t.assignedTo; })[0];
+    tdAssignee.textContent = person ? person.name : (t.assignedTo || '—');
+    tr.appendChild(tdAssignee);
+
+    var tdDue = document.createElement('td');
+    tdDue.textContent = t.dueDate || '—';
+    tr.appendChild(tdDue);
+
+    var tdPriority = document.createElement('td');
+    tdPriority.textContent = t.priority || '—';
+    tr.appendChild(tdPriority);
+
+    var tdStatus = document.createElement('td');
+    var sel = document.createElement('select');
+    sel.className = 'status-select';
+    ['Not Started','In Progress','Blocked','Done'].forEach(function(s){
+      var opt = document.createElement('option');
+      opt.value = s; opt.textContent = s;
+      if((t.status || 'Not Started') === s) opt.selected = true;
+      sel.appendChild(opt);
+    });
+    sel.addEventListener('change', function(){ updateTaskStatus(t, sel.value); });
+    tdStatus.appendChild(sel);
+    tr.appendChild(tdStatus);
+
+    tbody.appendChild(tr);
+  });
+}
+
+function updateTaskStatus(task, newStatus){
+  task.status = newStatus;
+  apiPost({ action:'saveTask', task: task }).then(function(){ setSync('Saved · ' + new Date().toLocaleTimeString()); loadTasks(); });
+}
+
+function openTaskModal(){
+  document.getElementById('t-title').value = '';
+  document.getElementById('t-desc').value = '';
+  document.getElementById('t-area').value = '';
+  document.getElementById('t-priority').value = 'Medium';
+  document.getElementById('t-due').value = '';
+  document.getElementById('task-modal').classList.add('visible');
+}
+
+function saveTask(){
+  var task = {
+    title: document.getElementById('t-title').value.trim(),
+    description: document.getElementById('t-desc').value.trim(),
+    department: document.getElementById('t-dept').value,
+    physicalArea: document.getElementById('t-area').value.trim(),
+    assignedTo: document.getElementById('t-assignee').value,
+    assignedBy: currentPerson.id,
+    status: 'Not Started',
+    priority: document.getElementById('t-priority').value,
+    dueDate: document.getElementById('t-due').value,
+    notes: ''
+  };
+  if(!task.title){ alert('Give the task a title.'); return; }
+  apiPost({ action:'saveTask', task: task }).then(function(){
+    closeModal('task-modal');
+    loadTasks();
+  });
+}
+
+// ---------- RENDER: REVENUE ----------
+function renderRevenue(){
+  var tbody = document.getElementById('revenue-tbody');
+  tbody.innerHTML = '';
+  if(!revenueCache.length){
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="6">No revenue entries visible to your role yet.</td></tr>';
+    return;
+  }
+  revenueCache.forEach(function(r){
+    var actual = Number(r.actual) || 0;
+    var budget = Number(r.budget) || 0;
+    var varAmt = actual - budget;
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td>' + escapeHtml(r.period||'—') + '</td>' +
+      '<td>' + escapeHtml(r.department||'—') + '</td>' +
+      '<td>' + escapeHtml(r.channel||'—') + '</td>' +
+      '<td style="text-align:right">' + fmtMoney(actual) + '</td>' +
+      '<td style="text-align:right">' + fmtMoney(budget) + '</td>' +
+      '<td style="text-align:right" class="' + (varAmt>=0?'var-positive':'var-negative') + '">' + fmtMoney(varAmt) + '</td>';
+    tbody.appendChild(tr);
+  });
+}
+
+function openRevenueModal(){
+  ['r-period','r-channel','r-actual','r-budget'].forEach(function(id){ document.getElementById(id).value=''; });
+  document.getElementById('revenue-modal').classList.add('visible');
+}
+
+function saveRevenue(){
+  var rec = {
+    period: document.getElementById('r-period').value.trim(),
+    department: document.getElementById('r-dept').value,
+    channel: document.getElementById('r-channel').value.trim(),
+    actual: document.getElementById('r-actual').value,
+    budget: document.getElementById('r-budget').value
+  };
+  if(!rec.period){ alert('Enter a period, e.g. 2026-08.'); return; }
+  apiPost({ action:'saveRevenue', record: rec }).then(function(){
+    closeModal('revenue-modal');
+    loadRevenue();
+  });
+}
+
+// ---------- RENDER: COGS ----------
+function renderCogs(){
+  var tbody = document.getElementById('cogs-tbody');
+  tbody.innerHTML = '';
+  if(!cogsCache.length){
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="6">No cost entries visible to your role yet.</td></tr>';
+    return;
+  }
+  cogsCache.forEach(function(c){
+    var actual = Number(c.actual) || 0;
+    var budget = Number(c.budget) || 0;
+    var varAmt = budget - actual;
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td>' + escapeHtml(c.period||'—') + '</td>' +
+      '<td>' + escapeHtml(c.department||'—') + '</td>' +
+      '<td>' + escapeHtml(c.category||'—') + '</td>' +
+      '<td style="text-align:right">' + fmtMoney(actual) + '</td>' +
+      '<td style="text-align:right">' + fmtMoney(budget) + '</td>' +
+      '<td style="text-align:right" class="' + (varAmt>=0?'var-positive':'var-negative') + '">' + fmtMoney(varAmt) + '</td>';
+    tbody.appendChild(tr);
+  });
+}
+
+function openCogsModal(){
+  ['c-period','c-category','c-actual','c-budget'].forEach(function(id){ document.getElementById(id).value=''; });
+  document.getElementById('cogs-modal').classList.add('visible');
+}
+
+function saveCogs(){
+  var rec = {
+    period: document.getElementById('c-period').value.trim(),
+    department: document.getElementById('c-dept').value,
+    category: document.getElementById('c-category').value.trim(),
+    actual: document.getElementById('c-actual').value,
+    budget: document.getElementById('c-budget').value
+  };
+  if(!rec.period){ alert('Enter a period, e.g. 2026-08.'); return; }
+  apiPost({ action:'saveCOGS', record: rec }).then(function(){
+    closeModal('cogs-modal');
+    loadCogs();
+  });
+}
+
+// ---------- RENDER: AREAS ----------
+function renderAreas(){
+  var tbody = document.getElementById('areas-tbody');
+  tbody.innerHTML = '';
+  if(!areasCache.length){
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="3">No areas configured.</td></tr>';
+    return;
+  }
+  areasCache.forEach(function(a){
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td>' + escapeHtml(a.name||'') + '</td><td>' + escapeHtml(a.type||'') + '</td><td>' + escapeHtml(a.department||'—') + '</td>';
+    tbody.appendChild(tr);
+  });
+}
+
+// ---------- HELPERS ----------
+function closeModal(id){ document.getElementById(id).classList.remove('visible'); }
+function fmtMoney(n){ return '$' + (Math.round(n*100)/100).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+</script>
+</body>
+</html>
