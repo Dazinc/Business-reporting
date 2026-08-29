@@ -145,9 +145,9 @@ tbody td { padding: 10px 12px; vertical-align: middle; color: #2B2F3A; }
         <div class="card-body" style="padding:0;">
           <table>
             <thead>
-              <tr><th>Task</th><th>Department</th><th>Assigned To</th><th>Due</th><th>Priority</th><th>Status</th></tr>
+              <tr><th>Task</th><th>Department</th><th>Routed To</th><th>Assigned To</th><th>Due</th><th>Priority</th><th>Status</th></tr>
             </thead>
-            <tbody id="tasks-tbody"><tr class="empty-row"><td colspan="6">Loading&hellip;</td></tr></tbody>
+            <tbody id="tasks-tbody"><tr class="empty-row"><td colspan="7">Loading&hellip;</td></tr></tbody>
           </table>
         </div>
       </div>
@@ -213,6 +213,7 @@ tbody td { padding: 10px 12px; vertical-align: middle; color: #2B2F3A; }
       <div><label class="field-label">Title</label><input id="t-title" class="field-input" type="text"></div>
       <div><label class="field-label">Description</label><textarea id="t-desc" class="field-textarea"></textarea></div>
       <div><label class="field-label">Department</label><select id="t-dept" class="field-select"></select></div>
+      <div><label class="field-label">Route to Department (optional)</label><select id="t-route" class="field-select"></select></div>
       <div><label class="field-label">Physical Area (optional)</label><input id="t-area" class="field-input" type="text"></div>
       <div><label class="field-label">Assigned To</label><select id="t-assignee" class="field-select"></select></div>
       <div><label class="field-label">Priority</label>
@@ -449,6 +450,7 @@ function loadAreas(){
     areasCache = d.areas || [];
     var depts = areasCache.filter(function(a){ return a.type === 'department'; }).map(function(a){ return {value:a.name, label:a.name}; });
     fillSelect('t-dept', depts);
+    fillSelect('t-route', [{value:'', label:'— none —'}].concat(depts));
     fillSelect('r-dept', depts);
     fillSelect('c-dept', depts);
     renderAreas();
@@ -489,7 +491,7 @@ function renderTasks(){
   var tbody = document.getElementById('tasks-tbody');
   tbody.innerHTML = '';
   if(!tasksCache.length){
-    tbody.innerHTML = '<tr class="empty-row"><td colspan="6">No tasks yet. Click + New Task to add one.</td></tr>';
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="7">No tasks yet. Click + New Task to add one.</td></tr>';
     return;
   }
   tasksCache.forEach(function(t){
@@ -502,6 +504,24 @@ function renderTasks(){
     var tdDept = document.createElement('td');
     tdDept.textContent = t.department || '—';
     tr.appendChild(tdDept);
+
+    var tdRoute = document.createElement('td');
+    var deptOptions = areasCache.filter(function(a){ return a.type === 'department'; }).map(function(a){ return a.name; });
+    var routeSel = document.createElement('select');
+    routeSel.className = 'status-select';
+    var noneOpt = document.createElement('option');
+    noneOpt.value = ''; noneOpt.textContent = '— none —';
+    if(!t.routedToDept) noneOpt.selected = true;
+    routeSel.appendChild(noneOpt);
+    deptOptions.forEach(function(d){
+      var opt = document.createElement('option');
+      opt.value = d; opt.textContent = d;
+      if(t.routedToDept === d) opt.selected = true;
+      routeSel.appendChild(opt);
+    });
+    routeSel.addEventListener('change', function(){ updateTaskRouting(t, routeSel.value); });
+    tdRoute.appendChild(routeSel);
+    tr.appendChild(tdRoute);
 
     var tdAssignee = document.createElement('td');
     var person = peopleCache.filter(function(p){ return p.id === t.assignedTo; })[0];
@@ -538,12 +558,18 @@ function updateTaskStatus(task, newStatus){
   apiPost({ action:'saveTask', task: task }).then(function(){ setSync('Saved · ' + new Date().toLocaleTimeString()); loadTasks(); });
 }
 
+function updateTaskRouting(task, newDept){
+  task.routedToDept = newDept;
+  apiPost({ action:'saveTask', task: task }).then(function(){ setSync('Saved · ' + new Date().toLocaleTimeString()); loadTasks(); });
+}
+
 function openTaskModal(){
   document.getElementById('t-title').value = '';
   document.getElementById('t-desc').value = '';
   document.getElementById('t-area').value = '';
   document.getElementById('t-priority').value = 'Medium';
   document.getElementById('t-due').value = '';
+  if(document.getElementById('t-route')) document.getElementById('t-route').value = '';
   document.getElementById('task-modal').classList.add('visible');
 }
 
@@ -552,6 +578,7 @@ function saveTask(){
     title: document.getElementById('t-title').value.trim(),
     description: document.getElementById('t-desc').value.trim(),
     department: document.getElementById('t-dept').value,
+    routedToDept: document.getElementById('t-route').value,
     physicalArea: document.getElementById('t-area').value.trim(),
     assignedTo: document.getElementById('t-assignee').value,
     assignedBy: currentPerson.id,
