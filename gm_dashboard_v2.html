@@ -233,7 +233,6 @@ tbody td:first-child { text-align: left; font-weight: 600; color: #000000; }
 <div class="tab-nav">
   <div class="tab-nav-left">
     <button class="tab-btn active" id="tabbtn-sales" onclick="switchTab('sales')">Sales</button>
-    <button class="tab-btn" id="tabbtn-report" onclick="switchTab('report')">Sales Report</button>
     <button class="tab-btn" id="tabbtn-presentation" onclick="switchTab('presentation')">Presentation</button>
   </div>
   <div class="tab-nav-right">
@@ -376,16 +375,14 @@ tbody td:first-child { text-align: left; font-weight: 600; color: #000000; }
   </div>
 
 </div>
-</div>
 
-<!-- ============ TAB: SALES REPORT ============ -->
-<div class="tab-panel" id="tab-report">
+<div class="section-divider" style="background:#000000;color:#FF6B00;padding:10px 32px;font-size:0.78rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-top:4px;">Monthly Sales Report</div>
 <div class="report-main">
 
   <div class="report-cover">
     <div class="report-cover-header">
       <div class="report-cover-title">Prancing Pony &#8212; Sales Report</div>
-      <div class="report-cover-sub">Confidential &#8212; Board use only</div>
+      <div class="report-cover-sub">Monthly sales report &#8212; auto-fed from Sales tab entries above</div>
     </div>
     <div class="report-cover-meta">
       <div class="report-cover-meta-item"><span class="rcm-label">Reporting Month</span><input class="rcm-input" id="report-month-label" type="text" placeholder="e.g. June 2026" oninput="markUnsaved()"></div>
@@ -540,11 +537,10 @@ var boardUnlocked = false;
 //  TABS + PIN
 // ============================================================
 function switchTab(tab) {
-  ['sales','report','presentation'].forEach(function(t){
+  ['sales','presentation'].forEach(function(t){
     document.getElementById('tabbtn-'+t).classList.toggle('active', t===tab);
     document.getElementById('tab-'+t).classList.toggle('active', t===tab);
   });
-  if (tab === 'report') calcSummary();
   if (tab === 'presentation') refreshPresentation();
 }
 
@@ -575,7 +571,7 @@ function updateBrewTotal() {
   var vd=tA-tB, vp=tB?(vd/tB)*100:0;
   setText('b-total-budget',fa(tB)); setText('b-total-actual',fa(tA)); setText('b-total-sply',fa(tS));
   setVC('b-total-var-d',formatCurrency(vd),vp); setVC('b-total-var-p',formatPct(vp),vp);
-  calcEVSales(); calcLabour(); calcChannel();
+  calcEVSales(); calcLabour(); calcChannel(); calcSummary();
 }
 
 // ============================================================
