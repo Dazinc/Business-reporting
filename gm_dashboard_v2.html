@@ -298,7 +298,21 @@ tbody td:first-child { text-align: left; font-weight: 600; color: #000000; }
         </tbody>
       </table>
     </div>
+  
+<div class="report-section">
+    <div class="report-section-header"><span class="report-section-title">Channel Breakdown &amp; Revenue Commentary</span></div>
+    <div>
+      <div style="padding:12px 20px 4px;"><div style="font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#6B7080;margin-bottom:8px;">Channel Breakdown &#8212; Revenue MTD</div></div>
+      <div class="report-table-wrap">
+        <table class="report-table">
+          <thead><tr><th style="width:20%">Channel</th><th>Revenue Actual</th><th>Revenue Budget</th><th>Actual vs Budget $</th><th>Actual vs Budget %</th></tr></thead>
+          <tbody id="channel-tbody"></tbody>
+        </table>
+      </div>
+      <div class="narrative-block"><div class="narrative-label">Revenue Commentary</div><textarea class="narrative-textarea" id="n-trading-summary" rows="4" placeholder="Overall trading narrative, key drivers, market conditions..." oninput="markUnsaved()"></textarea></div>
+    </div>
   </div>
+</div>
 
   <!-- LABOUR PRODUCTIVITY -->
   
@@ -386,38 +400,8 @@ tbody td:first-child { text-align: left; font-weight: 600; color: #000000; }
 
 <div class="section-divider" style="background:#000000;color:#FF6B00;padding:10px 32px;font-size:0.78rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-top:4px;">Monthly Sales Report</div>
 <div class="report-main">
-
-  <div class="report-cover">
-    <div class="report-cover-header">
-      <div class="report-cover-title">Prancing Pony &#8212; Sales Report</div>
-      <div class="report-cover-sub">Monthly sales report &#8212; auto-fed from Sales tab entries above</div>
-    </div>
-    <div class="report-cover-meta">
-      <div class="report-cover-meta-item"><span class="rcm-label">Reporting Month</span><input class="rcm-input" id="report-month-label" type="text" placeholder="e.g. June 2026" oninput="markUnsaved()"></div>
-      <div class="report-cover-meta-item"><span class="rcm-label">Date Prepared</span><input class="rcm-input" id="report-date" type="date" oninput="markUnsaved()"></div>
-      <div class="report-cover-meta-item"><span class="rcm-label">Prepared By</span><input class="rcm-input" id="report-author" type="text" placeholder="General Manager" oninput="markUnsaved()"></div>
-      <div class="report-cover-meta-item"><span class="rcm-label">Next Board Meeting</span><input class="rcm-input" id="report-next-board" type="date" oninput="markUnsaved()"></div>
-    </div>
-  </div>
-
-  <!-- SECTION 1: CHANNEL BREAKDOWN & COMMENTARY -->
-  <div class="report-section">
-    <div class="report-section-header"><div class="report-section-num">1</div><span class="report-section-title">Channel Breakdown &amp; Revenue Commentary</span></div>
-    <div>
-      <div style="padding:12px 20px 4px;"><div style="font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#6B7080;margin-bottom:8px;">Channel Breakdown &#8212; Revenue MTD</div></div>
-      <div class="report-table-wrap">
-        <table class="report-table">
-          <thead><tr><th style="width:20%">Channel</th><th>Revenue Actual</th><th>Revenue Budget</th><th>Actual vs Budget $</th><th>Actual vs Budget %</th></tr></thead>
-          <tbody id="channel-tbody"></tbody>
-        </table>
-      </div>
-      <div class="narrative-block"><div class="narrative-label">Revenue Commentary</div><textarea class="narrative-textarea" id="n-trading-summary" rows="4" placeholder="Overall trading narrative, key drivers, market conditions..." oninput="markUnsaved()"></textarea></div>
-    </div>
-  </div>
-
-  <!-- SECTION 2: PIPELINE -->
-  <div class="report-section">
-    <div class="report-section-header"><div class="report-section-num">2</div><span class="report-section-title">New Business &amp; Pipeline</span></div>
+<div class="report-section">
+    <div class="report-section-header"><span class="report-section-title">New Business &amp; Pipeline</span></div>
     <div>
       <div style="padding:12px 20px 8px;">
         <table class="action-plan-table">
@@ -429,19 +413,8 @@ tbody td:first-child { text-align: left; font-weight: 600; color: #000000; }
       <div class="narrative-block"><div class="narrative-label">Pipeline Commentary</div><textarea class="narrative-textarea" id="n-pipeline" rows="3" placeholder="Won this month, lost deals, notable movements in pipeline..." oninput="markUnsaved()"></textarea></div>
     </div>
   </div>
-
-  <!-- SECTION 3: BREWERY, CHANNEL & COMMERCIAL -->
-  <div class="report-section">
-    <div class="report-section-header"><div class="report-section-num">3</div><span class="report-section-title">Brewery, Channel &amp; Commercial Update</span></div>
-    <div>
-      <div class="narrative-block"><div class="narrative-label">Channel &amp; Distribution</div><textarea class="narrative-textarea" id="n-brewery" rows="4" placeholder="ALM, Paramount, Independent, Coles, Endeavour — volume movements, new listings, ranging changes, delistings..." oninput="markUnsaved()"></textarea></div>
-      <div class="narrative-block"><div class="narrative-label">Key Actions</div><textarea class="narrative-textarea" id="n-brewery-actions" rows="3" placeholder="&#8226; Action 1&#10;&#8226; Action 2" oninput="markUnsaved()"></textarea></div>
-    </div>
-  </div>
-
-  <!-- SECTION 4: 3-MONTH ACTION PLAN -->
-  <div class="report-section">
-    <div class="report-section-header"><div class="report-section-num">4</div><span class="report-section-title">3-Month Action Plan &#8212; Wholesale &amp; Sales</span></div>
+<div class="report-section">
+    <div class="report-section-header"><span class="report-section-title">3-Month Action Plan &#8212; Wholesale &amp; Sales</span></div>
     <div>
       <div style="padding:12px 20px 8px;">
         <table class="action-plan-table"><thead><tr><th style="width:5%">#</th><th style="width:28%">Action</th><th style="width:30%">Process / Detail</th><th style="width:18%">Timing</th><th style="width:19%">Responsibility</th></tr></thead>
@@ -450,6 +423,7 @@ tbody td:first-child { text-align: left; font-weight: 600; color: #000000; }
       </div>
     </div>
   </div>
+
 
 </div>
 </div>
