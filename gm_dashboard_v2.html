@@ -208,6 +208,7 @@ tbody td:first-child { text-align: left; font-weight: 600; color: #000000; }
   .cell-input, .kpi-input, .meta-input, .agenda-text, .action-input, .status-select,
   .narrative-textarea, .rcm-input, .rt-input, .ap-input, .labour-input { background: transparent !important; }
 }
+.no-dollar::before{content:none !important;}
 </style>
 </head>
 <body>
@@ -272,6 +273,13 @@ tbody td:first-child { text-align: left; font-weight: 600; color: #000000; }
             <td><input class="cell-input" type="number" id="b-keg-sply" placeholder="SPLY" oninput="calc('b-keg');markUnsaved()"></td>
             <td id="b-keg-var-d">&#8212;</td><td id="b-keg-var-p">&#8212;</td><td>&#8212;</td><td>&#8212;</td>
           </tr>
+<tr>
+            <td>Kegs Sold</td>
+            <td class="no-dollar"><input class="cell-input" type="number" id="b-kegqty-budget" placeholder="0" oninput="calc('b-kegqty');markUnsaved()" min="0"></td>
+            <td class="no-dollar"><input class="cell-input" type="number" id="b-kegqty-actual" placeholder="0" oninput="calc('b-kegqty');markUnsaved()" min="0"></td>
+            <td class="no-dollar"><input class="cell-input" type="number" id="b-kegqty-sply" placeholder="SPLY" oninput="calc('b-kegqty');markUnsaved()"></td>
+            <td id="b-kegqty-var-d">&#8212;</td><td id="b-kegqty-var-p">&#8212;</td><td>&#8212;</td><td>&#8212;</td>
+          </tr>
           <tr class="subsection-row"><td colspan="8">Pack Sales</td></tr>
           <tr>
             <td>Pack Revenue</td>
@@ -279,6 +287,13 @@ tbody td:first-child { text-align: left; font-weight: 600; color: #000000; }
             <td><input class="cell-input" type="number" id="b-pack-actual" placeholder="0" oninput="calc('b-pack');markUnsaved()" min="0"></td>
             <td><input class="cell-input" type="number" id="b-pack-sply" placeholder="SPLY" oninput="calc('b-pack');markUnsaved()"></td>
             <td id="b-pack-var-d">&#8212;</td><td id="b-pack-var-p">&#8212;</td><td>&#8212;</td><td>&#8212;</td>
+          </tr>
+<tr>
+            <td>Cartons Sold</td>
+            <td class="no-dollar"><input class="cell-input" type="number" id="b-packqty-budget" placeholder="0" oninput="calc('b-packqty');markUnsaved()" min="0"></td>
+            <td class="no-dollar"><input class="cell-input" type="number" id="b-packqty-actual" placeholder="0" oninput="calc('b-packqty');markUnsaved()" min="0"></td>
+            <td class="no-dollar"><input class="cell-input" type="number" id="b-packqty-sply" placeholder="SPLY" oninput="calc('b-packqty');markUnsaved()"></td>
+            <td id="b-packqty-var-d">&#8212;</td><td id="b-packqty-var-p">&#8212;</td><td>&#8212;</td><td>&#8212;</td>
           </tr>
           <tr class="subsection-row"><td colspan="8">Other Sales</td></tr>
           <tr>
@@ -991,6 +1006,12 @@ function setSaveBtn(d){ document.getElementById('save-btn').disabled=d; }
 //  SAVE / LOAD
 // ============================================================
 var SAVE_FIELDS=[
+  'b-kegqty-budget',
+  'b-kegqty-actual',
+  'b-kegqty-sply',
+  'b-packqty-budget',
+  'b-packqty-actual',
+  'b-packqty-sply',
   'b-keg-budget','b-keg-actual','b-keg-sply',
   'b-pack-budget','b-pack-actual','b-pack-sply',
   'b-other-budget','b-other-actual','b-other-sply',
