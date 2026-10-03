@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GM Operations Dashboard</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#FF6B00">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAIAAADdvvtQAAAFC0lEQVR4nO3dS2tcZQDG8WcS28TUaJOoo2ITqKmlrakbjQFRUal4hVa0CC7cWBAj+gUUsdAPIKV04coiQkGC4AXURSharHYXInhrSysSU0yijc2FxIyLhFxInJ7TJ4fzvnP+v+2cMzyLf+aSOZlIAAAAAAAAAAAAAAAACEgp1dGV3oxmICylI0mPrMtyBmofAcFCQLAQECwEBAsBwUJAsBAQLAQECwHBQkCwEBAsBAQLAcFCQLAQECwEBAsBwUJAsBAQLAQECwHBQkCwEBAsBAQLAcFCQLAQECwEBAsBwUJAsBAQLAQECwHBQkCwEBAsBAQLAcFCQLBck/eABS98qeO/rM9d1ZXUUK+Get2wUeUm3dqk7S3a0aLum7WjNeU/if0fca3NVCgBraO5iiZnNTmrv6Z1flySdG7hphsb9Vi79nfq8XY11Oc3cZm41q5WrKewP6f04c/a+7k6jungaY1N5z2oqijWFiugRcMTevt7bftARwdVyXvMFYW8tqABzRuZ0qsn9MQnujiZ95QEwlxb6IDmfXFBPR/pzN9570gmtLUEJEnnLumBPl0Yz3tHMkGtJaAFQxN65jNNzOa9I5lw1hLQkoERvXkq7xGJBbKWgFZ4d0CDo3mPSCyEtQS0wlxFB0/nPSKxENZG+Zvo9x7WyzvXvml8RmNTGhzVySG9/6N+v5z6zvvOaHhC5SZz45K41qZVa49AzRvU3qwnO3SoR+df0uEH1ZTyZ+Tfio7/ms24VeJau6ZaC2i5+pJe61L/Xl23Id2JX/2WzaCq4lq7qJYDmtdd1tGH0p1yciibKQnEtVZFCEjSi9u1uy3F8WPTGp7IbM2VxLW2EAGVpH1b051y9lI2UxKIa20hApJ0Xznd8aO5XjsR0dqiBJT2je7lmWx2JBPR2qIEFNplNNVFtLYoAV1M+TJzU8r30usrorVFCejbP9Id39qQzY5kIlpbiIDmKuo7m+6UrddnMyWBuNYWIqBjP+mHNJ9atzbm+elSXGtrP6BTw+o9ke6U+2/JZkoCca1VbQc0O6fDA3rk49RX7u3Zks2gquJauyjKyzmq+GdGY9MaHNE3V3uBRH1J+zszWLaWuNauKcqADvTrQH9Wd/7sHev8kiKutWnV8lPYVagr6a178h6RWAhrCWiF13erK80n4fkKYS0BLbmrVYd68h6RWCBrCWhBuUmfPp36itK8hLOWgCSpvVlf71NHc947kglqLQHp0dv13XPatjnvHcmEtjaAB8H8tDTonW71dqku/G8CC3VtQQO66Vq9sktv3K22xrynJBDy2mIF1NaoPVv0fKee6gj3S+MWRbG2BgMqSRuXfW3lbZt052btbNG9Ze0K72sr41q7WpQBVflj4QDFtTYt3oXBQkCwEBAsBAQLAcFCQLAQECwEBAsBwUJAsBAQLAQECwHBQkCwEBAsBAQLAcFCQLAQECzprtqu9GY0A2EpHUl6JI9AsBAQLAQECwHBQkCwEBAsBAQLAcFCQLAQECwEBAsBwUJAsBAQLAQECwHBQkCwEBAsBAQLAcFCQLAQECwEBAsBwUJAsBAQLAQECwHBQkCwEBAsBAQLAcFCQLAQECwEBAsBwUJAsBAQLAQECwHBQkCwEBAsBAQLAcFCQLAQECwEBAsBwUJAsBAQLAQECwEBAAAAAAAAAAAAAAAE5T/i/i+UVCUniAAAAABJRU5ErkJggg==">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GM Dashboard">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { font-size: 14px; }
@@ -1192,6 +1198,11 @@ function updateDate(){
   else { var ok=restoreLocal(); if(!ok) recalcAll(); setSyncStatus('warn','SHEETS_URL not set'); }
   setTimeout(function(){ initialising=false; },800);
 })();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); });
+}
 </script>
 </body>
 </html>
