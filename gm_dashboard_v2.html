@@ -946,14 +946,14 @@ function buildMonthSelector(){
   var sel=document.getElementById('month-selector');
   var now=new Date();
   sel.innerHTML='';
-  for(var i=0;i<12;i++){
+  for(var i=-2;i<12;i++){
     var d=new Date(now.getFullYear(),now.getMonth()-i,1);
     var key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
     var opt=document.createElement('option');
     opt.value=key; opt.textContent=d.toLocaleDateString('en-AU',{month:'long',year:'numeric'});
     sel.appendChild(opt);
   }
-  currentMonth=sel.value;
+  sel.value=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0'); currentMonth=sel.value;
 }
 function onMonthChange(){
   if(hasUnsaved&&!confirm('You have unsaved changes. Switch month without saving?')){
